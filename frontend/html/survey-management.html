@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Survey Management - ChangeWave</title>
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --black: #0a0a0a;
+            --dark-grey: #1a1a1a;
+            --medium-grey: #2d2d2d;
+            --light-grey: #6b6b6b;
+            --lighter-grey: #e5e5e5;
+            --white: #ffffff;
+            --off-white: #f5f5f5;
+            --brown: #8B6B4A;
+            --light-brown: #A67C52;
+            --dark-brown: #6B4423;
+            --orange: #F97316;
+            --orange-light: #FB923C;
+            --purple: #8B5CF6;
+            --purple-light: #A78BFA;
+            --gradient-primary: linear-gradient(135deg, var(--brown) 0%, var(--light-brown) 100%);
+            --gradient-success: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            --gradient-warning: linear-gradient(135deg, var(--orange) 0%, var(--orange-light) 100%);
+            --gradient-info: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--black);
+            color: var(--white);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Main Survey Container */
+        .survey-container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 120px 40px 80px;
+            position: relative;
+        }
+
+        /* Background Effect */
+        .survey-container::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(139, 107, 74, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(107, 68, 35, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Survey Header */
+        .survey-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .survey-header h1 {
+            font-size: 36px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--white) 0%, var(--light-brown) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn-create-survey {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-create-survey:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 107, 74, 0.3);
+        }
+
+        /* Survey Management Section */
+        .survey-management {
+            background: var(--dark-grey);
+            border: 1px solid rgba(139, 107, 74, 0.2);
+            border-radius: 30px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+            animation: fadeInUp 0.6s ease-out 0.1s;
+            animation-fill-mode: both;
+        }
+
+        /* Filters */
+        .filters {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .filters select {
+            padding: 12px 20px;
+            border: 1px solid rgba(139, 107, 74, 0.2);
+            border-radius: 20px;
+            background: var(--medium-grey);
+            color: var(--white);
+            font-size: 16px;
+            min-width: 200px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filters select:hover {
+            border-color: var(--brown);
+            background: rgba(139, 107, 74, 0.1);
+        }
+
+        .filters select:focus {
+            outline: none;
+            border-color: var(--brown);
+            box-shadow: 0 0 0 3px rgba(139, 107, 74, 0.1);
+        }
+
+        /* Survey Grid */
+        #surveys-list {
+            min-height: 200px;
+        }
+
+        .surveys-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 30px;
+        }
+
+        /* Survey Cards */
+        .survey-card {
+            background: var(--medium-grey);
+            border: 1px solid rgba(139, 107, 74, 0.1);
+            border-radius: 25px;
+            padding: 30px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .survey-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: var(--gradient-primary);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+
+        .survey-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .survey-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--brown);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .survey-card h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 15px 0;
+            color: var(--white);
+        }
+
+        .survey-card p {
+            color: var(--lighter-grey);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        /* Survey Type Badge */
+        .survey-type {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .survey-type.before {
+            background: rgba(33, 147, 176, 0.2);
+            color: #6dd5ed;
+        }
+
+        .survey-type.after {
+            background: rgba(139, 92, 246, 0.2);
+            color: var(--purple-light);
+        }
+
+        /* Survey Meta */
+        .survey-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            font-size: 14px;
+            color: var(--lighter-grey);
+        }
+
+        .survey-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Action Buttons */
+        .btn-take-survey {
+            background: linear-gradient(135deg, var(--dark-brown) 0%, var(--brown) 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 20px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-take-survey:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(33, 147, 176, 0.3);
+        }
+
+        .btn-completed {
+            background: var(--medium-grey);
+            color: var(--lighter-grey);
+            border: 1px solid rgba(139, 107, 74, 0.1);
+            padding: 12px 25px;
+            border-radius: 20px;
+            cursor: not-allowed;
+            width: 100%;
+            font-weight: 600;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        /* Survey Actions for Managers */
+        .survey-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-view-results,
+        .btn-edit-survey {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-view-results {
+            background: var(--gradient-info);
+            color: white;
+        }
+
+        .btn-view-results:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(33, 147, 176, 0.3);
+        }
+
+        .btn-edit-survey {
+            background: var(--gradient-warning);
+            color: white;
+        }
+
+        .btn-edit-survey:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(249, 115, 22, 0.3);
+        }
+
+        .creator-badge {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Loading State */
+        .loading-surveys {
+            text-align: center;
+            padding: 60px;
+        }
+
+        .loading-surveys .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid var(--medium-grey);
+            border-top: 5px solid var(--brown);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        /* No Surveys Found */
+        .no-surveys-found {
+            text-align: center;
+            padding: 80px 20px;
+            color: var(--lighter-grey);
+        }
+
+        .no-surveys-found i {
+            font-size: 64px;
+            color: var(--light-grey);
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .no-surveys-found a {
+            color: var(--light-brown);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .no-surveys-found a:hover {
+            text-decoration: underline;
+        }
+
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .modal-content {
+            background: var(--dark-grey);
+            border: 1px solid rgba(139, 107, 74, 0.2);
+            padding: 40px;
+            border-radius: 30px;
+            max-width: 700px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 30px;
+            cursor: pointer;
+            color: var(--lighter-grey);
+            transition: all 0.3s ease;
+            background: var(--medium-grey);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .close:hover {
+            color: var(--white);
+            background: var(--brown);
+            transform: rotate(90deg);
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--medium-grey);
+            border-radius: 10px;
+            margin: 30px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient-primary);
+            transition: width 0.3s ease;
+        }
+
+        /* Question Styles */
+        .question {
+            background: var(--medium-grey);
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(139, 107, 74, 0.1);
+        }
+
+        .question label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--white);
+            font-size: 18px;
+        }
+
+        /* Rating Scale */
+        .rating-scale {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin: 30px 0;
+        }
+
+        .rating-scale label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            padding: 15px;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .rating-scale label:hover {
+            background: rgba(139, 107, 74, 0.1);
+            transform: scale(1.1);
+        }
+
+        .rating-scale input[type="radio"] {
+            display: none;
+        }
+
+        .rating-scale label span {
+            width: 50px;
+            height: 50px;
+            border: 2px solid var(--light-grey);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .rating-scale input[type="radio"]:checked + span {
+            background: var(--gradient-primary);
+            color: white;
+            border-color: var(--brown);
+            transform: scale(1.1);
+        }
+
+        .scale-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--lighter-grey);
+            margin-top: 10px;
+        }
+
+        /* Text Response */
+        .text-response {
+            width: 100%;
+            padding: 15px 20px;
+            border: 1px solid rgba(139, 107, 74, 0.2);
+            border-radius: 15px;
+            background: var(--black);
+            color: var(--white);
+            font-size: 16px;
+            transition: all 0.3s ease;
+            resize: vertical;
+        }
+
+        .text-response:focus {
+            outline: none;
+            border-color: var(--brown);
+            box-shadow: 0 0 0 3px rgba(139, 107, 74, 0.1);
+        }
+
+        /* Survey Navigation */
+        .survey-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            gap: 20px;
+        }
+
+        .survey-navigation button {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-prev,
+        .btn-next {
+            background: var(--gradient-info);
+            color: white;
+        }
+
+        .btn-submit-survey {
+            background: var(--gradient-success);
+            color: white;
+        }
+
+        .survey-navigation button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .survey-navigation button:disabled {
+            background: var(--medium-grey);
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        /* Results Modal */
+        .results-summary {
+            padding: 20px 0;
+        }
+
+        .results-summary p {
+            font-size: 18px;
+            color: var(--lighter-grey);
+            margin-bottom: 30px;
+        }
+
+        .results-summary strong {
+            color: var(--light-brown);
+            font-size: 24px;
+        }
+
+        .result-item {
+            margin-bottom: 30px;
+            padding: 25px;
+            background: var(--medium-grey);
+            border-radius: 20px;
+            border: 1px solid rgba(139, 107, 74, 0.1);
+        }
+
+        .result-item h4 {
+            margin-bottom: 20px;
+            color: var(--white);
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .answer-breakdown {
+            margin-top: 15px;
+        }
+
+        .answer-stat {
+            position: relative;
+            margin-bottom: 15px;
+            padding: 12px;
+            background: var(--black);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .answer-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: var(--gradient-primary);
+            opacity: 0.2;
+            transition: width 0.5s ease;
+            z-index: 0;
+        }
+
+        .answer-stat span {
+            position: relative;
+            z-index: 1;
+            color: var(--white);
+            font-weight: 500;
+        }
+
+        .text-responses {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .text-responses::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .text-responses::-webkit-scrollbar-track {
+            background: rgba(139, 107, 74, 0.1);
+            border-radius: 3px;
+        }
+
+        .text-responses::-webkit-scrollbar-thumb {
+            background: var(--brown);
+            border-radius: 3px;
+        }
+
+        .response-item {
+            padding: 15px;
+            margin-bottom: 15px;
+            background: var(--black);
+            border-radius: 15px;
+            border-left: 3px solid var(--brown);
+        }
+
+        .response-item p {
+            margin: 8px 0;
+            font-style: italic;
+            color: var(--white);
+        }
+
+        .response-item small {
+            color: var(--lighter-grey);
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 107, 74, 0.3);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .surveys-grid {
+                grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .survey-container {
+                padding: 80px 20px 40px;
+            }
+
+            .survey-header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .survey-header h1 {
+                font-size: 28px;
+            }
+
+            .filters {
+                flex-direction: column;
+            }
+
+            .filters select {
+                width: 100%;
+            }
+
+            .survey-meta {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .survey-actions {
+                flex-direction: column;
+            }
+
+            .modal-content {
+                padding: 25px;
+                margin: 20px;
+            }
+
+            .rating-scale {
+                gap: 10px;
+            }
+
+            .rating-scale label span {
+                width: 40px;
+                height: 40px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation will be inserted by navigation.js -->
+    <nav class="navbar"></nav>
+
+    <main class="survey-container">
+        <div class="survey-header">
+            <h1>Impact Measurement Surveys</h1>
+            <button class="btn-create-survey" id="createSurveyBtn" style="display: none;" onclick="window.location.href='create-survey.html'">
+                <i class="fas fa-plus-circle"></i> Create Survey
+            </button>
+        </div>
+
+        <!-- Survey Management Section with Filters -->
+        <div class="survey-management" id="surveyManagement">
+            <div class="filters">
+                <select id="campaign-filter" onchange="filterSurveys()">
+                    <option value="">All Campaigns</option>
+                </select>
+                <select id="type-filter" onchange="filterSurveys()">
+                    <option value="">All Types</option>
+                    <option value="before">Pre-Campaign</option>
+                    <option value="after">Post-Campaign</option>
+                </select>
+                <select id="status-filter" onchange="filterSurveys()">
+                    <option value="">All Status</option>
+                    <option value="active">Active</option>
+                    <option value="completed">Completed</option>
+                    <option value="draft">Draft</option>
+                </select>
+            </div>
+            
+            <div id="surveys-list" class="surveys-grid">
+                <div class="loading-surveys">
+                    <div class="spinner"></div>
+                    <p>Loading surveys...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Survey Modal -->
+        <div id="surveyModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <span class="close" onclick="closeSurvey()">&times;</span>
+                <h2 id="surveyTitle" style="color: var(--white); margin-bottom: 10px;">Survey Title</h2>
+                <div id="surveyProgress" class="progress-bar">
+                    <div class="progress-fill" style="width: 0%"></div>
+                </div>
+                <form id="surveyForm">
+                    <div id="surveyQuestions">
+                        <!-- Questions will be loaded dynamically -->
+                    </div>
+                    <div class="survey-navigation">
+                        <button type="button" class="btn-prev" id="prevBtn" onclick="previousQuestion()" disabled>Previous</button>
+                        <button type="button" class="btn-next" id="nextBtn" onclick="nextQuestion()">Next</button>
+                        <button type="submit" class="btn-submit-survey" id="submitBtn" style="display: none;">Submit Survey</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script src="../js/common/auth.js"></script>
+    <script src="../js/common/navigation.js"></script>
+    <script>
+        // All existing JavaScript remains exactly the same
+        let allSurveys = [];
+        let userRole = null;
+        let campaigns = [];
+        let currentQuestionIndex = 0;
+        let surveyResponses = {};
+        let currentSurvey = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            userRole = user.role;
+            
+            // Fix navigation based on role
+            const dashboardLink = document.querySelector('a[href="user-dashboard.html"]');
+            if (dashboardLink) {
+                if (userRole === 'admin') {
+                    dashboardLink.href = 'admin-dashboard.html';
+                } else if (userRole === 'campaign_manager') {
+                    dashboardLink.href = 'manager-dashboard.html';
+                }
+            }
+            
+            // Show appropriate view based on role
+            if (userRole === 'campaign_manager' || userRole === 'admin') {
+                document.getElementById('createSurveyBtn').style.display = 'flex';
+            }
+            
+            // Load data
+            await loadCampaigns();
+            await loadSurveys();
+        });
+
+        async function loadCampaigns() {
+            try {
+                const response = await fetch('http://localhost:3000/api/campaigns', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    campaigns = data.campaigns || data;
+                    populateCampaignFilter();
+                }
+            } catch (error) {
+                console.error('Error loading campaigns:', error);
+            }
+        }
+
+        function populateCampaignFilter() {
+            const filter = document.getElementById('campaign-filter');
+            filter.innerHTML = '<option value="">All Campaigns</option>';
+            
+            campaigns.forEach(campaign => {
+                const option = document.createElement('option');
+                option.value = campaign._id;
+                option.textContent = campaign.title;
+                filter.appendChild(option);
+            });
+        }
+
+        async function loadSurveys() {
+            try {
+                const response = await fetch('http://localhost:3000/api/surveys', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    allSurveys = data.surveys || data;
+                    console.log('Loaded surveys:', allSurveys);
+                    displaySurveys();
+                } else {
+                    throw new Error(`Failed to load surveys: ${response.status}`);
+                }
+            } catch (error) {
+                console.error('Error loading surveys:', error);
+                showError('Failed to load surveys. Please check your connection.');
+            }
+        }
+
+        function displaySurveys() {
+            const container = document.getElementById('surveys-list');
+            const filteredSurveys = getFilteredSurveys();
+            
+            if (!filteredSurveys || filteredSurveys.length === 0) {
+                container.innerHTML = `
+                    <div class="no-surveys-found">
+                        <i class="fas fa-clipboard-list"></i>
+                        <p>No surveys found</p>
+                        ${userRole === 'campaign_manager' || userRole === 'admin' ? 
+                            '<p><a href="create-survey.html">Create your first survey</a></p>' : ''}
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filteredSurveys.map(survey => {
+                const campaignId = survey.campaign?._id || survey.campaign || survey.campaignId;
+                const campaignName = survey.campaign?.title || getCampaignName(campaignId) || 'Unknown Campaign';
+                
+                const isCreator = survey.createdBy === getCurrentUserId() || 
+                                 survey.createdBy?._id === getCurrentUserId();
+                
+                let actionButton = '';
+                
+                if (userRole === 'campaign_manager' || userRole === 'admin') {
+                    if (isCreator) {
+                        actionButton = `
+                            <div class="survey-actions">
+                                <button class="btn-view-results" onclick="viewSurveyResults('${survey._id}')">
+                                    <i class="fas fa-chart-bar"></i> View Results
+                                </button>
+                                <button class="btn-edit-survey" onclick="editSurvey('${survey._id}')">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                            </div>
+                        `;
+                    } else {
+                        actionButton = survey.completed ? 
+                            '<button class="btn-completed" disabled><i class="fas fa-check"></i> Completed</button>' :
+                            `<button class="btn-take-survey" onclick="takeSurvey('${survey._id}')">Take Survey</button>`;
+                    }
+                } else {
+                    actionButton = survey.completed ? 
+                        '<button class="btn-completed" disabled><i class="fas fa-check"></i> Completed</button>' :
+                        `<button class="btn-take-survey" onclick="takeSurvey('${survey._id}')">Take Survey</button>`;
+                }
+                
+                return `
+                    <div class="survey-card">
+                        <div class="survey-type ${survey.type}">${survey.type === 'before' ? 'Pre' : 'Post'}-Campaign</div>
+                        <h3>${survey.title}</h3>
+                        <p>${survey.description || 'Help us measure the impact of this campaign'}</p>
+                        <div class="survey-meta">
+                            <span><i class="fas fa-clipboard-list"></i> ${survey.questions?.length || 0} questions</span>
+                            <span><i class="fas fa-flag"></i> ${campaignName}</span>
+                            <span><i class="fas fa-users"></i> ${survey.responsesCount || 0} responses</span>
+                            ${isCreator && (userRole === 'campaign_manager' || userRole === 'admin') ? 
+                                '<span class="creator-badge"><i class="fas fa-user"></i> Your Survey</span>' : ''}
+                        </div>
+                        ${actionButton}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getCurrentUserId() {
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            return user.id || user._id;
+        }
+
+        async function viewSurveyResults(surveyId) {
+            try {
+                const response = await fetch(`http://localhost:3000/api/surveys/${surveyId}/results`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                if (response.ok) {
+                    const results = await response.json();
+                    displaySurveyResults(results);
+                } else {
+                    alert('Failed to load survey results');
+                }
+            } catch (error) {
+                console.error('Error loading survey results:', error);
+                alert('Error loading survey results');
+            }
+        }
+
+        function displaySurveyResults(data) {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 800px;">
+                    <span class="close" onclick="this.parentElement.parentElement.remove()">&times;</span>
+                    <h2 style="color: var(--white); margin-bottom: 20px;">Survey Results: ${data.survey.title}</h2>
+                    <div class="results-summary">
+                        <p>Total Responses: <strong>${data.responses}</strong></p>
+                        <div class="results-container">
+                            ${Object.entries(data.results).map(([questionId, result]) => `
+                                <div class="result-item">
+                                    <h4>${result.question}</h4>
+                                    ${renderQuestionResults(result)}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <button class="btn-primary" onclick="exportResults('${data.survey._id}')">Export Results</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            modal.style.display = 'flex';
+        }
+
+        function renderQuestionResults(result) {
+            if (result.type === 'text') {
+                return `
+                    <div class="text-responses">
+                        ${result.responses.slice(0, 5).map(r => `
+                            <div class="response-item">
+                                <p>"${r.answer}"</p>
+                                <small>- ${r.user.name}, ${new Date(r.date).toLocaleDateString()}</small>
+                            </div>
+                        `).join('')}
+                        ${result.responses.length > 5 ? `<p style="color: var(--lighter-grey);">...and ${result.responses.length - 5} more responses</p>` : ''}
+                    </div>
+                `;
+            } else {
+                const answerCounts = {};
+                result.responses.forEach(r => {
+                    answerCounts[r.answer] = (answerCounts[r.answer] || 0) + 1;
+                });
+                
+                return `
+                    <div class="answer-breakdown">
+                        ${Object.entries(answerCounts).map(([answer, count]) => `
+                            <div class="answer-stat">
+                                <span>${answer}: </span>
+                                <span class="count">${count} (${Math.round(count / result.responses.length * 100)}%)</span>
+                                <div class="answer-bar" style="width: ${count / result.responses.length * 100}%"></div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+        }
+
+        function editSurvey(surveyId) {
+            alert('Edit survey feature coming soon!');
+        }
+
+        function exportResults(surveyId) {
+            window.open(`http://localhost:3000/api/surveys/${surveyId}/export?token=${localStorage.getItem('token')}`, '_blank');
+        }
+
+        function getFilteredSurveys() {
+            const campaignFilter = document.getElementById('campaign-filter').value;
+            const typeFilter = document.getElementById('type-filter').value;
+            const statusFilter = document.getElementById('status-filter').value;
+            
+            return allSurveys.filter(survey => {
+                const campaignId = survey.campaign?._id || survey.campaign;
+                if (campaignFilter && campaignId !== campaignFilter) return false;
+                if (typeFilter && survey.type !== typeFilter) return false;
+                if (statusFilter && (survey.status || 'active') !== statusFilter) return false;
+                return true;
+            });
+        }
+
+        function filterSurveys() {
+            displaySurveys();
+        }
+
+        function getCampaignName(campaignId) {
+            if (!campaignId) return 'Unknown Campaign';
+            const campaign = campaigns.find(c => c._id === campaignId);
+            return campaign ? campaign.title : 'Campaign';
+        }
+
+        async function takeSurvey(surveyId) {
+            try {
+                const survey = allSurveys.find(s => s._id === surveyId);
+                if (survey) {
+                    openSurveyModal(survey);
+                } else {
+                    const response = await fetch(`http://localhost:3000/api/surveys/${surveyId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        }
+                    });
+
+                    if (response.ok) {
+                        const surveyData = await response.json();
+                        openSurveyModal(surveyData);
+                    } else {
+                        throw new Error('Survey not found');
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading survey:', error);
+                alert('Failed to load survey. Please try again.');
+            }
+        }
+
+        function openSurveyModal(survey) {
+            currentSurvey = survey;
+            const modal = document.getElementById('surveyModal');
+            document.getElementById('surveyTitle').textContent = survey.title;
+            currentQuestionIndex = 0;
+            surveyResponses = {};}
+            
+                   function loadSurveyQuestions() {
+            if (!currentSurvey || !currentSurvey.questions) {
+                console.error('No survey or questions available');
+                return;
+            }
+            
+            const questionsContainer = document.getElementById('surveyQuestions');
+            questionsContainer.innerHTML = '';
+            
+            currentSurvey.questions.forEach((question, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.style.display = index === currentQuestionIndex ? 'block' : 'none';
+                questionDiv.setAttribute('data-question-index', index);
+                
+                let questionHTML = `<label>${index + 1}. ${question.text}</label>`;
+                
+                switch (question.type) {
+                    case 'rating':
+                    case 'scale':
+                        const min = question.scaleMin || 1;
+                        const max = question.scaleMax || 5;
+                        questionHTML += '<div class="rating-scale">';
+                        for (let i = min; i <= max; i++) {
+                            questionHTML += `
+                                <label>
+                                    <input type="radio" name="question_${question.questionId}" value="${i}">
+                                    <span>${i}</span>
+                                </label>
+                            `;
+                        }
+                        questionHTML += '</div>';
+                        if (min === 1 && max === 5) {
+                            questionHTML += `
+                                <div class="scale-labels">
+                                    <span>Strongly Disagree</span>
+                                    <span>Strongly Agree</span>
+                                </div>
+                            `;
+                        }
+                        break;
+                        
+                    case 'yes-no':
+                        questionHTML += `
+                            <div class="rating-scale">
+                                <label>
+                                    <input type="radio" name="question_${question.questionId}" value="yes">
+                                    <span>Yes</span>
+                                </label>
+                                <label>
+                                    <input type="radio" name="question_${question.questionId}" value="no">
+                                    <span>No</span>
+                                </label>
+                            </div>
+                        `;
+                        break;
+                        
+                    case 'multiple-choice':
+                        questionHTML += '<div class="rating-scale">';
+                        question.options.forEach((option, optIndex) => {
+                            questionHTML += `
+                                <label>
+                                    <input type="radio" name="question_${question.questionId}" value="${option}">
+                                    <span>${String.fromCharCode(65 + optIndex)}</span>
+                                </label>
+                            `;
+                        });
+                        questionHTML += '</div>';
+                        // Show options below
+                        questionHTML += '<div style="text-align: center; margin-top: 15px;">';
+                        question.options.forEach((option, optIndex) => {
+                            questionHTML += `<p style="margin: 5px 0;"><strong>${String.fromCharCode(65 + optIndex)}:</strong> ${option}</p>`;
+                        });
+                        questionHTML += '</div>';
+                        break;
+                        
+                    case 'text':
+                        questionHTML += `
+                            <textarea class="text-response" name="question_${question.questionId}" 
+                                     rows="4" placeholder="Type your answer here..."></textarea>
+                        `;
+                        break;
+                }
+                
+                questionDiv.innerHTML = questionHTML;
+                questionsContainer.appendChild(questionDiv);
+            });
+            
+            updateProgressBar();
+            updateNavigationButtons();
+            modal.style.display = 'flex';
+        }
+
+        function nextQuestion() {
+            if (!saveCurrentAnswer()) {
+                alert('Please answer the current question before proceeding.');
+                return;
+            }
+            
+            if (currentQuestionIndex < currentSurvey.questions.length - 1) {
+                currentQuestionIndex++;
+                showCurrentQuestion();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                showCurrentQuestion();
+            }
+        }
+
+        function showCurrentQuestion() {
+            document.querySelectorAll('.question').forEach((q, index) => {
+                q.style.display = index === currentQuestionIndex ? 'block' : 'none';
+            });
+            updateProgressBar();
+            updateNavigationButtons();
+        }
+
+        function updateProgressBar() {
+            const progress = ((currentQuestionIndex + 1) / currentSurvey.questions.length) * 100;
+            document.querySelector('.progress-fill').style.width = progress + '%';
+        }
+
+        function updateNavigationButtons() {
+            document.getElementById('prevBtn').disabled = currentQuestionIndex === 0;
+            document.getElementById('nextBtn').style.display = 
+                currentQuestionIndex === currentSurvey.questions.length - 1 ? 'none' : 'block';
+            document.getElementById('submitBtn').style.display = 
+                currentQuestionIndex === currentSurvey.questions.length - 1 ? 'block' : 'none';
+        }
+
+        function saveCurrentAnswer() {
+            const currentQuestion = currentSurvey.questions[currentQuestionIndex];
+            const questionId = currentQuestion.questionId;
+            
+            if (currentQuestion.type === 'text') {
+                const textarea = document.querySelector(`textarea[name="question_${questionId}"]`);
+                if (textarea && textarea.value.trim()) {
+                    surveyResponses[questionId] = textarea.value.trim();
+                    return true;
+                }
+            } else {
+                const selectedOption = document.querySelector(`input[name="question_${questionId}"]:checked`);
+                if (selectedOption) {
+                    surveyResponses[questionId] = selectedOption.value;
+                    return true;
+                }
+            }
+            
+            return currentQuestion.required !== false ? false : true;
+        }
+
+        function closeSurvey() {
+            document.getElementById('surveyModal').style.display = 'none';
+            currentSurvey = null;
+            currentQuestionIndex = 0;
+            surveyResponses = {};
+        }
+
+        document.getElementById('surveyForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!saveCurrentAnswer()) {
+                alert('Please answer all required questions.');
+                return;
+            }
+            
+            const responses = currentSurvey.questions.map(q => ({
+                questionId: q.questionId,
+                answer: surveyResponses[q.questionId] || ''
+            }));
+            
+            try {
+                const response = await fetch(`http://localhost:3000/api/surveys/${currentSurvey._id}/response`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({ responses })
+                });
+
+                if (response.ok) {
+                    alert('Thank you for completing the survey!');
+                    closeSurvey();
+                    loadSurveys(); // Reload to update completion status
+                } else {
+                    const error = await response.json();
+                    alert(error.error || 'Failed to submit survey. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error submitting survey:', error);
+                alert('Failed to submit survey. Please try again.');
+            }
+        });
+
+        function showError(message) {
+            document.getElementById('surveys-list').innerHTML = `
+                <div class="no-surveys-found">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>${message}</p>
+                    <button class="btn-primary" onclick="loadSurveys()">Try Again</button>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

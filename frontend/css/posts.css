@@ -1,0 +1,511 @@
+/* Posts Page Styles */
+
+/* Dark theme for entire page */
+body {
+    background-color: #0a0a0a !important; /* Pure black background */
+    color: #e5e5e5;
+}
+
+/* Feed container */
+.feed-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: transparent; /* Inherit pure black from body */
+}
+
+/* Feed header */
+.feed-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.feed-header h1 {
+    color: #ffffff;
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 20px;
+}
+
+/* Feed filters */
+.feed-filters {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: 10px 20px;
+    background: #2a2a2a; /* Lighter grey for contrast */
+    border: 1px solid #3d3d3d;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s;
+    color: #e5e5e5;
+    font-weight: 500;
+}
+
+.filter-btn:hover {
+    background: #3d3d3d;
+    border-color: #8B6B4A;
+    transform: translateY(-1px);
+}
+
+.filter-btn.active {
+    background: #8B6B4A;
+    color: white;
+    border-color: #8B6B4A;
+}
+
+.btn-create {
+    background: #27ae60;
+    color: white !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-weight: 600;
+}
+
+/* Post Card - HIGH CONTRAST */
+.post-card {
+    background: #2a2a2a; /* Much lighter grey for strong contrast */
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05);
+    margin-bottom: 30px;
+    overflow: hidden;
+    color: #e5e5e5;
+    border: 1px solid #3d3d3d;
+    transition: all 0.3s ease;
+}
+
+.post-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.1);
+    border-color: #4d4d4d;
+}
+
+/* Post header */
+.post-header {
+    display: flex;
+    align-items: flex-start;
+    padding: 20px;
+    gap: 15px;
+    position: relative;
+    background: rgba(255, 255, 255, 0.03); /* Subtle highlight */
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background: #4d4d4d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.post-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    flex: 1;
+}
+
+.post-meta h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #ffffff;
+    text-align: left !important;
+}
+
+.post-time {
+    color: #999999;
+    font-size: 14px;
+    text-align: left !important;
+}
+
+/* Post type badges */
+.post-type-badge {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 5px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 20px;
+    color: white;
+}
+
+.campaign-badge {
+    background: #F97316;
+}
+
+.personal-badge {
+    background: #27ae60;
+}
+
+/* Campaign vs Personal post indicators */
+.personal-post {
+    border-left: 4px solid #27ae60;
+}
+
+.campaign-post {
+    border-left: 4px solid #F97316;
+}
+
+/* Post content */
+.post-content {
+    padding: 0 20px 20px;
+    background: transparent;
+}
+
+.post-title {
+    color: #ffffff;
+    font-size: 24px;
+    margin-bottom: 10px;
+    text-align: left;
+    font-weight: 600;
+}
+
+.post-text {
+    color: #d0d0d0;
+    line-height: 1.6;
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.post-image {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    margin-top: 15px;
+    border-radius: 8px;
+}
+
+/* Post tags */
+.post-tags {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+}
+
+.tag {
+    background: #1a1a1a;
+    color: #F97316;
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 13px;
+    border: 1px solid #3d3d3d;
+    transition: all 0.3s ease;
+}
+
+.tag:hover {
+    background: #3d3d3d;
+    transform: translateY(-1px);
+}
+
+/* Post actions */
+.post-actions {
+    display: flex;
+    justify-content: space-around;
+    padding: 15px;
+    border-top: 1px solid #3d3d3d;
+    background: #1f1f1f; /* Darker than post card for depth */
+}
+
+.action-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px 20px;
+    border-radius: 8px;
+    color: #e5e5e5;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 14px;
+}
+
+.action-btn:hover {
+    background: #3d3d3d;
+    color: #ffffff;
+}
+
+.action-btn i {
+    font-size: 16px;
+}
+
+/* Comments section */
+.comments-section {
+    padding: 20px;
+    border-top: 1px solid #3d3d3d;
+    background: #1a1a1a; /* Darker than post for layering */
+    color: #e5e5e5;
+}
+
+.comment-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.comment-input {
+    flex: 1;
+    padding: 12px 20px;
+    border: 1px solid #3d3d3d;
+    border-radius: 25px;
+    background: #2a2a2a; /* Match post card background */
+    color: #e5e5e5;
+    font-size: 14px;
+}
+
+.comment-input::placeholder {
+    color: #888888;
+}
+
+.comment-input:focus {
+    outline: none;
+    border-color: #8B6B4A;
+    background: #333333;
+}
+
+.comment-submit {
+    padding: 12px 24px;
+    background: #8B6B4A;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.comment-submit:hover {
+    background: #A67C52;
+    transform: translateY(-1px);
+}
+
+/* Individual comments */
+.comment {
+    background: #2a2a2a; /* Same as post card for consistency */
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    color: #e5e5e5;
+    border: 1px solid #3d3d3d;
+}
+
+.comment-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.comment-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #4d4d4d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.comment-meta {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex: 1;
+}
+
+.comment-author {
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.comment-time {
+    color: #888888;
+    font-size: 12px;
+}
+
+.comment-text {
+    margin: 8px 0;
+    line-height: 1.4;
+    color: #d0d0d0;
+}
+
+/* Sentiment indicators */
+.sentiment-indicator,
+.comment-sentiment {
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.comment-sentiment.positive,
+.sentiment-positive {
+    background: rgba(56, 239, 125, 0.2);
+    color: #38ef7d;
+}
+
+.comment-sentiment.neutral,
+.sentiment-neutral {
+    background: rgba(109, 213, 237, 0.2);
+    color: #6dd5ed;
+}
+
+.comment-sentiment.negative,
+.sentiment-negative {
+    background: rgba(244, 92, 67, 0.2);
+    color: #f45c43;
+}
+
+/* Post sentiment section */
+.post-sentiment {
+    padding: 15px 20px;
+    background: #1a1a1a;
+    border-top: 1px solid #3d3d3d;
+}
+
+.sentiment-title {
+    font-size: 14px;
+    margin-bottom: 8px;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.sentiment-bar {
+    display: flex;
+    height: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 10px;
+    background: #0a0a0a;
+    border: 1px solid #3d3d3d;
+}
+
+.sentiment-positive {
+    background: #38ef7d;
+}
+
+.sentiment-neutral {
+    background: #6dd5ed;
+}
+
+.sentiment-negative {
+    background: #f45c43;
+}
+
+.sentiment-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+}
+
+.sentiment-breakdown {
+    font-size: 12px;
+    color: #999;
+}
+
+/* Role badges */
+.post-role {
+    display: inline-block;
+    margin-left: 10px;
+    padding: 2px 8px;
+    font-size: 11px;
+    background: #3d3d3d;
+    border-radius: 10px;
+    color: #8B6B4A;
+}
+
+/* Empty states */
+.no-comments,
+.comments-disabled {
+    text-align: center;
+    color: #888888;
+    padding: 20px;
+    font-style: italic;
+}
+
+/* Loading states */
+.loading {
+    text-align: center;
+    padding: 20px;
+    color: #888888;
+}
+
+/* Ensure all text aligns left */
+.post-header *,
+.post-content * {
+    text-align: left !important;
+}
+
+/* Main content area */
+main,
+.main-content {
+    background-color: #0a0a0a !important;
+    min-height: 100vh;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .feed-container {
+        padding: 15px;
+    }
+    
+    .post-card {
+        margin-bottom: 20px;
+    }
+    
+    .post-header {
+        padding: 15px;
+    }
+    
+    .post-content {
+        padding: 0 15px 15px;
+    }
+    
+    .filter-btn {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+}
+
+/* Manager links styling */
+#managerLinks {
+    display: flex;
+    gap: 20px;
+}
+
+#managerLinks a {
+    color: inherit;
+    text-decoration: none;
+    padding: 5px 10px;
+    transition: all 0.3s ease;
+}
+
+#managerLinks a:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+}
+
+/* Error message */
+.error-message {
+    text-align: center;
+    padding: 20px;
+    color: #f44336;
+}

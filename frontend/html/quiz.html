@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChangeWave - Awareness Quiz</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --black: #0a0a0a;
+            --dark-grey: #1a1a1a;
+            --medium-grey: #2d2d2d;
+            --light-grey: #6b6b6b;
+            --lighter-grey: #e5e5e5;
+            --white: #ffffff;
+            --brown: #8B6B4A;
+            --light-brown: #A67C52;
+            --orange: #F97316;
+            --orange-light: #FB923C;
+            --blue: #2193b0;
+            --light-blue: #6dd5ed;
+            --green: #11998e;
+            --light-green: #38ef7d;
+            --red: #e74c3c;
+            --light-red: #ff6b6b;
+            --gradient-primary: linear-gradient(135deg, var(--brown) 0%, var(--light-brown) 100%);
+            --gradient-success: linear-gradient(135deg, var(--green) 0%, var(--light-green) 100%);
+            --gradient-warning: linear-gradient(135deg, var(--orange) 0%, var(--orange-light) 100%);
+            --gradient-info: linear-gradient(135deg, var(--blue) 0%, var(--light-blue) 100%);
+            --gradient-danger: linear-gradient(135deg, var(--red) 0%, var(--light-red) 100%);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--black);
+            color: var(--white);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Background Effect */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(33, 147, 176, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(139, 107, 74, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Container */
+        .container {
+            max-width: 900px;
+            margin: 80px auto;
+            background: var(--dark-grey);
+            border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            padding: 50px;
+            text-align: center;
+            border: 1px solid rgba(33, 147, 176, 0.2);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: var(--gradient-info);
+            border-radius: 30px;
+            z-index: -1;
+            opacity: 0.1;
+        }
+
+        /* Title */
+        h1 {
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, var(--white) 0%, var(--light-blue) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            background: var(--medium-grey);
+            height: 8px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--gradient-info);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+
+        /* Question Card */
+        #quiz-container {
+            background: var(--medium-grey);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(33, 147, 176, 0.1);
+            min-height: 400px;
+        }
+
+        .question {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            color: var(--white);
+            line-height: 1.5;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        /* Options */
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .options button {
+            background: var(--dark-grey);
+            border: 2px solid rgba(139, 107, 74, 0.3);
+            color: var(--lighter-grey);
+            border-radius: 15px;
+            padding: 18px 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            font-weight: 500;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .options button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-primary);
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+
+        .options button:hover:not(:disabled) {
+            transform: translateX(10px);
+            border-color: var(--light-brown);
+            color: var(--white);
+        }
+
+        .options button:hover:not(:disabled)::before {
+            left: 0;
+        }
+
+        .options button:disabled {
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+
+        .options button.correct {
+            background: var(--gradient-success) !important;
+            border-color: transparent !important;
+            color: white !important;
+            animation: correctPulse 0.6s ease;
+        }
+
+        .options button.incorrect {
+            background: var(--gradient-danger) !important;
+            border-color: transparent !important;
+            color: white !important;
+            animation: shake 0.5s ease;
+        }
+
+        /* Control Buttons */
+        #next-btn, #next-level-btn, #restart-btn {
+            display: none;
+            margin: 20px auto;
+            padding: 15px 40px;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        #next-btn:hover, #next-level-btn:hover, #restart-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(139, 107, 74, 0.3);
+        }
+
+        #next-btn::after {
+            content: ' →';
+        }
+
+        #next-level-btn {
+            background: var(--gradient-info);
+        }
+
+        #restart-btn {
+            background: var(--gradient-success);
+        }
+
+        /* Score Display */
+        #score-box {
+            display: none;
+            margin-top: 30px;
+            padding: 30px;
+            background: var(--medium-grey);
+            border-radius: 20px;
+            border: 1px solid rgba(33, 147, 176, 0.2);
+            animation: bounceIn 0.8s ease;
+        }
+
+        .score-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--light-blue);
+        }
+
+        .score-details {
+            font-size: 20px;
+            color: var(--lighter-grey);
+            margin-bottom: 10px;
+        }
+
+        .score-percentage {
+            font-size: 48px;
+            font-weight: 800;
+            background: var(--gradient-info);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 20px 0;
+        }
+
+        /* Level Indicator */
+        .level-indicator {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--gradient-info);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            color: white;
+        }
+
+        /* Back Button */
+        a.back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: var(--medium-grey);
+            border: 1px solid rgba(139, 107, 74, 0.3);
+            border-radius: 20px;
+            color: var(--light-brown);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        a.back-btn:hover {
+            background: rgba(139, 107, 74, 0.1);
+            transform: translateY(-2px);
+            border-color: var(--brown);
+        }
+
+        /* Timer */
+        .timer {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: var(--medium-grey);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--lighter-grey);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes correctPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            70% {
+                transform: scale(0.9);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Stars Animation */
+        .stars {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .star {
+            font-size: 40px;
+            color: #ffd700;
+            opacity: 0;
+            animation: starPop 0.4s ease forwards;
+        }
+
+        .star:nth-child(1) { animation-delay: 0.1s; }
+        .star:nth-child(2) { animation-delay: 0.2s; }
+        .star:nth-child(3) { animation-delay: 0.3s; }
+        .star:nth-child(4) { animation-delay: 0.4s; }
+        .star:nth-child(5) { animation-delay: 0.5s; }
+
+        @keyframes starPop {
+            to {
+                opacity: 1;
+                transform: scale(1.2) rotate(360deg);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                margin: 40px 20px;
+                padding: 30px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            .question {
+                font-size: 18px;
+            }
+
+            .options button {
+                padding: 15px 20px;
+                font-size: 14px;
+            }
+
+            .level-indicator,
+            .timer {
+                position: static;
+                margin-bottom: 20px;
+                display: inline-block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="level-indicator">Level <span id="currentLevel">1</span></div>
+        <div class="timer">Time: <span id="timer">00:00</span></div>
+        
+        <h1><i class="fas fa-brain"></i> Social Awareness Quiz</h1>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div id="quiz-container">
+            <p class="question" id="question"></p>
+            <div class="options" id="options"></div>
+            <button id="next-btn" onclick="nextQuestion()">Next Question</button>
+            <button id="next-level-btn" onclick="loadNextLevel()">
+                <i class="fas fa-arrow-right"></i> Continue to Level 2
+            </button>
+        </div>
+        
+        <div id="score-box">
+            <div class="score-title">Level Complete!</div>
+            <div class="stars" id="stars"></div>
+            <div class="score-percentage" id="scorePercentage"></div>
+            <div class="score-details" id="scoreDetails"></div>
+            <button id="restart-btn" onclick="restartQuiz()">
+                <i class="fas fa-redo"></i> Try Again
+            </button>
+        </div>
+        
+        <a href="gamification.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Back to Rewards
+        </a>
+    </div>
+
+    <script>
+        // Enhanced quiz questions
+        const level1 = [
+            {
+                question: "What is the primary purpose of social awareness campaigns?",
+                options: [
+                    "To generate profit for organizations",
+                    "To educate and inspire positive social change",
+                    "To increase social media followers",
+                    "To promote commercial products"
+                ],
+                correct: 1,
+                explanation: "Social awareness campaigns aim to educate people about important issues and inspire them to take action for positive change."
+            },
+            {
+                question: "Which approach makes campaigns more engaging for young people?",
+                options: [
+                    "Traditional newspaper advertisements",
+                    "Long academic research papers",
+                    "Interactive gamification and rewards",
+                    "Radio commercials only"
+                ],
+                correct: 2,
+                explanation: "Gamification and rewards make campaigns more interactive and engaging, especially for younger audiences."
+            },
+            {
+                question: "What does 'community impact' mean in social campaigns?",
+                options: [
+                    "The measurable positive changes in a community",
+                    "The number of likes on social media",
+                    "The amount of money raised",
+                    "The number of volunteers recruited"
+                ],
+                correct: 0,
+                explanation: "Community impact refers to the real, measurable positive changes that occur as a result of campaign efforts."
+            },
+            {
+                question: "Why is data tracking important in social campaigns?",
+                options: [
+                    "To spy on participants",
+                    "To measure success and improve future efforts",
+                    "To sell information to companies",
+                    "To create competition between campaigns"
+                ],
+                correct: 1,
+                explanation: "Tracking data helps organizations understand what works and improve their strategies for greater impact."
+            },
+            {
+                question: "What role do youth ambassadors play in campaigns?",
+                options: [
+                    "They only donate money",
+                    "They represent and spread campaign messages to peers",
+                    "They create memes for entertainment",
+                    "They manage financial accounts"
+                ],
+                correct: 1,
+                explanation: "Youth ambassadors help spread campaign messages authentically to their peers, increasing reach and credibility."
+            }
+        ];
+
+        const level2 = [
+            {
+                question: "How can technology enhance social awareness campaigns?",
+                options: [
+                    "By replacing all human interaction",
+                    "Through data analytics, wider reach, and engagement tools",
+                    "By making campaigns more expensive",
+                    "Only through email marketing"
+                ],
+                correct: 1,
+                explanation: "Technology provides tools for better analytics, wider reach, and more engaging interactions with participants."
+            },
+            {
+                question: "What is 'sustainable impact' in social campaigns?",
+                options: [
+                    "Short-term viral trends",
+                    "One-time donations",
+                    "Long-lasting positive changes that continue after the campaign",
+                    "Daily social media posts"
+                ],
+                correct: 2,
+                explanation: "Sustainable impact means creating changes that continue to benefit communities long after the campaign ends."
+            },
+            {
+                question: "Why is collaboration important in social movements?",
+                options: [
+                    "It creates unnecessary competition",
+                    "It combines resources, ideas, and reach for greater impact",
+                    "It makes campaigns slower",
+                    "It's not important at all"
+                ],
+                correct: 1,
+                explanation: "Collaboration multiplies impact by combining different strengths, resources, and audiences."
+            },
+            {
+                question: "What makes a campaign message effective?",
+                options: [
+                    "Using complex technical language",
+                    "Being vague and mysterious",
+                    "Clear, relatable, and action-oriented content",
+                    "Focusing only on problems without solutions"
+                ],
+                correct: 2,
+                explanation: "Effective messages are clear, relatable to the audience, and include specific actions people can take."
+            },
+            {
+                question: "How do successful campaigns measure their impact?",
+                options: [
+                    "Only by counting money raised",
+                    "Through multiple metrics including behavior change and awareness levels",
+                    "By social media likes alone",
+                    "They don't measure impact"
+                ],
+                correct: 1,
+                explanation: "Successful campaigns use various metrics including surveys, behavior tracking, and community feedback to measure real impact."
+            }
+        ];
+
+        // Quiz state
+        let currentLevel = 1;
+        let quizData = [...level1];
+        let currentQuestion = 0;
+        let score = 0;
+        let timer = 0;
+        let timerInterval;
+
+        // DOM elements
+        const questionEl = document.getElementById("question");
+        const optionsEl = document.getElementById("options");
+        const nextBtn = document.getElementById("next-btn");
+        const nextLevelBtn = document.getElementById("next-level-btn");
+        const scoreBox = document.getElementById("score-box");
+        const progressBar = document.getElementById("progressBar");
+        const timerEl = document.getElementById("timer");
+        const currentLevelEl = document.getElementById("currentLevel");
+
+        // Start timer
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timer++;
+                const minutes = Math.floor(timer / 60);
+                const seconds = timer % 60;
+                timerEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        // Load question
+        function loadQuestion() {
+            const q = quizData[currentQuestion];
+            questionEl.textContent = `Question ${currentQuestion + 1}: ${q.question}`;
+            optionsEl.innerHTML = "";
+            
+            q.options.forEach((opt, index) => {
+                const btn = document.createElement("button");
+                btn.innerHTML = `<strong>${String.fromCharCode(65 + index)}.</strong> ${opt}`;
+                btn.onclick = () => checkAnswer(index);
+                optionsEl.appendChild(btn);
+            });
+            
+            updateProgress();
+        }
+
+        // Update progress bar
+        function updateProgress() {
+            const progress = ((currentQuestion) / quizData.length) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        // Check answer
+        function checkAnswer(selectedIndex) {
+            const correctIndex = quizData[currentQuestion].correct;
+            const buttons = optionsEl.querySelectorAll("button");
+            
+            buttons.forEach((btn, index) => {
+                btn.disabled = true;
+                if (index === correctIndex) {
+                    btn.classList.add('correct');
+                } else if (index === selectedIndex && index !== correctIndex) {
+                    btn.classList.add('incorrect');
+                }
+            });
+
+            if (selectedIndex === correctIndex) {
+                score++;
+            }
+            
+            nextBtn.style.display = "inline-block";
+        }
+
+        // Next question
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < quizData.length) {
+                loadQuestion();
+                nextBtn.style.display = "none";
+            } else {
+                if (currentLevel === 1) {
+                    showLevelComplete();
+                } else {
+                    showFinalScore();
+                }
+            }
+        }
+
+        // Show level complete
+        function showLevelComplete() {
+            clearInterval(timerInterval);
+            questionEl.style.display = "none";
+            optionsEl.style.display = "none";
+            nextBtn.style.display = "none";
+            scoreBox.style.display = "block";
+            
+            const percentage = Math.round((score / quizData.length) * 100);
+            const stars = Math.ceil((score / quizData.length) * 5);
+            
+            document.getElementById('scorePercentage').textContent = `${percentage}%`;
+            document.getElementById('scoreDetails').innerHTML = `
+                You scored <strong>${score}</strong> out of <strong>${quizData.length}</strong> questions correct!<br>
+                Time taken: <strong>${timerEl.textContent}</strong>
+            `;
+            
+            // Show stars
+            const starsContainer = document.getElementById('stars');
+            starsContainer.innerHTML = '';
+            for (let i = 0; i < 5; i++) {
+                const star = document.createElement('span');
+                star.className = 'star';
+                star.innerHTML = i < stars ? '⭐' : '☆';
+                starsContainer.appendChild(star);
+            }
+            
+            nextLevelBtn.style.display = "inline-block";
+        }
+
+        // Load next level
+        function loadNextLevel() {
+            currentLevel = 2;
+            currentLevelEl.textContent = '2';
+            quizData = [...level2];
+            currentQuestion = 0;
+            
+            nextLevelBtn.style.display = "none";
+            scoreBox.style.display = "none";
+            questionEl.style.display = "block";
+            optionsEl.style.display = "flex";
+            
+            // Continue timer
+            startTimer();
+            loadQuestion();
+        }
+
+        // Show final score
+        function showFinalScore() {
+            clearInterval(timerInterval);
+            questionEl.style.display = "none";
+            optionsEl.style.display = "none";
+            nextBtn.style.display = "none";
+            nextLevelBtn.style.display = "none";
+            scoreBox.style.display = "block";
+            
+            const totalQuestions = level1.length + level2.length;
+            const totalScore = score;
+            const percentage = Math.round((totalScore / totalQuestions) * 100);
+            const stars = Math.ceil((totalScore / totalQuestions) * 5);
+            
+            document.querySelector('.score-title').textContent = '🏆 Quiz Complete!';
+            document.getElementById('scorePercentage').textContent = `${percentage}%`;
+            document.getElementById('scoreDetails').innerHTML = `
+                Final Score: <strong>${totalScore}</strong> out of <strong>${totalQuestions}</strong> questions!<br>
+                Total time: <strong>${timerEl.textContent}</strong><br><br>
+                ${percentage >= 80 ? '🎉 Excellent work! You\'re a social awareness champion!' : 
+                  percentage >= 60 ? '👏 Good job! Keep learning and growing!' : 
+                  '💪 Nice try! Review the topics and try again!'}
+            `;
+            
+            // Show stars
+            const starsContainer = document.getElementById('stars');
+            starsContainer.innerHTML = '';
+            for (let i = 0; i < 5; i++) {
+                const star = document.createElement('span');
+                star.className = 'star';
+                star.innerHTML = i < stars ? '⭐' : '☆';
+                starsContainer.appendChild(star);
+            }
+            
+            document.getElementById('restart-btn').style.display = 'inline-block';
+        }
+
+        // Restart quiz
+        function restartQuiz() {
+            currentLevel = 1;
+            currentLevelEl.textContent = '1';
+            quizData = [...level1];
+            currentQuestion = 0;
+            score = 0;
+            timer = 0;
+            
+            scoreBox.style.display = "none";
+            questionEl.style.display = "block";
+            optionsEl.style.display = "flex";
+            document.getElementById('restart-btn').style.display = 'none';
+            
+            timerEl.textContent = '00:00';
+            startTimer();
+            loadQuestion();
+        }
+
+        // Initialize
+        startTimer();
+        loadQuestion();
+    </script>
+</body>
+</html>

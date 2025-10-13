@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campaign Manager Dashboard - ChangeWave</title>
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/campaign-manager.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="logo">ChangeWave Manager</h1>
+            <ul class="nav-links">
+                <li><a href="campaign-manager-dashboard.html" class="active">Dashboard</a></li>
+                <li><a href="analytics-dashboard.html">Analytics</a></li>
+                <li><a href="post-feed.html">View Feed</a></li>
+                <li><a href="#" id="userMenu" class="user-menu"></a></li>
+                <li><a href="#" onclick="logout()" class="logout-btn">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="dashboard-container">
+        <div class="dashboard-header">
+            <h1>Campaign Manager Dashboard</h1>
+            <button class="btn-primary" onclick="window.location.href='create-campaign.html'">+ New Campaign</button>
+
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <div class="action-card" onclick="window.location.href='create-post.html'">
+                <div class="action-icon">📝</div>
+                <h3>Create Post</h3>
+                <p>Share campaign updates</p>
+            </div>
+            <div class="action-card" onclick="window.location.href='create-education-module.html'">
+                <div class="action-icon">📚</div>
+                <h3>Create Education Module</h3>
+                <p>Build learning content</p>
+            </div>
+            <div class="action-card" onclick="window.location.href='create-survey.html'">
+                <div class="action-icon">📊</div>
+                <h3>Create Survey</h3>
+                <p>Measure campaign impact</p>
+            </div>
+            <div class="action-card" onclick="window.location.href='analytics-dashboard.html'">
+                <div class="action-icon">📈</div>
+                <h3>View Analytics</h3>
+                <p>Track performance</p>
+            </div>
+        </div>
+
+        <!-- Active Campaigns -->
+        <section class="campaigns-section">
+            <h2>Your Active Campaigns</h2>
+            <div class="campaigns-grid" id="campaignsGrid">
+                <!-- Campaign cards will be dynamically loaded -->
+            </div>
+        </section>
+
+        <!-- Recent Activity -->
+        <section class="activity-overview">
+            <div class="activity-card">
+                <h3>Recent Posts</h3>
+                <div id="recentPosts" class="activity-list">
+                    <!-- Recent posts will be loaded here -->
+                </div>
+            </div>
+            <div class="activity-card">
+                <h3>Survey Responses</h3>
+                <div id="recentSurveys" class="activity-list">
+                    <!-- Recent survey responses will be loaded here -->
+                </div>
+            </div>
+            <div class="activity-card">
+                <h3>Module Completions</h3>
+                <div id="moduleCompletions" class="activity-list">
+                    <!-- Module completion data will be loaded here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Performance Summary -->
+        <section class="performance-section">
+            <h2>Performance Overview</h2>
+            <div class="performance-grid">
+                <div class="metric-card">
+                    <h4>Total Engagement</h4>
+                    <div class="metric-value" id="totalEngagement">0</div>
+                    <div class="metric-trend positive">+12%</div>
+                </div>
+                <div class="metric-card">
+                    <h4>Active Users</h4>
+                    <div class="metric-value" id="activeUsers">0</div>
+                    <div class="metric-trend positive">+8%</div>
+                </div>
+                <div class="metric-card">
+                    <h4>Survey Responses</h4>
+                    <div class="metric-value" id="surveyResponses">0</div>
+                    <div class="metric-trend positive">+15%</div>
+                </div>
+                <div class="metric-card">
+                    <h4>Module Completions</h4>
+                    <div class="metric-value" id="moduleComplete">0</div>
+                    <div class="metric-trend positive">+20%</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Create Campaign Modal -->
+    
+
+    <script src="../js/common/auth.js"></script>
+    <script src="../js/campaign/manager-dashboard.js"></script>
+</body>
+</html>

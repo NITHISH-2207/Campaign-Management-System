@@ -1,0 +1,1851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - ChangeWave</title>
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --black: #0a0a0a;
+            --dark-grey: #1a1a1a;
+            --medium-grey: #2d2d2d;
+            --light-grey: #6b6b6b;
+            --lighter-grey: #e5e5e5;
+            --white: #ffffff;
+            --off-white: #f5f5f5;
+            --brown: #8B6B4A;
+            --light-brown: #A67C52;
+            --dark-brown: #6B4423;
+            --orange: #F97316;
+            --orange-light: #FB923C;
+            --purple: #8B5CF6;
+            --purple-light: #A78BFA;
+            --gradient-primary: linear-gradient(135deg, var(--brown) 0%, var(--light-brown) 100%);
+            --gradient-success: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            --gradient-warning: linear-gradient(135deg, var(--orange) 0%, var(--orange-light) 100%);
+            --gradient-info: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--black);
+            color: var(--white);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Main Dashboard Container */
+        .user-dashboard {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 120px 40px 80px;
+            position: relative;
+        }
+
+        /* Background Effect */
+        .user-dashboard::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(139, 107, 74, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(107, 68, 35, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Top Section with Welcome and Quick Actions */
+        .top-section {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 40px;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        /* Welcome Section */
+        .welcome-section {
+            background: var(--dark-grey);
+            border: 1px solid rgba(139, 107, 74, 0.2);
+            color: white;
+            padding: 30px 40px;
+            border-radius: 30px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .welcome-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at top left, rgba(139, 107, 74, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .welcome-section h1 {
+            margin: 0 0 10px 0;
+            font-size: 36px;
+            font-weight: 800;
+            position: relative;
+            z-index: 1;
+            background: linear-gradient(135deg, var(--white) 0%, var(--light-brown) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .welcome-section p {
+            font-size: 18px;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+            margin: 0;
+            color: var(--lighter-grey);
+        }
+
+        /* Quick Actions in Top Section */
+        .quick-actions-top {
+            background: var(--dark-grey);
+            border: 1px solid rgba(139, 107, 74, 0.2);
+            padding: 20px 30px;
+            border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .quick-actions-top h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--white);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .quick-actions-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .quick-action-btn {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .quick-action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 107, 74, 0.3);
+        }
+
+        .quick-action-btn i {
+            font-size: 16px;
+        }
+
+        /* Level and Stats Section */
+        .level-stats-section {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+            align-items: center;
+        }
+
+        /* Level Card - Circular Design */
+        .level-card {
+            background: var(--dark-grey);
+            border: 3px solid rgba(139, 107, 74, 0.4);
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            margin: 0 auto;
+        }
+
+        .level-card::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            background: var(--gradient-warning);
+            border-radius: 50%;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .level-card:hover::before {
+            opacity: 1;
+        }
+
+        .level-card:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+        }
+
+        .level-display {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--orange-light);
+            margin-bottom: 5px;
+        }
+
+        .level-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--white);
+            margin-bottom: 15px;
+        }
+
+        /* Circular Progress for Level */
+        .circular-progress {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            border-radius: 50%;
+        }
+
+        .circular-progress svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .circular-progress circle {
+            fill: none;
+            stroke-width: 6;
+        }
+
+        .circular-progress .bg {
+            stroke: rgba(139, 107, 74, 0.2);
+        }
+
+        .circular-progress .progress {
+            stroke: var(--orange);
+            stroke-dasharray: 629;
+            stroke-dashoffset: 629;
+            transition: stroke-dashoffset 1.5s ease-out;
+            stroke-linecap: round;
+        }
+
+        .level-info {
+            font-size: 12px;
+            color: var(--lighter-grey);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Stats Cards - Circular Design */
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        .stat-card {
+            background: var(--dark-grey);
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            cursor: pointer;
+            border: 2px solid rgba(139, 107, 74, 0.3);
+            margin: 0 auto;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+        }
+
+        .stat-card:hover .stat-number {
+            transform: scale(1.1);
+        }
+
+        .stat-card h3 {
+            font-size: 12px;
+            color: var(--lighter-grey);
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 42px;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0;
+            line-height: 1;
+            animation: countUp 1s ease-out;
+            transition: transform 0.3s ease;
+        }
+
+        /* Action Section */
+        .action-section {
+            margin-bottom: 50px;
+        }
+
+        .action-section h2 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-weight: 800;
+            font-size: 32px;
+            background: linear-gradient(135deg, var(--white) 0%, var(--light-brown) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+        }
+
+        .action-card {
+            background: var(--dark-grey);
+            padding: 30px 25px;
+            border-radius: 25px;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(139, 107, 74, 0.2);
+        }
+
+        .action-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: var(--gradient-primary);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+
+        .action-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .action-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--brown);
+        }
+
+        .action-card:hover .action-icon {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        .action-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            transition: transform 0.4s ease;
+            display: inline-block;
+        }
+
+        .action-card h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--white);
+            margin-bottom: 10px;
+        }
+
+        .action-card p {
+            color: var(--lighter-grey);
+            font-size: 14px;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        /* Floating Feature Buttons */
+        .floating-features {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 1000;
+            animation: fadeInRight 0.6s ease-out 0.8s both;
+        }
+
+        .feature-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .feature-button:hover::before {
+            width: 100px;
+            height: 100px;
+        }
+
+        .gamification-btn {
+            background: var(--gradient-warning);
+            color: white;
+            animation: bounceIn 0.5s ease-out 1s both;
+        }
+
+        .chatbot-btn {
+            background: var(--gradient-info);
+            color: white;
+            animation: bounceIn 0.5s ease-out 1.2s both;
+        }
+
+        .feature-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .feature-button i {
+            font-size: 24px;
+            z-index: 1;
+        }
+
+        /* Tooltip on hover */
+        .feature-button::after {
+            content: attr(title);
+            position: absolute;
+            right: 70px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--dark-grey);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .feature-button:hover::after {
+            opacity: 1;
+        }
+
+        /* Main Content Grid */
+        .main-content-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+
+        /* Survey Section */
+        .surveys-section {
+            background: var(--dark-grey);
+            border: 1px solid rgba(139, 107, 74, 0.2);
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .surveys-section h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(139, 107, 74, 0.2);
+        }
+
+        #available-surveys {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        #available-surveys::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #available-surveys::-webkit-scrollbar-track {
+            background: rgba(139, 107, 74, 0.1);
+            border-radius: 3px;
+        }
+
+        #available-surveys::-webkit-scrollbar-thumb {
+            background: var(--brown);
+            border-radius: 3px;
+        }
+
+        .survey-card {
+            background: var(--medium-grey);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(139, 107, 74, 0.1);
+        }
+
+        .survey-card:hover {
+            transform: translateX(5px);
+            border-color: var(--brown);
+        }
+
+        .survey-card.completed {
+            opacity: 0.7;
+        }
+
+        .survey-card h4 {
+            font-size: 18px;
+            color: var(--white);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .survey-card p {
+            color: var(--lighter-grey);
+            font-size: 14px;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .survey-meta {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .survey-type {
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .survey-type.before {
+            background: rgba(33, 147, 176, 0.2);
+            color: #6dd5ed;
+        }
+
+        .survey-type.after {
+            background: rgba(139, 92, 246, 0.2);
+            color: var(--purple-light);
+        }
+
+        .questions-count {
+            padding: 4px 12px;
+            background: rgba(139, 107, 74, 0.2);
+            border-radius: 15px;
+            font-size: 12px;
+            color: var(--lighter-grey);
+        }
+
+        .take-survey-btn {
+            background: var(--gradient-info);
+            color: white;
+            padding: 10px 25px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .take-survey-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(33, 147, 176, 0.3);
+        }
+
+        .completed-btn {
+            background: var(--medium-grey);
+            color: var(--lighter-grey);
+            padding: 10px 25px;
+            border: none;
+            border-radius: 20px;
+            cursor: not-allowed;
+            font-weight: 600;
+            font-size: 14px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        /* Active Campaigns Section */
+        .active-campaigns-section {
+            background: var(--dark-grey);
+            border: 1px solid rgba(139, 107, 74, 0.2);
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .active-campaigns-section h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(139, 107, 74, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .active-campaigns-section h2 a {
+            font-size: 14px;
+            color: var(--light-brown);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .active-campaigns-section h2 a:hover {
+            text-decoration: underline;
+        }
+
+        #activeCampaigns {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        #activeCampaigns::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #activeCampaigns::-webkit-scrollbar-track {
+            background: rgba(139, 107, 74, 0.1);
+            border-radius: 3px;
+        }
+
+        #activeCampaigns::-webkit-scrollbar-thumb {
+            background: var(--brown);
+            border-radius: 3px;
+        }
+
+        /* Campaign Items */
+        .campaign-item {
+            background: var(--medium-grey);
+            transition: all 0.3s ease;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(139, 107, 74, 0.1);
+        }
+
+        .campaign-item:hover {
+            background-color: rgba(139, 107, 74, 0.1);
+            transform: translateX(5px);
+            border-color: var(--brown);
+        }
+
+        /* Bottom Row */
+        .bottom-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 40px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--dark-grey);
+            border: 1px solid rgba(139, 107, 74, 0.2) !important;
+            border-radius: 25px !important;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--brown) !important;
+        }
+
+        .card-header {
+            background: transparent !important;
+            border: none !important;
+            padding: 25px 30px !important;
+            font-weight: 600;
+            font-size: 18px;
+            color: var(--white) !important;
+            border-bottom: 1px solid rgba(139, 107, 74, 0.2) !important;
+        }
+
+        .card-body {
+            padding: 30px !important;
+            background: transparent;
+        }
+
+        /* Activity Items */
+        .activity-item {
+            position: relative;
+            padding-left: 60px;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .activity-item::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--gradient-primary);
+        }
+
+        .activity-item:hover {
+            transform: translateX(10px);
+        }
+
+        /* Badge Icons */
+        .badge-icon {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .badge-icon:hover {
+            transform: rotate(360deg) scale(1.2);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .top-section {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .level-stats-section {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            
+            .level-card {
+                margin: 0 auto 20px;
+            }
+            
+            .quick-stats {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 20px;
+            }
+            
+            .stat-card {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .stat-number {
+                font-size: 36px;
+            }
+
+            .main-content-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .action-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+
+            .bottom-row {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .user-dashboard {
+                padding: 80px 20px 40px;
+            }
+
+            .welcome-section {
+                padding: 20px 25px;
+            }
+
+            .welcome-section h1 {
+                font-size: 24px;
+            }
+
+            .quick-stats {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 15px;
+            }
+            
+            .stat-card {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .stat-card h3 {
+                font-size: 10px;
+            }
+            
+            .stat-number {
+                font-size: 24px;
+            }
+            
+            .level-card {
+                width: 180px;
+                height: 180px;
+            }
+            
+            .level-display {
+                font-size: 2.5rem;
+            }
+
+            .action-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .quick-actions-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-icon {
+                font-size: 36px;
+            }
+
+            .floating-features {
+                bottom: 20px;
+                right: 20px;
+            }
+            
+            .feature-button {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .feature-button i {
+                font-size: 20px;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes countUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes progressAnimation {
+            from {
+                width: 0% !important;
+            }
+        }
+
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes bounceIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* Helper Classes */
+        .d-flex { display: flex !important; }
+        .d-grid { display: grid !important; }
+        .gap-2 { gap: 0.5rem !important; }
+        .justify-content-between { justify-content: space-between !important; }
+        .justify-content-center { justify-content: center !important; }
+        .align-items-center { align-items: center !important; }
+        .text-center { text-align: center !important; }
+        .text-end { text-align: end !important; }
+        .me-3 { margin-right: 1rem !important; }
+        .mb-0 { margin-bottom: 0 !important; }
+        .mb-1 { margin-bottom: 0.25rem !important; }
+        .mb-3 { margin-bottom: 1rem !important; }
+        .mt-3 { margin-top: 1rem !important; }
+        .py-4 { padding-top: 1.5rem !important; padding-bottom: 1.5rem !important; }
+        .flex-grow-1 { flex-grow: 1 !important; }
+        .fw-bold { font-weight: 700 !important; }
+        .small { font-size: 0.875em !important; }
+        .btn-sm { padding: 0.25rem 0.5rem !important; font-size: 0.875rem !important; }
+
+        /* Text Colors */
+        .text-muted { color: var(--light-grey) !important; }
+        .text-success { color: #38ef7d !important; }
+        .text-warning { color: var(--orange-light) !important; }
+        .text-primary { color: var(--light-brown) !important; }
+        .text-info { color: #6dd5ed !important; }
+        .text-danger { color: #f45c43 !important; }
+        .text-purple { color: var(--purple-light) !important; }
+        .text-brown { color: var(--brown) !important; }
+        .text-secondary { color: var(--light-grey) !important; }
+        .text-dark { color: var(--dark-grey) !important; }
+
+        /* Buttons */
+        .btn {
+            border-radius: 12px !important;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            padding: 10px 20px;
+            border: none !important;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary) !important;
+            color: white !important;
+        }
+
+        .btn-success {
+            background: var(--gradient-success) !important;
+            color: white !important;
+        }
+
+        .btn-info {
+            background: var(--gradient-info) !important;
+            color: white !important;
+        }
+
+        .btn-outline-primary {
+            background: transparent !important;
+            color: var(--light-brown) !important;
+            border: 1px solid var(--brown) !important;
+        }
+
+        .btn-outline-primary:hover {
+            background: rgba(139, 107, 74, 0.1) !important;
+            border-color: var(--brown) !important;
+            color: var(--white) !important;
+        }
+
+        .btn-outline-info {
+            background: transparent !important;
+            color: #6dd5ed !important;
+            border: 1px solid #6dd5ed !important;
+        }
+
+        .btn-outline-info:hover {
+            background: rgba(109, 213, 237, 0.1) !important;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Chatbot Styles */
+        #chatbot-container {
+            position: fixed;
+            bottom: 110px;
+            right: 30px;
+            width: 350px;
+            max-width: 90vw;
+            background-color: var(--dark-grey);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            display: none;
+            flex-direction: column;
+            z-index: 999;
+            border: 1px solid rgba(139, 107, 74, 0.2);
+        }
+
+        #chatbot-container.open {
+            display: flex;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #chatbot-header {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #chatbot-header .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        #chatbot-keywords {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px;
+            background-color: var(--medium-grey);
+            border-bottom: 1px solid rgba(139, 107, 74, 0.2);
+        }
+
+        .keyword-btn {
+            background-color: var(--brown);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 6px 15px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .keyword-btn:hover {
+            background-color: var(--light-brown);
+            transform: scale(1.05);
+        }
+
+        #chatbot-body {
+            display: flex;
+            flex-direction: column;
+            height: 400px;
+        }
+
+        #chatbot-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background-color: var(--dark-grey);
+            color: var(--lighter-grey);
+        }
+
+        .user-msg {
+            background-color: var(--medium-grey);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 15px 15px 5px 15px;
+            margin: 8px 0;
+            align-self: flex-end;
+            max-width: 80%;
+        }
+
+        .bot-msg {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 15px 15px 15px 5px;
+            margin: 8px 0;
+            align-self: flex-start;
+            max-width: 80%;
+        }
+
+        .bot-msg a {
+            color: white;
+            text-decoration: underline;
+        }
+
+        #chatbot-input {
+            border: none;
+            outline: none;
+            padding: 15px;
+            background-color: var(--medium-grey);
+            color: white;
+            width: 100%;
+            font-size: 14px;
+            border-top: 1px solid rgba(139, 107, 74, 0.2);
+        }
+/* Username Link Styling */
+.username-link {
+    color: inherit;
+    text-decoration: none;
+    background: linear-gradient(135deg, var(--white) 0%, var(--light-brown) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    position: relative;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.username-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--light-brown);
+    transition: width 0.3s ease;
+}
+
+.username-link:hover::after {
+    width: 100%;
+}
+
+.username-link:hover {
+    transform: translateY(-1px);
+}
+
+        #chatbot-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #chatbot-messages::-webkit-scrollbar-track {
+            background: rgba(139, 107, 74, 0.1);
+        }
+
+        #chatbot-messages::-webkit-scrollbar-thumb {
+            background: var(--brown);
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation will be inserted by navigation.js -->
+    <nav class="navbar"></nav>
+
+    <main class="user-dashboard">
+        <!-- Top Section: Welcome + Quick Actions -->
+        <div class="top-section fade-in-up">
+            <section class="welcome-section">
+    <h1 id="welcomeMessage">Welcome back, <a href="profile.html" class="username-link">ard</a>!</h1>
+    <p>Ready to make a difference today?</p>
+</section>
+
+            
+            <div class="quick-actions-top">
+                <h3>Quick Actions</h3>
+                <div class="quick-actions-grid">
+                    <a href="campaigns-list.html" class="quick-action-btn">
+                        <i class="fas fa-search"></i> Find Campaigns
+                    </a>
+                    <a href="post-feed.html" class="quick-action-btn">
+                        <i class="fas fa-comments"></i> Community
+                    </a>
+                    <a href="education-library.html" class="quick-action-btn">
+                        <i class="fas fa-book"></i> Learn
+                    </a>
+                    <a href="profile.html" class="quick-action-btn">
+                        <i class="fas fa-user"></i> Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Level + Stats Section -->
+        <div class="level-stats-section fade-in-up">
+            <div class="level-card">
+                <div class="circular-progress">
+                    <svg>
+                        <circle class="bg" cx="110" cy="110" r="100"></circle>
+                        <circle class="progress" id="levelProgressCircle" cx="110" cy="110" r="100"></circle>
+                    </svg>
+                </div>
+                <div style="position: relative; z-index: 1;">
+                    <div class="level-display" id="userLevel">1</div>
+                    <div class="level-title">Change Maker</div>
+                    <div class="level-info">
+                        <span id="pointsToNext">100</span> points to next level
+                    </div>
+                </div>
+            </div>
+            
+            <section class="quick-stats">
+                <div class="stat-card">
+                    <h3>My Posts</h3>
+                    <p class="stat-number" id="myPostsCount">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Impact</h3>
+                    <p class="stat-number" id="myImpactCount">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Campaigns</h3>
+                    <p class="stat-number" id="campaignsJoined">0</p>
+                </div>
+            </section>
+        </div>
+
+        <!-- Action Cards Section -->
+        <section class="action-section fade-in-up">
+            <h2>What would you like to do today?</h2>
+            <div class="action-grid">
+                <div class="action-card" onclick="window.location.href='post-feed.html'">
+                    <div class="action-icon">📰</div>
+                    <h3>Browse Feed</h3>
+                    <p>See latest updates</p>
+                </div>
+                <div class="action-card" onclick="window.location.href='create-post.html'">
+                    <div class="action-icon">✍️</div>
+                    <h3>Create Post</h3>
+                    <p>Share your experience</p>
+                </div>
+                <div class="action-card" onclick="window.location.href='education-library.html'">
+                    <div class="action-icon">📚</div>
+                    <h3>Learn</h3>
+                    <p>Explore content</p>
+                </div>
+                <div class="action-card" onclick="window.location.href='survey-participation.html'">
+                    <div class="action-icon">📊</div>
+                    <h3>Surveys</h3>
+                    <p>Contribute research</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Floating Feature Buttons -->
+        <div class="floating-features">
+            <div class="feature-button gamification-btn" onclick="window.location.href='gamification.html'" title="Gamification & Rewards">
+                <i class="fas fa-trophy"></i>
+            </div>
+            <div class="feature-button chatbot-btn" onclick="toggleChatbot()" title="AI Assistant">
+                <i class="fas fa-robot"></i>
+            </div>
+        </div>
+
+        <!-- Main Content: Surveys + Campaigns Side by Side -->
+        <div class="main-content-grid fade-in-up">
+            <section class="surveys-section">
+                <h2>Available Surveys</h2>
+                <div id="available-surveys">
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-spinner fa-spin fa-3x mb-3"></i>
+                        <p>Loading surveys...</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="active-campaigns-section">
+                <h2>
+                    My Active Campaigns
+                    <a href="campaigns-list.html">Browse More</a>
+                </h2>
+                <div id="activeCampaigns">
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-spinner fa-spin fa-3x mb-3"></i>
+                        <p>Loading campaigns...</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Bottom Row: Recent Activity + Badges -->
+        <div class="bottom-row fade-in-up">
+            <div class="left-column">
+                <div class="card">
+                    <div class="card-header">
+                        <span><i class="fas fa-clock"></i> Recent Activity</span>
+                    </div>
+                    <div class="card-body">
+                        <div id="recentActivity">
+                            <div class="text-center text-muted py-4">
+                                <i class="fas fa-spinner fa-spin fa-3x mb-3"></i>
+                                <p>Loading activity...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="right-column">
+                <div class="card">
+                    <div class="card-header">
+                        <span><i class="fas fa-medal"></i> Recent Badges</span>
+                    </div>
+                    <div class="card-body">
+                        <div id="recentBadges">
+                            <div class="text-center text-muted py-4">
+                                <i class="fas fa-medal fa-3x mb-3" style="opacity: 0.5"></i>
+                                <p class="small">Start participating to earn badges!</p>
+                            </div>
+                        </div>
+                        <div class="text-center mt-3">
+                            <a href="badges.html" class="btn btn-outline-info btn-sm">View All Badges</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Chatbot Integration -->
+    <div id="chatbot-container">
+        <div id="chatbot-header">
+            <span>💬 ChangeWave Assistant</span>
+            <button class="close-btn" onclick="toggleChatbot()">×</button>
+        </div>
+
+        <div id="chatbot-keywords">
+            <button class="keyword-btn" onclick="handleKeyword('campaigns')">Campaigns</button>
+            <button class="keyword-btn" onclick="handleKeyword('rewards')">Rewards</button>
+            <button class="keyword-btn" onclick="handleKeyword('quiz')">Quiz</button>
+            <button class="keyword-btn" onclick="handleKeyword('help')">Help</button>
+        </div>
+
+        <div id="chatbot-body">
+            <div id="chatbot-messages">
+                <div class="bot-msg">Hello! I'm your ChangeWave assistant. How can I help you today?</div>
+            </div>
+            <input type="text" id="chatbot-input" placeholder="Type your message..." onkeypress="sendMessage(event)">
+        </div>
+    </div>
+
+    <script src="../js/common/auth.js"></script>
+    <script src="../js/common/navigation.js"></script>
+    <script>
+        // Define API base URL
+        const API_BASE_URL = 'http://localhost:3000';
+
+        document.addEventListener('DOMContentLoaded', () => {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const userName = user.name || 'Change Maker';
+    
+    // Update user info with clickable name
+    document.getElementById('welcomeMessage').innerHTML = `Welcome back, <a href="profile.html" class="username-link">${userName}</a>!`;
+    
+    // Rest of your existing code...
+    loadDashboardData();
+    loadActiveCampaigns();
+    loadAvailableSurveys();
+    
+    // Add fade-in animation to elements
+    const elements = document.querySelectorAll('.fade-in-up');
+    elements.forEach((el, index) => {
+        setTimeout(() => {
+            el.style.opacity = '1';
+        }, index * 100);
+    });
+});
+
+        async function loadDashboardData() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/users/dashboard`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        // Update stats
+                        animateCounter('myPostsCount', data.stats.postsCount || 0);
+                        animateCounter('myImpactCount', data.stats.totalImpact || 0);
+                        animateCounter('campaignsJoined', data.stats.campaignsJoined || 0);
+                        
+                        // Update level
+                        updateLevelProgress(data.stats.level || 1, data.stats.points || 0);
+                        
+                        // Update other sections
+                        displayRecentActivity(data.recentActivity || []);
+                        displayRecentBadges(data.badges || []);
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+                // Show default values
+                animateCounter('myPostsCount', 0);
+                animateCounter('myImpactCount', 0);
+                animateCounter('campaignsJoined', 0);
+            }
+        }
+
+        async function loadActiveCampaigns() {
+            const container = document.getElementById('activeCampaigns');
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/campaigns/my-joined`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    if (data.success && data.campaigns && data.campaigns.length > 0) {
+                        displayActiveCampaigns(data.campaigns);
+                    } else {
+                        container.innerHTML = `
+                            <div class="text-center text-muted py-4">
+                                <i class="fas fa-flag fa-3x mb-3" style="opacity: 0.5"></i>
+                                <p>You haven't joined any campaigns yet.</p>
+                                <a href="campaigns-list.html" class="btn btn-primary btn-sm">Browse Campaigns</a>
+                            </div>
+                        `;
+                    }
+                } else {
+                    throw new Error('Failed to fetch campaigns');
+                }
+            } catch (error) {
+                console.error('Error loading campaigns:', error);
+                container.innerHTML = `
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-exclamation-circle fa-3x mb-3" style="opacity: 0.5"></i>
+                        <p>Unable to load campaigns</p>
+                        <button onclick="loadActiveCampaigns()" class="btn btn-sm btn-outline-primary">Retry</button>
+                    </div>
+                `;
+            }
+        }
+
+        function displayActiveCampaigns(campaigns) {
+            const container = document.getElementById('activeCampaigns');
+            
+            const iconMap = {
+                'Environment': { icon: 'fa-leaf', color: 'text-success' },
+                'Education': { icon: 'fa-graduation-cap', color: 'text-primary' },
+                'Health': { icon: 'fa-heartbeat', color: 'text-danger' },
+                'Community': { icon: 'fa-users', color: 'text-info' },
+                'Technology': { icon: 'fa-laptop-code', color: 'text-purple' },
+                'Poverty': { icon: 'fa-hands-helping', color: 'text-warning' },
+                'Human Rights': { icon: 'fa-balance-scale', color: 'text-dark' },
+                'Animal Welfare': { icon: 'fa-paw', color: 'text-brown' },
+                'Disaster Relief': { icon: 'fa-life-ring', color: 'text-danger' },
+                'Youth': { icon: 'fa-child', color: 'text-success' }
+            };
+            
+            const campaignsHTML = campaigns.slice(0, 5).map(campaign => {
+                const daysLeft = Math.ceil((new Date(campaign.endDate) - new Date()) / (1000 * 60 * 60 * 24));
+                const urgencyClass = daysLeft <= 7 ? 'text-warning' : 'text-success';
+                const iconInfo = iconMap[campaign.category] || { icon: 'fa-flag', color: 'text-secondary' };
+                
+                return `
+                    <div class="campaign-item d-flex align-items-center">
+                        <div class="me-3">
+                            <i class="fas ${iconInfo.icon} fa-2x ${iconInfo.color}"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1" style="color: var(--white);">${escapeHtml(campaign.title)}</h6>
+                            <small class="text-muted">${campaign.category} • ${campaign.location || campaign.type}</small><br>
+                            <small class="${urgencyClass}">
+                                <i class="fas fa-clock"></i> ${daysLeft > 0 ? daysLeft + ' days left' : 'Ended'}
+                            </small>
+                        </div>
+                        <div class="text-end">
+                            <a href="campaigns-list.html" class="btn btn-outline-primary btn-sm">View</a>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            container.innerHTML = campaignsHTML;
+        }
+
+        function displayRecentActivity(activities) {
+            const container = document.getElementById('recentActivity');
+            
+            if (!activities || activities.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-history fa-3x mb-3" style="opacity: 0.5"></i>
+                        <p>No recent activity</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const activitiesHTML = activities.map(activity => {
+                const timeAgo = getTimeAgo(new Date(activity.date));
+                const colorMap = {
+                    'post': 'text-info',
+                    'campaign': 'text-success',
+                    'survey': 'text-primary',
+                    'badge': 'text-warning'
+                };
+                
+                return `
+                    <div class="activity-item d-flex align-items-center">
+                        <div class="me-3">
+                            <i class="${activity.icon} fa-2x ${colorMap[activity.type] || 'text-secondary'}"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="fw-bold" style="color: var(--white);">${activity.title}</div>
+                            <small class="text-muted">${timeAgo}</small>
+                        </div>
+                        <div class="text-success fw-bold">
+                            +${activity.points} pts
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            container.innerHTML = activitiesHTML;
+        }
+
+        function displayRecentBadges(badges) {
+            const container = document.getElementById('recentBadges');
+            
+            if (!badges || badges.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-medal fa-3x mb-3" style="opacity: 0.5"></i>
+                        <p class="small">Start participating to earn badges!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const badgesHTML = badges.map(badge => `
+                <div class="d-flex align-items-center justify-content-center mb-3">
+                    <div class="badge-icon text-${badge.color} me-3">
+                        <i class="${badge.icon} fa-3x"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-0" style="color: var(--white);">${badge.name}</h6>
+                        <small class="text-muted">Recently earned</small>
+                    </div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = badgesHTML;
+        }
+
+        async function loadAvailableSurveys() {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    displayNoSurveysMessage('Please login to view surveys');
+                    return;
+                }
+
+                const response = await fetch(`${API_BASE_URL}/api/surveys/user/available`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        displayNoSurveysMessage('Session expired. Please login again.');
+                        return;
+                    }
+                    throw new Error('Failed to fetch surveys');
+                }
+
+                const data = await response.json();
+                const surveys = data.surveys || data;
+                displayAvailableSurveys(surveys);
+            } catch (error) {
+                console.error('Error loading surveys:', error);
+                displayNoSurveysMessage('Unable to load surveys at this time.');
+            }
+        }
+
+        function displayAvailableSurveys(surveys) {
+            const container = document.getElementById('available-surveys');
+            
+            if (!surveys || surveys.length === 0) {
+                displayNoSurveysMessage('No surveys available at the moment.');
+                return;
+            }
+
+            const surveysHTML = surveys.map(survey => `
+                <div class="survey-card ${survey.completed ? 'completed' : ''}">
+                    <h4>${escapeHtml(survey.title)}</h4>
+                    <p>${escapeHtml(survey.description || 'Help us measure the impact of this campaign')}</p>
+                    <div class="survey-meta">
+                        <span class="survey-type ${survey.type}">${survey.type === 'before' ? 'Pre' : 'Post'}-Campaign Survey</span>
+                        <span class="questions-count">${survey.questions ? survey.questions.length : 0} questions</span>
+                    </div>
+                    ${survey.completed ? 
+                        '<button class="completed-btn" disabled><i class="fas fa-check"></i> Completed</button>' :
+                        `<button onclick="takeSurvey('${survey._id}')" class="take-survey-btn">Take Survey</button>`
+                    }
+                </div>
+            `).join('');
+
+            container.innerHTML = surveysHTML;
+        }
+
+        function displayNoSurveysMessage(message) {
+            const container = document.getElementById('available-surveys');
+            container.innerHTML = `
+                <div class="text-center text-muted py-4">
+                    <i class="fas fa-clipboard-list fa-3x mb-3" style="opacity: 0.5"></i>
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+
+        function takeSurvey(surveyId) {
+            window.location.href = `take-survey.html?id=${surveyId}`;
+        }
+
+        function animateCounter(id, finalValue, suffix = '') {
+            const element = document.getElementById(id);
+            if (!element) return;
+            
+            const duration = 1500;
+            const steps = 60;
+            const stepValue = finalValue / steps;
+            let currentValue = 0;
+            const stepDuration = duration / steps;
+
+            const counter = setInterval(() => {
+                currentValue += stepValue;
+                if (currentValue >= finalValue) {
+                    element.textContent = finalValue + suffix;
+                    clearInterval(counter);
+                } else {
+                    element.textContent = Math.floor(currentValue) + suffix;
+                }
+            }, stepDuration);
+        }
+
+        function updateLevelProgress(level, points) {
+            const progressInLevel = points % 100;
+            const pointsToNext = 100 - progressInLevel;
+            
+            document.getElementById('userLevel').textContent = level;
+            document.getElementById('pointsToNext').textContent = pointsToNext;
+            
+            // Update circular progress
+            setTimeout(() => {
+                const progressCircle = document.getElementById('levelProgressCircle');
+                if (progressCircle) {
+                    const circumference = 2 * Math.PI * 100; // 2πr
+                    const offset = circumference - (progressInLevel / 100) * circumference;
+                    progressCircle.style.strokeDashoffset = offset;
+                }
+            }, 500);
+        }
+
+        function getTimeAgo(date) {
+            const seconds = Math.floor((new Date() - date) / 1000);
+            
+            const intervals = [
+                { label: 'year', seconds: 31536000 },
+                { label: 'month', seconds: 2592000 },
+                { label: 'day', seconds: 86400 },
+                { label: 'hour', seconds: 3600 },
+                { label: 'minute', seconds: 60 }
+            ];
+            
+            for (const interval of intervals) {
+                const count = Math.floor(seconds / interval.seconds);
+                if (count >= 1) {
+                    return count === 1 ? `1 ${interval.label} ago` : `${count} ${interval.label}s ago`;
+                }
+            }
+            
+            return 'Just now';
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('user');
+                localStorage.removeItem('token');
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Chatbot functionality
+        function toggleChatbot() {
+            const bot = document.getElementById('chatbot-container');
+            bot.classList.toggle('open');
+            
+            // Focus on input when opened
+            if (bot.classList.contains('open')) {
+                setTimeout(() => {
+                    document.getElementById('chatbot-input').focus();
+                }, 300);
+            }
+        }
+
+        function appendMessage(type, text) {
+            const messages = document.getElementById('chatbot-messages');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = type + '-msg';
+            msgDiv.innerHTML = text;
+            messages.appendChild(msgDiv);
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        function generateReply(userMsg) {
+            const msg = userMsg.toLowerCase();
+            let botReply = "I'm here to help! Ask me about campaigns, rewards, or any features.";
+
+            if (msg.includes('campaign')) {
+                botReply = 'You can find campaigns by clicking "Find Campaigns" in the quick actions or <a href="campaigns-list.html">browse all campaigns here</a>.';
+            } else if (msg.includes('reward') || msg.includes('badge')) {
+                botReply = 'Check out the <a href="gamification.html">Gamification section</a> to see your badges and rewards!';
+            } else if (msg.includes('quiz')) {
+                botReply = 'Test your knowledge with our <a href="gamification.html">awareness quiz</a> and earn points!';
+            } else if (msg.includes('post')) {
+                botReply = 'Share your thoughts by <a href="create-post.html">creating a post</a> or browse the <a href="post-feed.html">community feed</a>.';
+            } else if (msg.includes('survey')) {
+                botReply = 'Contribute to research by taking <a href="survey-participation.html">available surveys</a>.';
+            } else if (msg.includes('help')) {
+                botReply = 'I can help you with:\n• Finding campaigns\n• Creating posts\n• Taking surveys\n• Earning rewards\n• Learning about social causes';
+            } else if (msg.includes('hello') || msg.includes('hi')) {
+                botReply = 'Hello! How can I assist you today?';
+            }
+
+            return botReply;
+        }
+
+        function sendMessage(event) {
+            if (event.key === 'Enter') {
+                const input = document.getElementById('chatbot-input');
+                const userMsg = input.value.trim();
+                if (userMsg === '') return;
+
+                appendMessage('user', userMsg);
+                const botReply = generateReply(userMsg);
+
+                setTimeout(() => appendMessage('bot', botReply), 600);
+                input.value = '';
+            }
+        }
+
+        function handleKeyword(keyword) {
+            appendMessage('user', keyword);
+            const botReply = generateReply(keyword);
+            setTimeout(() => appendMessage('bot', botReply), 400);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+{
+  "name": "changewave-analytics",
+  "version": "1.0.0",
+  "description": "Analytics & Impact Measurement for Social Campaigns",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "nodemon backend/server.js",
+    "client": "cd frontend && live-server",
+    "test": "jest"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^7.8.7",
+    "multer": "^1.4.5-lts.1",
+    "natural": "^6.1.0",
+    "node-cron": "^3.0.3",
+    "nodemailer": "^7.0.9",
+    "sentiment": "^5.0.2",
+    "socket.io": "^4.5.4"
+  },
+  "devDependencies": {
+    "jest": "^29.3.1",
+    "live-server": "^1.2.2",
+    "nodemon": "^2.0.20"
+  }
+}

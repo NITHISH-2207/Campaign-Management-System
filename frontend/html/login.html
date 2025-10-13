@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - ChangeWave Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="../css/common.css" rel="stylesheet">
+    <style>
+        :root {
+            --black: #0a0a0a;
+            --dark-grey: #1a1a1a;
+            --medium-grey: #2d2d2d;
+            --light-grey: #6b6b6b;
+            --lighter-grey: #e5e5e5;
+            --white: #ffffff;
+            --off-white: #f5f5f5;
+            --brown: #8B6B4A;
+            --light-brown: #A67C52;
+            --dark-brown: #6B4423;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--black);
+            color: var(--white);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Left Side - Branding Section */
+        .branding-section {
+            background: var(--dark-grey);
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-top: 0;
+        }
+
+        .branding-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 0 50px;
+            margin-top: -80px; /* Move content up */
+        }
+
+        .branding-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(139, 107, 74, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(107, 68, 35, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(255, 255, 255, 0.02) 0%, transparent 50%);
+        }
+
+        /* Floating Shapes Animation */
+        .shape {
+            position: absolute;
+            background: linear-gradient(135deg, rgba(139, 107, 74, 0.1) 0%, rgba(107, 68, 35, 0.05) 100%);
+            border-radius: 50%;
+            filter: blur(40px);
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .shape:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .shape:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            top: 60%;
+            right: 10%;
+            animation-delay: 5s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(120deg); }
+            66% { transform: translate(-20px, 20px) rotate(240deg); }
+        }
+
+        .brand-logo {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--white) 0%, var(--light-brown) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+            margin-bottom: 20px;
+        }
+
+        .brand-tagline {
+            font-size: 1.3rem;
+            color: var(--lighter-grey);
+            font-weight: 300;
+            margin-bottom: 50px;
+            line-height: 1.8;
+        }
+
+        .feature-item {
+            background: rgba(45, 45, 45, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(139, 107, 74, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .feature-item:hover {
+            transform: translateX(10px);
+            border-color: var(--brown);
+            background: rgba(45, 45, 45, 0.5);
+        }
+
+        .feature-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--brown) 0%, var(--light-brown) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-right: 20px;
+        }
+
+        /* Right Side - Login Form */
+        .login-section {
+            background: var(--black);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-card {
+            background: var(--dark-grey);
+            border: 1px solid rgba(139, 107, 74, 0.2);
+            border-radius: 20px;
+            padding: 50px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+            margin-top: -20px;
+        }
+
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(139, 107, 74, 0.05) 0%, transparent 70%);
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-header h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--white) 0%, var(--light-brown) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .login-header p {
+            color: var(--light-grey);
+            font-size: 1.1rem;
+        }
+
+        /* Form Styling */
+        .form-label {
+            color: var(--lighter-grey);
+            font-weight: 500;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: stretch;
+        }
+
+        .input-group-text {
+            background: var(--medium-grey);
+            border: 1px solid rgba(139, 107, 74, 0.3);
+            border-right: none;
+            color: var(--light-brown);
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            border-radius: 8px 0 0 8px;
+        }
+
+        .form-control {
+            background: var(--medium-grey);
+            border: 1px solid rgba(139, 107, 74, 0.3);
+            border-left: none;
+            color: var(--white);
+            padding: 12px 15px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            height: auto;
+            border-radius: 0;
+            flex: 1;
+        }
+
+        .input-group:has(.btn-outline-secondary) .form-control {
+            border-radius: 0;
+            border-right: none;
+        }
+
+        .input-group:not(:has(.btn-outline-secondary)) .form-control {
+            border-radius: 0 8px 8px 0;
+        }
+        /* Override common.css button styles */
+#loginForm button[type="submit"].btn-primary {
+    background: var(--brown) !important;
+    border: none;
+    color: var(--white);
+    padding: 15px 30px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(139, 107, 74, 0.3);
+}
+
+#loginForm button[type="submit"].btn-primary:hover {
+    background: var(--light-brown) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(139, 107, 74, 0.4);
+}
+
+
+        .form-control:focus {
+            background: var(--black);
+            border-color: var(--brown);
+            box-shadow: 0 0 0 3px rgba(139, 107, 74, 0.1);
+            color: var(--white);
+            outline: none;
+        }
+
+        .form-control::placeholder {
+            color: var(--light-grey);
+        }
+
+        .btn-outline-secondary {
+            background: var(--medium-grey);
+            border: 1px solid rgba(139, 107, 74, 0.3);
+            border-left: none;
+            color: var(--light-grey);
+            padding: 12px 15px;
+            border-radius: 0 8px 8px 0;
+            height: auto;
+            display: flex;
+            align-items: center;
+        }
+
+        .btn-outline-secondary:hover {
+            background: var(--black);
+            border-color: var(--brown);
+            color: var(--light-brown);
+        }
+
+        .input-group:focus-within .input-group-text {
+            border-color: var(--brown);
+            color: var(--brown);
+        }
+
+        .input-group:focus-within .form-control {
+            background: var(--black);
+            border-color: var(--brown);
+        }
+
+        .input-group:focus-within .btn-outline-secondary {
+            border-color: var(--brown);
+        }
+
+        .input-group > * {
+            position: relative;
+            min-width: 0;
+        }
+
+        .input-group .input-group-text {
+            flex: 0 0 auto;
+            width: auto;
+        }
+
+        .input-group .btn-outline-secondary {
+            flex: 0 0 auto;
+            width: auto;
+        }
+
+        .form-check-input {
+            background-color: var(--medium-grey);
+            border: 1px solid rgba(139, 107, 74, 0.3);
+        }
+
+        .form-check-input:checked {
+            background-color: var(--brown);
+            border-color: var(--brown);
+        }
+
+        .form-check-label {
+            color: var(--lighter-grey);
+        }
+
+        /* Brown Sign In Button - Updated from purple */
+        .btn-primary {
+            background: var(--brown);
+            border: none;
+            color: var(--white);
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(139, 107, 74, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: var(--light-brown);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(139, 107, 74, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 10px rgba(139, 107, 74, 0.3);
+        }
+
+        .btn-primary:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(139, 107, 74, 0.5);
+        }
+
+        .social-login-btn {
+            background: var(--medium-grey);
+            border: 1px solid rgba(139, 107, 74, 0.3);
+            color: var(--white);
+            padding: 12px 20px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .social-login-btn:hover {
+            background: var(--black);
+            border-color: var(--brown);
+            transform: translateY(-2px);
+        }
+
+        .google-btn:hover {
+            border-color: #db4437;
+            color: #db4437;
+        }
+
+        .facebook-btn:hover {
+            border-color: #4267B2;
+            color: #4267B2;
+        }
+
+        /* Links */
+        a {
+            color: var(--light-brown);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--brown);
+        }
+
+        /* Demo Credentials Box */
+        .demo-box {
+            background: rgba(139, 107, 74, 0.1);
+            border: 1px solid rgba(139, 107, 74, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .demo-box h6 {
+            color: var(--light-brown);
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .demo-box small {
+            color: var(--lighter-grey);
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .demo-box strong {
+            color: var(--white);
+        }
+
+        /* Alert Messages */
+        .alert {
+            border: none;
+            border-radius: 10px;
+            padding: 15px 20px;
+            font-weight: 500;
+        }
+
+        .alert-danger {
+            background: rgba(220, 38, 38, 0.1);
+            color: #dc2626;
+            border: 1px solid rgba(220, 38, 38, 0.2);
+        }
+
+        .alert-success {
+            background: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        /* Modal Styling */
+        .modal-content {
+            background: var(--dark-grey);
+            border: 1px solid rgba(139, 107, 74, 0.3);
+            border-radius: 15px;
+        }
+
+        .modal-header {
+            border-bottom: 1px solid rgba(139, 107, 74, 0.2);
+        }
+
+        .modal-footer {
+            border-top: 1px solid rgba(139, 107, 74, 0.2);
+        }
+
+        .modal-title {
+            color: var(--white);
+            font-weight: 600;
+        }
+
+        .btn-close {
+            filter: invert(1);
+        }
+
+        .btn-secondary {
+            background: var(--medium-grey);
+            border: none;
+            color: var(--white);
+        }
+
+        .btn-secondary:hover {
+            background: var(--light-grey);
+        }
+
+        /* Modal Primary Button - Also brown */
+        .modal-content .btn-primary {
+            background: var(--brown);
+            border: none;
+            box-shadow: 0 4px 15px rgba(139, 107, 74, 0.3);
+        }
+
+        .modal-content .btn-primary:hover {
+            background: var(--light-brown);
+            box-shadow: 0 6px 20px rgba(139, 107, 74, 0.4);
+        }
+
+        /* Back to Home Link */
+        .back-link {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .back-link a {
+            color: var(--light-grey);
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-link a:hover {
+            color: var(--light-brown);
+        }
+
+        /* Divider */
+        .divider {
+            text-align: center;
+            margin: 30px 0;
+            position: relative;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: rgba(139, 107, 74, 0.2);
+        }
+
+        .divider span {
+            background: var(--dark-grey);
+            padding: 0 20px;
+            position: relative;
+            color: var(--light-grey);
+            font-size: 0.9rem;
+        }
+
+        /* Loading state */
+        .fa-spinner {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .branding-section {
+                display: none;
+            }
+
+            .login-section {
+                padding: 40px 20px;
+            }
+
+            .login-card {
+                padding: 40px 30px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .login-card {
+                padding: 30px 20px;
+            }
+
+            .login-header h2 {
+                font-size: 2rem;
+            }
+
+            .btn-primary {
+                padding: 12px 25px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row min-vh-100">
+            <!-- Left Side - Branding -->
+            <div class="col-lg-6 branding-section d-none d-lg-flex">
+                <div class="shape"></div>
+                <div class="shape"></div>
+                
+                <div class="branding-content">
+                    <h1 class="brand-logo">
+                        <i class="fas fa-wave-square"></i> ChangeWave
+                    </h1>
+                    <p class="brand-tagline">Join the movement that's changing the world, one campaign at a time.</p>
+                    
+                    <div class="feature-list">
+                        <div class="feature-item d-flex align-items-center">
+                            <div class="feature-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="text-start">
+                                <h5 class="mb-1">Community Driven</h5>
+                                <p class="mb-0 text-light">Connect with like-minded changemakers</p>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-item d-flex align-items-center">
+                            <div class="feature-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="text-start">
+                                <h5 class="mb-1">Real Impact</h5>
+                                <p class="mb-0 text-light">Track your campaign's real-world impact</p>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-item d-flex align-items-center">
+                            <div class="feature-icon">
+                                <i class="fas fa-share-alt"></i>
+                            </div>
+                            <div class="text-start">
+                                <h5 class="mb-1">Viral Reach</h5>
+                                <p class="mb-0 text-light">Amplify your message across all platforms</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side - Login Form -->
+            <div class="col-lg-6 login-section">
+                <div class="w-100 px-4">
+                    <div class="login-card mx-auto">
+                        <div class="login-header">
+                            <h2>Welcome Back!</h2>
+                            <p>Sign in to continue your social impact journey</p>
+                        </div>
+
+                        <form id="loginForm" style="position: relative; z-index: 1;">
+                            <div class="mb-4">
+                                <label for="email" class="form-label">Email Address</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-envelope"></i>
+                                    </span>
+                                    <input type="email" class="form-control" id="email" name="email" 
+                                           placeholder="Enter your email" required>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="password" class="form-label">Password</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-lock"></i>
+                                    </span>
+                                    <input type="password" class="form-control" id="password" name="password" 
+                                           placeholder="Enter your password" required>
+                                    <button class="btn btn-outline-secondary" type="button" onclick="togglePassword()">
+                                        <i class="fas fa-eye" id="toggleIcon"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="row mb-4">
+                                <div class="col-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="rememberMe" name="rememberMe">
+                                        <label class="form-check-label" for="rememberMe">
+                                            Remember me
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-6 text-end">
+                                    <a href="#" onclick="showForgotPassword()">
+                                        Forgot Password?
+                                    </a>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100 mb-4">
+                                <i class="fas fa-sign-in-alt"></i> Sign In
+                            </button>
+
+                            <div class="divider">
+                                <span>or sign in with</span>
+                            </div>
+
+                            <div class="row g-3 mb-4">
+                                <div class="col-6">
+                                    <button type="button" class="btn social-login-btn google-btn w-100" onclick="loginWithGoogle()">
+                                        <i class="fab fa-google"></i> Google
+                                    </button>
+                                </div>
+                                <div class="col-6">
+                                    <button type="button" class="btn social-login-btn facebook-btn w-100" onclick="loginWithFacebook()">
+                                        <i class="fab fa-facebook-f"></i> Facebook
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="text-center">
+                                <p class="mb-0" style="color: var(--light-grey);">Don't have an account? 
+                                    <a href="register.html" class="fw-bold">Create Account</a>
+                                </p>
+                            </div>
+                        </form>
+
+                        <!-- Error/Success Messages -->
+                        <div id="loginError" class="alert alert-danger mt-3 d-none"></div>
+                        <div id="loginSuccess" class="alert alert-success mt-3 d-none"></div>
+
+                        <!-- Demo Credentials -->
+                        <div class="demo-box">
+                            <h6>Demo Credentials:</h6>
+                            <small><strong>Admin:</strong> admin@changewave.com / admin123</small>
+                            <small><strong>Campaign Manager:</strong> manager@changewave.com / manager123</small>
+                        </div>
+                    </div>
+
+                    <div class="back-link">
+                        <a href="index.html">
+                            <i class="fas fa-arrow-left"></i> Back to Home
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div class="modal fade" id="forgotPasswordModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Reset Password</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="forgotPasswordForm">
+                        <div class="mb-3">
+                            <label for="resetEmail" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="resetEmail" 
+                                   placeholder="Enter your email address" required>
+                        </div>
+                        <p class="text-muted small">
+                            We'll send you a link to reset your password.
+                        </p>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="sendResetLink()">
+                        Send Reset Link
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/common/auth.js"></script>
+    <script>
+        // Toggle password visibility
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggleIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+
+        // Show forgot password modal
+        function showForgotPassword() {
+            const modal = new bootstrap.Modal(document.getElementById('forgotPasswordModal'));
+            modal.show();
+        }
+
+        // Send reset link
+        function sendResetLink() {
+            const email = document.getElementById('resetEmail').value;
+            if (!email) {
+                showAlert('Please enter your email address', 'warning');
+                return;
+            }
+
+            // TODO: Implement actual password reset functionality
+            showAlert('Password reset link sent to your email!', 'success');
+            const modal = bootstrap.Modal.getInstance(document.getElementById('forgotPasswordModal'));
+            modal.hide();
+        }
+
+        // Social login functions
+        function loginWithGoogle() {
+            showAlert('Google login will be implemented soon!', 'info');
+        }
+
+        function loginWithFacebook() {
+            showAlert('Facebook login will be implemented soon!', 'info');
+        }
+
+        // Show alert messages
+        function showAlert(message, type) {
+            const alertDiv = type === 'danger' ? document.getElementById('loginError') : document.getElementById('loginSuccess');
+            const otherDiv = type === 'danger' ? document.getElementById('loginSuccess') : document.getElementById('loginError');
+            
+            alertDiv.textContent = message;
+            alertDiv.classList.remove('d-none');
+            otherDiv.classList.add('d-none');
+            
+            setTimeout(() => {
+                alertDiv.classList.add('d-none');
+            }, 3000);
+        }
+
+        // Handle login form submission
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+            
+            if (!email || !password) {
+                showAlert('Please fill in all fields', 'danger');
+                return;
+            }
+
+            // Show loading state
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing In...';
+            submitBtn.disabled = true;
+
+            try {
+                const response = await fetch('http://localhost:3000/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Store token and user data
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    
+                    if (rememberMe) {
+                        localStorage.setItem('rememberMe', 'true');
+                        localStorage.setItem('savedEmail', email);
+                    }
+
+                    showAlert('Login successful! Redirecting...', 'success');
+
+                    // Redirect based on user role
+                    setTimeout(() => {
+                        switch(data.user.role) {
+                            case 'admin':
+                                window.location.href = 'admin-dashboard.html';
+                                break;
+                            case 'campaign_manager':
+                                window.location.href = 'campaign-manager-dashboard.html';
+                                break;
+                            default:
+                                window.location.href = 'user-dashboard.html';
+                        }
+                    }, 1500);
+                } else {
+                    showAlert(data.message || 'Invalid email or password', 'danger');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showAlert('An error occurred. Please try again.', 'danger');
+            } finally {
+                // Reset button state
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Auto-fill remembered email on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const rememberMe = localStorage.getItem('rememberMe');
+            const savedEmail = localStorage.getItem('savedEmail');
+            
+            if (rememberMe === 'true' && savedEmail) {
+                document.getElementById('email').value = savedEmail;
+                document.getElementById('rememberMe').checked = true;
+            }
+
+            // Check for demo parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const demo = urlParams.get('demo');
+            
+            if (demo === 'admin') {
+                document.getElementById('email').value = 'admin@changewave.com';
+                document.getElementById('password').value = 'admin123';
+            } else if (demo === 'manager') {
+                document.getElementById('email').value = 'manager@changewave.com';
+                document.getElementById('password').value = 'manager123';
+            }
+        });
+    </script>
+</body>
+</html>

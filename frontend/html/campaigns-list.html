@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explore Campaigns - ChangeWave</title>
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="stylesheet" href="../css/campaigns-list.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <!-- Navigation will be inserted by JavaScript -->
+    </nav>
+
+    <main class="campaigns-container">
+        <div class="campaigns-header">
+            <h1>Explore Active Campaigns</h1>
+            <p class="header-subtitle">Join campaigns that matter to you and make a difference in your community</p>
+            
+            <div class="campaigns-filters">
+                <div class="filter-group">
+                    <label for="categoryFilter">Category:</label>
+                    <select id="categoryFilter" class="filter-select">
+                        <option value="">All Categories</option>
+                        <option value="Environment">Environment</option>
+                        <option value="Health">Health & Wellness</option>
+                        <option value="Education">Education</option>
+                        <option value="Poverty">Poverty & Hunger</option>
+                        <option value="Human Rights">Human Rights</option>
+                        <option value="Animal Welfare">Animal Welfare</option>
+                        <option value="Community">Community Development</option>
+                        <option value="Technology">Technology for Good</option>
+                        <option value="Disaster Relief">Disaster Relief</option>
+                        <option value="Youth">Youth Empowerment</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="typeFilter">Type:</label>
+                    <select id="typeFilter" class="filter-select">
+                        <option value="">All Types</option>
+                        <option value="Online">Online Campaign</option>
+                        <option value="Physical">Physical Event</option>
+                        <option value="Hybrid">Hybrid</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="sortFilter">Sort by:</label>
+                    <select id="sortFilter" class="filter-select">
+                        <option value="recent">Most Recent</option>
+                        <option value="popular">Most Popular</option>
+                        <option value="ending">Ending Soon</option>
+                    </select>
+                </div>
+
+                <button class="btn-search" onclick="applyFilters()">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </div>
+        </div>
+
+        <div class="campaigns-stats">
+            <div class="stat-card">
+                <i class="fas fa-flag"></i>
+                <span class="stat-number" id="totalCampaigns">0</span>
+                <span class="stat-label">Active Campaigns</span>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-users"></i>
+                <span class="stat-number" id="totalParticipants">0</span>
+                <span class="stat-label">Total Participants</span>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-globe"></i>
+                <span class="stat-number" id="totalImpact">0</span>
+                <span class="stat-label">Lives Impacted</span>
+            </div>
+        </div>
+
+        <div id="campaignsGrid" class="campaigns-grid">
+            <!-- Campaign cards will be dynamically loaded here -->
+            <div class="loading-spinner">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Loading campaigns...</p>
+            </div>
+        </div>
+
+        <div class="load-more-container" id="loadMoreContainer" style="display: none;">
+            <button class="btn-load-more" onclick="loadMoreCampaigns()">
+                Load More Campaigns
+            </button>
+        </div>
+    </main>
+
+    <!-- Campaign Details Modal -->
+    <div id="campaignModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeCampaignModal()">&times;</span>
+            <div id="modalContent">
+                <!-- Campaign details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/common/auth.js"></script>
+    <script src="../js/common/navigation.js"></script>
+    <script src="../js/campaign/campaigns-list.js"></script>
+    
+
+</body>
+</html>

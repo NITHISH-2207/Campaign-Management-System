@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Campaign - ChangeWave</title>
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --black: #0a0a0a;
+            --dark-grey: #1a1a1a;
+            --medium-grey: #2d2d2d;
+            --light-grey: #6b6b6b;
+            --lighter-grey: #e5e5e5;
+            --white: #ffffff;
+            --off-white: #f5f5f5;
+            --brown: #8B6B4A;
+            --light-brown: #A67C52;
+            --dark-brown: #6B4423;
+            --orange: #F97316;
+            --orange-light: #FB923C;
+            --purple: #8B5CF6;
+            --purple-light: #A78BFA;
+            --gradient-primary: linear-gradient(135deg, var(--brown) 0%, var(--light-brown) 100%);
+            --gradient-success: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            --gradient-warning: linear-gradient(135deg, var(--orange) 0%, var(--orange-light) 100%);
+            --gradient-info: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--black);
+            color: var(--white);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Background Effect */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(139, 107, 74, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(107, 68, 35, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Campaign Form Container */
+        .campaign-form {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 120px 40px 80px;
+            position: relative;
+        }
+
+        /* Page Title */
+        .page-title {
+            text-align: center;
+            margin-bottom: 50px;
+            font-size: 48px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--white) 0%, var(--light-brown) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        /* Guidelines Section */
+        .guidelines {
+            background: var(--dark-grey);
+            padding: 30px 40px;
+            border-radius: 30px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(139, 107, 74, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .guidelines::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at top right, rgba(33, 147, 176, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .guidelines h4 {
+            color: var(--white);
+            margin-bottom: 20px;
+            font-size: 20px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .guidelines ul {
+            list-style: none;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .guidelines li {
+            padding: 10px 0;
+            padding-left: 30px;
+            position: relative;
+            color: var(--lighter-grey);
+            font-size: 14px;
+        }
+
+        .guidelines li:before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            top: 10px;
+            color: #38ef7d;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        /* Form Sections */
+        .form-section {
+            background: var(--dark-grey);
+            padding: 40px;
+            margin-bottom: 30px;
+            border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(139, 107, 74, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease-out both;
+        }
+
+        .form-section:nth-child(3) { animation-delay: 0.4s; }
+        .form-section:nth-child(4) { animation-delay: 0.6s; }
+        .form-section:nth-child(5) { animation-delay: 0.8s; }
+        .form-section:nth-child(6) { animation-delay: 1s; }
+
+        .form-section::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: var(--gradient-primary);
+            border-radius: 30px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .form-section:hover::before {
+            opacity: 0.1;
+        }
+
+        .form-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+        }
+
+        .form-section h3 {
+            color: var(--white);
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 24px;
+            font-weight: 700;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(139, 107, 74, 0.2);
+        }
+
+        .form-section h3 i {
+            font-size: 28px;
+            color: var(--light-brown);
+        }
+
+        /* Form Groups */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--white);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px 20px;
+            background: var(--medium-grey);
+            border: 1px solid rgba(139, 107, 74, 0.2);
+            border-radius: 15px;
+            font-size: 15px;
+            color: var(--white);
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--brown);
+            background: rgba(139, 107, 74, 0.05);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 107, 74, 0.2);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .char-count {
+            text-align: right;
+            font-size: 12px;
+            color: var(--light-grey);
+            margin-top: 5px;
+            font-weight: 500;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        /* File Input Styling */
+        input[type="file"] {
+            background: var(--medium-grey);
+            padding: 20px;
+            border: 2px dashed rgba(139, 107, 74, 0.3);
+            cursor: pointer;
+        }
+
+        input[type="file"]:hover {
+            border-color: var(--brown);
+            background: rgba(139, 107, 74, 0.05);
+        }
+
+        /* Image Preview */
+        .image-preview {
+            margin-top: 20px;
+            max-width: 100%;
+            display: none;
+        }
+
+        .image-preview img {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Checkbox Group */
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 40px 0;
+            padding: 25px;
+            background: var(--dark-grey);
+            border-radius: 20px;
+            border: 1px solid rgba(139, 107, 74, 0.2);
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            accent-color: var(--brown);
+        }
+
+        .checkbox-group label {
+            cursor: pointer;
+            color: var(--lighter-grey);
+            font-size: 14px;
+            margin: 0;
+        }
+
+        /* Button Group */
+        .btn-group {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 50px;
+            animation: fadeInUp 1s ease-out 1.2s both;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .btn-draft {
+            background: var(--gradient-info);
+            color: white;
+        }
+
+        .btn i {
+            font-size: 18px;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .campaign-form {
+                padding: 100px 20px 60px;
+            }
+
+            .page-title {
+                font-size: 32px;
+            }
+
+            .form-section {
+                padding: 25px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .guidelines ul {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-group {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Loading States */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 30px;
+            height: 30px;
+            border: 3px solid var(--light-grey);
+            border-top-color: var(--brown);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            transform: translate(-50%, -50%);
+        }
+
+        @keyframes spin {
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation will be inserted by navigation.js -->
+    <nav class="navbar"></nav>
+
+    <main class="campaign-form">
+        <h1 class="page-title">Create Your Campaign</h1>
+        
+        <div class="guidelines">
+            <h4><i class="fas fa-lightbulb"></i> Campaign Guidelines</h4>
+            <ul>
+                <li>Ensure your campaign has a clear, achievable goal</li>
+                <li>Use compelling visuals and storytelling</li>
+                <li>Define specific actions for participants</li>
+                <li>Include measurable impact metrics</li>
+                <li>Comply with legal and ethical standards</li>
+                <li>Engage your community throughout the campaign</li>
+            </ul>
+        </div>
+
+        <form id="campaignForm" enctype="multipart/form-data">
+            <!-- Basic Information -->
+            <div class="form-section">
+                <h3><i class="fas fa-info-circle"></i> Basic Information</h3>
+                
+                <div class="form-group">
+                    <label for="title">Campaign Title *</label>
+                    <input type="text" id="title" name="title" required maxlength="100" 
+                           placeholder="Enter a compelling campaign title">
+                    <div class="char-count"><span id="titleCount">0</span>/100</div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="category">Category *</label>
+                        <select id="category" name="category" required>
+                            <option value="">Select Category</option>
+                            <option value="Environment">Environment</option>
+                            <option value="Health">Health & Wellness</option>
+                            <option value="Education">Education</option>
+                            <option value="Poverty">Poverty & Hunger</option>
+                            <option value="Human Rights">Human Rights</option>
+                            <option value="Animal Welfare">Animal Welfare</option>
+                            <option value="Community">Community Development</option>
+                            <option value="Technology">Technology for Good</option>
+                            <option value="Disaster Relief">Disaster Relief</option>
+                            <option value="Youth">Youth Empowerment</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="type">Campaign Type *</label>
+                        <select id="type" name="type" required>
+                            <option value="">Select Type</option>
+                            <option value="Online">Online Campaign</option>
+                            <option value="Physical">Physical Event</option>
+                            <option value="Hybrid">Hybrid (Online + Physical)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Campaign Description *</label>
+                    <textarea id="description" name="description" rows="5" required maxlength="2000"
+                              placeholder="Describe your campaign's mission, goals, and why people should join..."></textarea>
+                    <div class="char-count"><span id="descCount">0</span>/2000</div>
+                </div>
+            </div>
+
+            <!-- Campaign Details -->
+            <div class="form-section">
+                <h3><i class="fas fa-calendar-alt"></i> Campaign Details</h3>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="startDate">Start Date *</label>
+                        <input type="date" id="startDate" name="startDate" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="endDate">End Date *</label>
+                        <input type="date" id="endDate" name="endDate" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="location">Location *</label>
+                        <input type="text" id="location" name="location" required
+                               placeholder="e.g., Mumbai, India or Global">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="targetAudience">Target Audience *</label>
+                        <select id="targetAudience" name="targetAudience" required>
+                            <option value="">Select Target Audience</option>
+                            <option value="General Public">General Public</option>
+                            <option value="Youth (13-25)">Youth (13-25)</option>
+                            <option value="Young Adults (18-35)">Young Adults (18-35)</option>
+                            <option value="Adults (25-55)">Adults (25-55)</option>
+                            <option value="Students">Students</option>
+                            <option value="Professionals">Professionals</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="goals">Campaign Goals *</label>
+                    <textarea id="goals" name="goals" rows="3" required maxlength="500"
+                              placeholder="What specific outcomes do you want to achieve?"></textarea>
+                    <div class="char-count"><span id="goalsCount">0</span>/500</div>
+                </div>
+            </div>
+
+            <!-- Strategy -->
+            <div class="form-section">
+                <h3><i class="fas fa-bullseye"></i> Campaign Strategy</h3>
+                
+                <div class="form-group">
+                    <label for="actionPlan">Action Plan *</label>
+                    <textarea id="actionPlan" name="actionPlan" rows="4" required maxlength="1000"
+                              placeholder="How will participants contribute? What actions do you want them to take?"></textarea>
+                    <div class="char-count"><span id="actionCount">0</span>/1000</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="expectedImpact">Expected Impact *</label>
+                    <textarea id="expectedImpact" name="expectedImpact" rows="3" required maxlength="500"
+                              placeholder="What real-world change do you expect to achieve?"></textarea>
+                    <div class="char-count"><span id="impactCount">0</span>/500</div>
+                </div>
+            </div>
+
+            <!-- Media & Contact -->
+            <div class="form-section">
+                <h3><i class="fas fa-photo-video"></i> Media & Contact</h3>
+                
+                <div class="form-group">
+                    <label for="campaignImage">Campaign Image</label>
+                    <input type="file" id="campaignImage" name="campaignImage" accept="image/*">
+                    <div id="imagePreview" class="image-preview"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="videoUrl">Campaign Video URL (YouTube/Vimeo)</label>
+                    <input type="url" id="videoUrl" name="videoUrl" 
+                           placeholder="https://youtube.com/watch?v=...">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="contactEmail">Contact Email *</label>
+                        <input type="email" id="contactEmail" name="contactEmail" required
+                               placeholder="campaign@example.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contactPhone">Contact Phone</label>
+                        <input type="tel" id="contactPhone" name="contactPhone"
+                               placeholder="+91-9876543210">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="hashtags">Campaign Hashtags</label>
+                    <input type="text" id="hashtags" name="hashtags"
+                           placeholder="#ChangeWave #SocialImpact #YourCampaign">
+                </div>
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="agreeTerms" required>
+                <label for="agreeTerms">
+                    I agree to the Terms of Service and verify that all information is accurate *
+                </label>
+            </div>
+
+            <div class="btn-group">
+                <button type="button" class="btn btn-draft" onclick="saveDraft()">
+                    <i class="fas fa-save"></i> Save as Draft
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-rocket"></i> Submit for Review
+                </button>
+            </div>
+        </form>
+    </main>
+
+    <script src="../js/common/auth.js"></script>
+    <script src="../js/common/navigation.js"></script>
+    <script src="../js/campaign/create-campaign.js"></script>
+    <script>
+        // Character count functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Character counters
+            const counters = [
+                { input: 'title', counter: 'titleCount', max: 100 },
+                { input: 'description', counter: 'descCount', max: 2000 },
+                { input: 'goals', counter: 'goalsCount', max: 500 },
+                { input: 'actionPlan', counter: 'actionCount', max: 1000 },
+                { input: 'expectedImpact', counter: 'impactCount', max: 500 }
+            ];
+
+            counters.forEach(({ input, counter, max }) => {
+                const inputEl = document.getElementById(input);
+                const counterEl = document.getElementById(counter);
+                
+                inputEl.addEventListener('input', () => {
+                    const length = inputEl.value.length;
+                    counterEl.textContent = length;
+                    
+                    if (length > max * 0.9) {
+                        counterEl.parentElement.style.color = 'var(--orange)';
+                    } else {
+                        counterEl.parentElement.style.color = 'var(--light-grey)';
+                    }
+                });
+            });
+
+            // Image preview
+            const imageInput = document.getElementById('campaignImage');
+            const imagePreview = document.getElementById('imagePreview');
+            
+            imageInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        imagePreview.innerHTML = `<img src="${e.target.result}" alt="Campaign preview">`;
+                        imagePreview.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Set minimum date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('startDate').min = today;
+            document.getElementById('endDate').min = today;
+        });
+
+        // Form submission
+        document.getElementById('campaignForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Add loading state
+            this.classList.add('loading');
+            // Handle form submission here
+            setTimeout(() => {
+                this.classList.remove('loading');
+                alert('Campaign submitted for review!');
+            }, 2000);
+        });
+
+        function saveDraft() {
+            document.getElementById('campaignForm').classList.add('loading');
+            setTimeout(() => {
+                document.getElementById('campaignForm').classList.remove('loading');
+                alert('Campaign saved as draft!');
+            }, 1500);
+        }
+    </script>
+</body>
+</html>

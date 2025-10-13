@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Email Notifications</title>
+    <link rel="stylesheet" href="../css/common.css">
+    <style>
+        .test-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .status-good { color: green; }
+        .status-bad { color: red; }
+        .log-container {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>Email Notification Testing</h1>
+        
+        <div class="test-section">
+            <h2>System Status</h2>
+            <div id="statusContainer">
+                <p>Loading...</p>
+            </div>
+            <button onclick="checkStatus()">Refresh Status</button>
+        </div>
+
+        <div class="test-section">
+            <h2>Send Test Email</h2>
+            <p>This will send a test campaign notification email to your registered email address.</p>
+            <button onclick="sendTestEmail()">Send Test Email</button>
+            <div id="testResult"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>Create Test Campaign (Starting Tomorrow)</h2>
+            <input type="text" id="campaignTitle" placeholder="Test Campaign Title" style="width: 100%; padding: 10px; margin: 10px 0;">
+            <button onclick="createTestCampaign()">Create Campaign for Tomorrow</button>
+            <div id="campaignResult"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>Email Logs</h2>
+            <div class="log-container" id="emailLogs">
+                <p>No logs yet...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        const token = localStorage.getItem('token');
+
+        async function checkStatus() {
+            try {
+                const response = await fetch(`${API_URL}/campaigns/notification-status`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+                
+                document.getElementById('statusContainer').innerHTML = `
+                    <div class="status-item">
+                        <span>Email Service:</span>
+                        <span class="${data.emailServiceConfigured ? 'status-good' : 'status-bad'}">
+                            ${data.emailServiceConfigured ? '✓ Configured' : '✗ Not Configured'}
+                        </span>
+                    </div>
+                    <div class="status-item">
+                        <span>Scheduler:</span>
+                        <span class="${data.schedulerRunning ? 'status-good' : 'status-bad'}">
+                            ${data.schedulerRunning ? '✓ Running' : '✗ Not Running'}
+                        </span>
+                    </div>
+                    <div class="status-item">
+                        <span>Campaigns Starting Tomorrow:</span>
+                        <span>${data.campaignsStartingTomorrow}</span>
+                    </div>
+                `;
+                
+                if (data.campaigns && data.campaigns.length > 0) {
+                    const campaignList = data.campaigns.map(c => 
+                        `<li>${c.title} - ${new Date(c.startDate).toLocaleDateString()}</li>`
+                    ).join('');
+                    document.getElementById('statusContainer').innerHTML += 
+                        `<div style="margin-top: 10px;"><strong>Tomorrow's Campaigns:</strong><ul>${campaignList}</ul></div>`;
+                }
+            } catch (error) {
+                document.getElementById('statusContainer').innerHTML = 
+                    `<p class="status-bad">Error: ${error.message}</p>`;
+            }
+        }
+
+        async function sendTestEmail() {
+            try {
+                const response = await fetch(`${API_URL}/campaigns/test-notification`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+                
+                document.getElementById('testResult').innerHTML = `
+                    <div style="margin-top: 10px; padding: 10px; background: ${data.success ? '#d4edda' : '#f8d7da'}; color: ${data.success ? '#155724' : '#721c24'}; border-radius: 4px;">
+                        <strong>${data.success ? 'Success!' : 'Failed!'}</strong> ${data.message}
+                        ${data.details ? `<br>Details: ${JSON.stringify(data.details, null, 2)}` : ''}
+                    </div>
+                `;
+                
+                logEmail(data);
+            } catch (error) {
+                document.getElementById('testResult').innerHTML = 
+                    `<div style="margin-top: 10px; padding: 10px; background: #f8d7da; color: #721c24; border-radius: 4px;">
+                        Error: ${error.message}
+                    </div>`;
+            }
+        }
+
+        async function createTestCampaign() {
+            const title = document.getElementById('campaignTitle').value || 'Test Campaign ' + Date.now();
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            
+            const campaignData = {
+                title: title,
+                description: 'Test campaign to verify email notifications',
+                category: 'Technology',
+                type: 'Online',
+                startDate: tomorrow.toISOString(),
+                endDate: new Date(tomorrow.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+                location: 'Online',
+                targetAudience: 'Developers',
+                goals: 'Test email notification system',
+                actionPlan: 'Send notification emails',
+                expectedImpact: 'Verify system functionality',
+                contactEmail: 'test@example.com',
+                contactPhone: '1234567890'
+            };
+            
+            try {
+                const response = await fetch(`${API_URL}/campaigns/create`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(campaignData)
+                });
+                const data = await response.json();
+                
+                document.getElementById('campaignResult').innerHTML = `
+                    <div style="margin-top: 10px; padding: 10px; background: ${data.success ? '#d4edda' : '#f8d7da'}; color: ${data.success ? '#155724' : '#721c24'}; border-radius: 4px;">
+                        ${data.success ? 
+                            `Campaign created! It will trigger notifications tomorrow morning at 9 AM.<br>Campaign ID: ${data.campaign._id}` : 
+                            `Failed to create campaign: ${data.message}`
+                        }
+                    </div>
+                `;
+            } catch (error) {
+                document.getElementById('campaignResult').innerHTML = 
+                    `<div style="margin-top: 10px; padding: 10px; background: #f8d7da; color: #721c24; border-radius: 4px;">
+                        Error: ${error.message}
+                    </div>`;
+            }
+        }
+
+        function logEmail(emailData) {
+            const logs = document.getElementById('emailLogs');
+            const timestamp = new Date().toLocaleString();
+            const logEntry = `
+                <div style="border-bottom: 1px solid #ddd; padding: 10px 0;">
+                    <strong>${timestamp}</strong><br>
+                    Status: ${emailData.success ? '✓ Sent' : '✗ Failed'}<br>
+                    ${emailData.details ? `Details: ${JSON.stringify(emailData.details)}` : ''}
+                </div>
+            `;
+            
+            if (logs.innerHTML.includes('No logs yet')) {
+                logs.innerHTML = logEntry;
+            } else {
+                logs.innerHTML = logEntry + logs.innerHTML;
+            }
+        }
+
+        // Check status on load
+        checkStatus();
+    </script>
+</body>
+</html>

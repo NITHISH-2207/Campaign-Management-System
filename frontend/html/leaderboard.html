@@ -1,0 +1,1733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ChangeWave - Leaderboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    :root {
+        --black: #0a0a0a;
+        --dark-grey: #1a1a1a;
+        --medium-grey: #2d2d2d;
+        --light-grey: #6b6b6b;
+        --lighter-grey: #e5e5e5;
+        --white: #ffffff;
+        --off-white: #f5f5f5;
+        --brown: #8B6B4A;
+        --light-brown: #A67C52;
+        --dark-brown: #6B4423;
+        --gold: #FFD700;
+        --silver: #C0C0C0;
+        --bronze: #CD7F32;
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--black);
+        color: var(--white);
+        line-height: 1.6;
+        overflow-x: hidden;
+    }
+
+    /* Background Effect */
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+            radial-gradient(circle at 20% 50%, rgba(139, 107, 74, 0.08) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(107, 68, 35, 0.05) 0%, transparent 50%);
+        pointer-events: none;
+        z-index: -1;
+    }
+
+    /* Enhanced Navigation */
+    .navbar {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        background: rgba(26, 26, 26, 0.95);
+        backdrop-filter: blur(10px);
+        z-index: 1000;
+        transition: all 0.3s ease;
+        border-bottom: 1px solid rgba(139, 107, 74, 0.1);
+    }
+
+    .nav-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px 40px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .logo {
+        font-size: 1.8rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--white) 0%, var(--light-brown) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing: -0.5px;
+    }
+
+    .nav-links {
+        display: flex;
+        list-style: none;
+        gap: 30px;
+        align-items: center;
+    }
+
+    .nav-links a {
+        color: var(--lighter-grey);
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        padding: 8px 16px;
+        border-radius: 20px;
+    }
+
+    .nav-links a:hover {
+        color: var(--white);
+        background: rgba(139, 107, 74, 0.1);
+    }
+
+    .btn-nav {
+        background: linear-gradient(135deg, var(--brown) 0%, var(--light-brown) 100%) !important;
+        color: var(--white) !important;
+        border-radius: 25px !important;
+        font-weight: 600 !important;
+    }
+
+    .btn-nav:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(139, 107, 74, 0.3);
+    }
+
+    /* Main Container */
+    .main-container {
+        margin-top: 100px;
+        padding: 40px;
+        max-width: 1400px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* Hero Section */
+    .hero {
+        background: var(--dark-grey);
+        border: 1px solid rgba(139, 107, 74, 0.2);
+        border-radius: 30px;
+        padding: 60px 40px;
+        margin-bottom: 50px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at top center, rgba(139, 107, 74, 0.1) 0%, transparent 50%);
+    }
+
+    .hero h1 {
+        font-size: 3.5rem;
+        font-weight: 800;
+        margin-bottom: 20px;
+        letter-spacing: -2px;
+        background: linear-gradient(135deg, var(--white) 0%, var(--light-brown) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        position: relative;
+        z-index: 1;
+    }
+
+    .hero p {
+        font-size: 1.3rem;
+        color: var(--lighter-grey);
+        max-width: 600px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Leaderboard */
+    .leaderboard-section {
+        margin-bottom: 50px;
+    }
+
+    .section-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .section-header h2 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+        color: var(--white);
+        letter-spacing: -0.5px;
+    }
+
+    .section-header p {
+        color: var(--light-grey);
+        font-size: 1.1rem;
+    }
+
+    /* Top 3 Podium */
+    .podium {
+        display: flex;
+        justify-content: center;
+        align-items: end;
+        gap: 30px;
+        margin-bottom: 50px;
+        flex-wrap: wrap;
+    }
+
+    .podium-place {
+        background: var(--dark-grey);
+        border: 3px solid;
+        border-radius: 25px;
+        padding: 30px 25px;
+        text-align: center;
+        min-width: 280px;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .podium-place::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        opacity: 0.1;
+        transition: opacity 0.3s ease;
+    }
+
+    .podium-place:hover::before {
+        opacity: 0.2;
+    }
+
+    .podium-place:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+    }
+
+    .first-place {
+        border-color: var(--gold);
+        order: 2;
+    }
+
+    .first-place::before {
+        background: radial-gradient(circle at center, var(--gold) 0%, transparent 50%);
+    }
+
+    .second-place {
+        border-color: var(--silver);
+        order: 1;
+        margin-top: 40px;
+    }
+
+    .second-place::before {
+        background: radial-gradient(circle at center, var(--silver) 0%, transparent 50%);
+    }
+
+    .third-place {
+        border-color: var(--bronze);
+        order: 3;
+        margin-top: 40px;
+    }
+
+    .third-place::before {
+        background: radial-gradient(circle at center, var(--bronze) 0%, transparent 50%);
+    }
+
+    .rank-number {
+        font-size: 3rem;
+        font-weight: 800;
+        margin-bottom: 15px;
+    }
+
+    .first-place .rank-number {
+        color: var(--gold);
+        text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+    }
+
+    .second-place .rank-number {
+        color: var(--silver);
+        text-shadow: 0 0 20px rgba(192, 192, 192, 0.5);
+    }
+
+    .third-place .rank-number {
+        color: var(--bronze);
+        text-shadow: 0 0 20px rgba(205, 127, 50, 0.5);
+    }
+
+    .user-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: var(--medium-grey);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        margin: 0 auto 15px;
+        border: 4px solid;
+    }
+
+    .first-place .user-avatar {
+        border-color: var(--gold);
+    }
+
+    .second-place .user-avatar {
+        border-color: var(--silver);
+    }
+
+    .third-place .user-avatar {
+        border-color: var(--bronze);
+    }
+
+    .user-name {
+        font-size: 1.6rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+        color: var(--white);
+        cursor: pointer;
+        transition: color 0.3s ease;
+    }
+
+    .user-name:hover {
+        color: var(--light-brown);
+    }
+
+    .user-stats {
+        color: var(--light-grey);
+        margin-bottom: 15px;
+        font-weight: 500;
+    }
+
+    .campaign-count {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--light-brown);
+        margin-bottom: 5px;
+    }
+
+    /* Full Leaderboard */
+    .full-leaderboard {
+        background: var(--dark-grey);
+        border: 1px solid rgba(139, 107, 74, 0.2);
+        border-radius: 25px;
+        padding: 40px;
+        margin-bottom: 40px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .leaderboard-item {
+        display: flex;
+        align-items: center;
+        padding: 25px;
+        margin-bottom: 20px;
+        background: var(--medium-grey);
+        border-radius: 20px;
+        border: 2px solid rgba(139, 107, 74, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .leaderboard-item:hover {
+        border-color: rgba(139, 107, 74, 0.3);
+        transform: translateX(10px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .item-rank {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: var(--light-brown);
+        width: 60px;
+        text-align: center;
+    }
+
+    .item-avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: var(--light-grey);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        margin: 0 25px;
+        border: 3px solid var(--brown);
+    }
+
+    .item-info {
+        flex-grow: 1;
+    }
+
+    .item-name {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--white);
+        margin-bottom: 5px;
+        cursor: pointer;
+        transition: color 0.3s ease;
+    }
+
+    .item-name:hover {
+        color: var(--light-brown);
+    }
+
+    .item-campaigns {
+        color: var(--light-grey);
+        font-size: 1rem;
+    }
+
+    .item-score {
+        text-align: right;
+        min-width: 120px;
+    }
+
+    .score-number {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--light-brown);
+        margin-bottom: 5px;
+    }
+
+    .score-label {
+        font-size: 0.9rem;
+        color: var(--light-grey);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* Certificate Modal */
+    .certificate-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        z-index: 2000;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .certificate-modal.show {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-content {
+        background: var(--dark-grey);
+        border: 2px solid var(--brown);
+        border-radius: 30px;
+        padding: 50px;
+        max-width: 900px;
+        max-height: 90vh;
+        overflow-y: auto;
+        position: relative;
+        animation: slideIn 0.3s ease;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-close {
+        position: absolute;
+        top: 20px;
+        right: 25px;
+        background: none;
+        border: none;
+        color: var(--light-grey);
+        font-size: 2.5rem;
+        cursor: pointer;
+        transition: color 0.3s ease;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+    }
+
+    .modal-close:hover {
+        color: var(--white);
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .modal-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .modal-header h2 {
+        color: var(--white);
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        background: linear-gradient(135deg, var(--white) 0%, var(--light-brown) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .certificates-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 25px;
+        margin-bottom: 40px;
+    }
+
+    .certificate-item {
+        background: var(--medium-grey);
+        border: 2px solid rgba(139, 107, 74, 0.2);
+        border-radius: 20px;
+        padding: 30px;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    .certificate-item:hover {
+        border-color: var(--brown);
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .certificate-icon {
+        font-size: 3.5rem;
+        margin-bottom: 15px;
+        display: block;
+    }
+
+    .certificate-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--white);
+        margin-bottom: 10px;
+    }
+
+    .certificate-desc {
+        color: var(--light-grey);
+        margin-bottom: 20px;
+        font-size: 0.95rem;
+        line-height: 1.4;
+    }
+
+    .download-btn {
+        background: linear-gradient(135deg, var(--brown) 0%, var(--light-brown) 100%);
+        color: var(--white);
+        border: none;
+        padding: 12px 25px;
+        border-radius: 25px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .download-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(139, 107, 74, 0.3);
+    }
+
+    .download-all-btn {
+        background: linear-gradient(135deg, var(--green) 0%, var(--light-green) 100%);
+        color: var(--white);
+        border: none;
+        padding: 18px 40px;
+        border-radius: 30px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 0 auto;
+    }
+
+    .download-all-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(17, 153, 142, 0.3);
+    }
+
+    /* Campaign Details */
+    .campaign-details {
+        background: var(--dark-grey);
+        border: 1px solid rgba(139, 107, 74, 0.2);
+        border-radius: 25px;
+        padding: 40px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .campaign-details h3 {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 35px;
+        color: var(--white);
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+    }
+
+    .user-campaigns {
+        display: grid;
+        gap: 30px;
+    }
+
+    .user-campaign-section {
+        background: var(--medium-grey);
+        border-radius: 20px;
+        padding: 30px;
+        border: 1px solid rgba(139, 107, 74, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .user-campaign-section:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .user-campaign-section h4 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--white);
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .campaign-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 25px;
+    }
+
+    .campaign-tag {
+        background: rgba(139, 107, 74, 0.2);
+        color: var(--light-brown);
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        border: 1px solid rgba(139, 107, 74, 0.3);
+        transition: all 0.3s ease;
+    }
+
+    .campaign-tag:hover {
+        background: rgba(139, 107, 74, 0.3);
+        transform: translateY(-2px);
+    }
+
+    /* Badges Section */
+    .badges-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 20px;
+        margin-top: 25px;
+    }
+
+    .badge-item {
+        background: rgba(139, 107, 74, 0.1);
+        border-radius: 20px;
+        padding: 25px;
+        text-align: center;
+        border: 1px solid rgba(139, 107, 74, 0.2);
+        transition: all 0.3s ease;
+    }
+
+    .badge-item:hover {
+        transform: scale(1.05);
+        border-color: var(--brown);
+        box-shadow: 0 5px 15px rgba(139, 107, 74, 0.3);
+    }
+
+    .badge-icon {
+        font-size: 3rem;
+        margin-bottom: 12px;
+        display: block;
+    }
+
+    .badge-name {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--white);
+        margin-bottom: 5px;
+    }
+
+    .badge-desc {
+        font-size: 0.85rem;
+        color: var(--light-grey);
+    }
+
+    /* Loading Spinner */
+    .loading {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: var(--white);
+        animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    /* Canvas for certificate generation */
+    #certificateCanvas {
+        display: none;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .nav-container {
+            padding: 15px 20px;
+        }
+
+        .nav-links {
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .main-container {
+            margin-top: 80px;
+            padding: 20px;
+        }
+
+        .hero {
+            padding: 40px 25px;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+        }
+
+        .podium {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .podium-place {
+            min-width: 100%;
+            margin-top: 0 !important;
+            order: unset !important;
+            margin-bottom: 20px;
+        }
+
+        .leaderboard-item {
+            flex-direction: column;
+            text-align: center;
+            gap: 15px;
+        }
+
+        .item-score {
+            text-align: center;
+        }
+
+        .modal-content {
+            margin: 20px;
+            padding: 30px 20px;
+        }
+
+        .certificates-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Animations */
+    .fade-in {
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeInUp 0.6s ease forwards;
+    }
+
+    @keyframes fadeInUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes slideIn {
+        from { 
+            opacity: 0;
+            transform: translateY(-50px) scale(0.9);
+        }
+        to { 
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    /* Stagger animation delays */
+    .podium-place:nth-child(1) { animation-delay: 0.1s; }
+    .podium-place:nth-child(2) { animation-delay: 0.2s; }
+    .podium-place:nth-child(3) { animation-delay: 0.3s; }
+
+    /* Success message */
+    .success-toast {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: linear-gradient(135deg, var(--green) 0%, var(--light-green) 100%);
+        color: white;
+        padding: 15px 25px;
+        border-radius: 25px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        display: none;
+        align-items: center;
+        gap: 10px;
+        font-weight: 600;
+        z-index: 3000;
+    }
+
+    .success-toast.show {
+        display: flex;
+        animation: slideInRight 0.3s ease;
+    }
+
+    @keyframes slideInRight {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+</style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="logo">ChangeWave</h1>
+            <ul class="nav-links">
+                <li><a href="gamification.html">Gamification</a></li>
+                <li><a href="user-dashboard.html">Dashboard</a></li>
+                <li><a href="post-feed.html">Feed</a></li>
+                <li><a href="#" class="btn-nav">Leaderboard</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <!-- Hero Section -->
+        <section class="hero fade-in">
+            <h1>🏆 Leaderboard</h1>
+            <p>Celebrating our top change-makers and their incredible impact on social causes</p>
+        </section>
+
+        <!-- Top 3 Podium -->
+        <section class="leaderboard-section">
+            <div class="section-header">
+                <h2>Top Performers</h2>
+                <p>Leading the charge in social impact campaigns</p>
+            </div>
+
+            <div class="podium">
+                <div class="podium-place second-place fade-in">
+                    <div class="rank-number">2</div>
+                    <div class="user-avatar">🥈</div>
+                    <div class="user-name" onclick="showCertificates('Prathish')">Prathish</div>
+                    <div class="user-stats">Campaign Leader</div>
+                    <div class="campaign-count">8</div>
+                    <div>Campaigns</div>
+                </div>
+
+                <div class="podium-place first-place fade-in">
+                    <div class="rank-number">1</div>
+                    <div class="user-avatar">👑</div>
+                    <div class="user-name" onclick="showCertificates('Nirmalkumar')">Nirmalkumar</div>
+                    <div class="user-stats">Social Impact Champion</div>
+                    <div class="campaign-count">12</div>
+                    <div>Campaigns</div>
+                </div>
+
+                <div class="podium-place third-place fade-in">
+                    <div class="rank-number">3</div>
+                    <div class="user-avatar">🥉</div>
+                    <div class="user-name" onclick="showCertificates('Arnald')">Arnald</div>
+                    <div class="user-stats">Change Catalyst</div>
+                    <div class="campaign-count">7</div>
+                    <div>Campaigns</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Full Leaderboard -->
+        <section class="leaderboard-section">
+            <div class="section-header">
+                <h2>Complete Rankings</h2>
+            </div>
+
+            <div class="full-leaderboard">
+                <div class="leaderboard-item">
+                    <div class="item-rank">1</div>
+                    <div class="item-avatar">👑</div>
+                    <div class="item-info">
+                        <div class="item-name" onclick="showCertificates('Nirmalkumar')">Nirmalkumar V</div>
+                        <div class="item-campaigns">Water Management Expert • Environmental Advocate</div>
+                    </div>
+                    <div class="item-score">
+                        <div class="score-number">12</div>
+                        <div class="score-label">Campaigns</div>
+                    </div>
+                </div>
+
+                <div class="leaderboard-item">
+                    <div class="item-rank">2</div>
+                    <div class="item-avatar">🥈</div>
+                    <div class="item-info">
+                        <div class="item-name" onclick="showCertificates('Prathish')">Prathish</div>
+                        <div class="item-campaigns">Health Awareness • Community Outreach Leader</div>
+                    </div>
+                    <div class="item-score">
+                        <div class="score-number">8</div>
+                        <div class="score-label">Campaigns</div>
+                    </div>
+                </div>
+
+                <div class="leaderboard-item">
+                    <div class="item-rank">3</div>
+                    <div class="item-avatar">🥉</div>
+                    <div class="item-info">
+                        <div class="item-name" onclick="showCertificates('Arnald')">Arnald</div>
+                        <div class="item-campaigns">Digital Literacy • Education Reform Advocate</div>
+                    </div>
+                    <div class="item-score">
+                        <div class="score-number">7</div>
+                        <div class="score-label">Campaigns</div>
+                    </div>
+                </div>
+
+                <div class="leaderboard-item">
+                    <div class="item-rank">4</div>
+                    <div class="item-avatar">⭐</div>
+                    <div class="item-info">
+                        <div class="item-name" onclick="showCertificates('Nishanth')">Nishanth</div>
+                        <div class="item-campaigns">Climate Action • Sustainability Champion</div>
+                    </div>
+                    <div class="item-score">
+                        <div class="score-number">6</div>
+                        <div class="score-label">Campaigns</div>
+                    </div>
+                </div>
+
+                <div class="leaderboard-item">
+                    <div class="item-rank">5</div>
+                    <div class="item-avatar">🌟</div>
+                    <div class="item-info">
+                        <div class="item-name" onclick="showCertificates('Gowtham')">Gowtham</div>
+                        <div class="item-campaigns">Mental Health • Youth Empowerment Advocate</div>
+                    </div>
+                    <div class="item-score">
+                        <div class="score-number">5</div>
+                        <div class="score-label">Campaigns</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Campaign Details -->
+        <section class="campaign-details">
+            <h3><i class="fas fa-flag"></i> Campaign Contributions</h3>
+            
+            <div class="user-campaigns">
+                <div class="user-campaign-section">
+                    <h4><span style="font-size: 1.8rem;">👑</span> Nirmalkumar V - 12 Campaigns</h4>
+                    <div class="campaign-list">
+                        <div class="campaign-tag">Water Management</div>
+                        <div class="campaign-tag">Clean Water Initiative</div>
+                        <div class="campaign-tag">Water Conservation</div>
+                        <div class="campaign-tag">Sustainable Agriculture</div>
+                        <div class="campaign-tag">River Cleaning</div>
+                        <div class="campaign-tag">Rainwater Harvesting</div>
+                        <div class="campaign-tag">Water Quality Testing</div>
+                        <div class="campaign-tag">Groundwater Protection</div>
+                        <div class="campaign-tag">Drought Awareness</div>
+                        <div class="campaign-tag">Water Recycling</div>
+                        <div class="campaign-tag">Wetland Conservation</div>
+                        <div class="campaign-tag">Aquifer Management</div>
+                    </div>
+                    <div class="badges-grid">
+                        <div class="badge-item">
+                            <div class="badge-icon">🌊</div>
+                            <div class="badge-name">Water Guardian</div>
+                            <div class="badge-desc">Water expert</div>
+                        </div>
+                        <div class="badge-item">
+                            <div class="badge-icon">🏆</div>
+                            <div class="badge-name">Campaign Master</div>
+                            <div class="badge-desc">10+ campaigns</div>
+                        </div>
+                        <div class="badge-item">
+                            <div class="badge-icon">⭐</div>
+                            <div class="badge-name">Impact Leader</div>
+                            <div class="badge-desc">Top performer</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="user-campaign-section">
+                    <h4><span style="font-size: 1.8rem;">🥈</span> Prathish - 8 Campaigns</h4>
+                    <div class="campaign-list">
+                        <div class="campaign-tag">Mental Health Awareness</div>
+                        <div class="campaign-tag">Community Health</div>
+                        <div class="campaign-tag">Nutrition Education</div>
+                        <div class="campaign-tag">Healthcare Access</div>
+                        <div class="campaign-tag">Disease Prevention</div>
+                        <div class="campaign-tag">Wellness Programs</div>
+                        <div class="campaign-tag">Medical Camps</div>
+                        <div class="campaign-tag">Health Insurance</div>
+                    </div>
+                    <div class="badges-grid">
+                        <div class="badge-item">
+                            <div class="badge-icon">🏥</div>
+                            <div class="badge-name">Health Champion</div>
+                            <div class="badge-desc">Health advocate</div>
+                        </div>
+                        <div class="badge-item">
+                            <div class="badge-icon">🤝</div>
+                            <div class="badge-name">Community Leader</div>
+                            <div class="badge-desc">5+ campaigns</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="user-campaign-section">
+                    <h4><span style="font-size: 1.8rem;">🥉</span> Arnald - 7 Campaigns</h4>
+                    <div class="campaign-list">
+                        <div class="campaign-tag">Digital Literacy</div>
+                        <div class="campaign-tag">Online Safety</div>
+                        <div class="campaign-tag">Tech Education</div>
+                        <div class="campaign-tag">Cybersecurity</div>
+                        <div class="campaign-tag">Digital Rights</div>
+                        <div class="campaign-tag">E-learning</div>
+                        <div class="campaign-tag">Internet Access</div>
+                    </div>
+                    <div class="badges-grid">
+                        <div class="badge-item">
+                            <div class="badge-icon">💻</div>
+                            <div class="badge-name">Tech Pioneer</div>
+                            <div class="badge-desc">Digital expert</div>
+                        </div>
+                        <div class="badge-item">
+                            <div class="badge-icon">🛡️</div>
+                            <div class="badge-name">Safety Advocate</div>
+                            <div class="badge-desc">Online safety</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="user-campaign-section">
+                    <h4><span style="font-size: 1.8rem;">⭐</span> Nishanth - 6 Campaigns</h4>
+                    <div class="campaign-list">
+                        <div class="campaign-tag">Climate Action</div>
+                        <div class="campaign-tag">Renewable Energy</div>
+                        <div class="campaign-tag">Carbon Footprint</div>
+                        <div class="campaign-tag">Sustainable Living</div>
+                        <div class="campaign-tag">Green Technology</div>
+                        <div class="campaign-tag">Environmental Protection</div>
+                    </div>
+                    <div class="badges-grid">
+                        <div class="badge-item">
+                            <div class="badge-icon">🌱</div>
+                            <div class="badge-name">Eco Warrior</div>
+                            <div class="badge-desc">Environment focus</div>
+                                                <div class="badge-item">
+                            <div class="badge-icon">♻️</div>
+                            <div class="badge-name">Sustainability</div>
+                            <div class="badge-desc">Green advocate</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="user-campaign-section">
+                    <h4><span style="font-size: 1.8rem;">🌟</span> Gowtham - 5 Campaigns</h4>
+                    <div class="campaign-list">
+                        <div class="campaign-tag">Mental Health</div>
+                        <div class="campaign-tag">Youth Empowerment</div>
+                        <div class="campaign-tag">Stress Management</div>
+                        <div class="campaign-tag">Student Wellness</div>
+                        <div class="campaign-tag">Counseling Services</div>
+                    </div>
+                    <div class="badges-grid">
+                        <div class="badge-item">
+                            <div class="badge-icon">🧠</div>
+                            <div class="badge-name">Mind Guardian</div>
+                            <div class="badge-desc">Mental health</div>
+                        </div>
+                        <div class="badge-item">
+                            <div class="badge-icon">🌟</div>
+                            <div class="badge-name">Youth Leader</div>
+                            <div class="badge-desc">Empowerment</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Certificate Modal -->
+    <div class="certificate-modal" id="certificateModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeCertificateModal()">&times;</button>
+            <div class="modal-header">
+                <h2 id="modalUserName">Certificates</h2>
+                <p>Campaign Achievement Certificates</p>
+            </div>
+            <div class="certificates-grid" id="certificatesGrid">
+                <!-- Certificates will be loaded here -->
+            </div>
+            <button class="download-all-btn" onclick="downloadAllCertificates()">
+                <i class="fas fa-download"></i> Download All Certificates
+            </button>
+        </div>
+    </div>
+
+    <!-- Success Toast -->
+    <div class="success-toast" id="successToast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">Certificate downloaded successfully!</span>
+    </div>
+
+    <!-- Hidden Canvas for Certificate Generation -->
+    <canvas id="certificateCanvas" width="1200" height="800"></canvas>
+
+    <script>
+        // Certificate data for each user
+        const certificatesData = {
+            'Nirmalkumar': [
+                { icon: '🌊', title: 'Water Management Champion', desc: 'Successfully completed Water Management campaign with 95% engagement', campaign: 'Water Management', date: '2024-01-15' },
+                { icon: '💧', title: 'Clean Water Initiative Leader', desc: 'Led Clean Water Initiative reaching 500+ participants', campaign: 'Clean Water Initiative', date: '2024-01-22' },
+                { icon: '🏞️', title: 'Water Conservation Expert', desc: 'Promoted water conservation practices in rural communities', campaign: 'Water Conservation', date: '2024-02-10' },
+                { icon: '🌾', title: 'Sustainable Agriculture Advocate', desc: 'Implemented sustainable farming techniques campaign', campaign: 'Sustainable Agriculture', date: '2024-02-18' },
+                { icon: '🏊', title: 'River Cleaning Volunteer', desc: 'Organized and led river cleaning drives', campaign: 'River Cleaning', date: '2024-03-05' },
+                { icon: '☔', title: 'Rainwater Harvesting Specialist', desc: 'Educated communities about rainwater harvesting systems', campaign: 'Rainwater Harvesting', date: '2024-03-12' },
+                { icon: '🔬', title: 'Water Quality Testing Expert', desc: 'Conducted water quality assessments in local areas', campaign: 'Water Quality Testing', date: '2024-03-20' },
+                { icon: '🏔️', title: 'Groundwater Protection Guardian', desc: 'Promoted groundwater conservation and protection measures', campaign: 'Groundwater Protection', date: '2024-04-01' },
+                { icon: '🌵', title: 'Drought Awareness Educator', desc: 'Raised awareness about drought management strategies', campaign: 'Drought Awareness', date: '2024-04-15' },
+                { icon: '♻️', title: 'Water Recycling Innovator', desc: 'Promoted water recycling and reuse technologies', campaign: 'Water Recycling', date: '2024-04-22' },
+                { icon: '🦆', title: 'Wetland Conservation Hero', desc: 'Protected and restored local wetland ecosystems', campaign: 'Wetland Conservation', date: '2024-05-05' },
+                { icon: '⛲', title: 'Aquifer Management Specialist', desc: 'Implemented aquifer management and protection programs', campaign: 'Aquifer Management', date: '2024-05-15' }
+            ],
+            'Prathish': [
+                { icon: '🧠', title: 'Mental Health Advocate', desc: 'Led mental health awareness campaigns', campaign: 'Mental Health Awareness', date: '2024-01-20' },
+                { icon: '🏥', title: 'Community Health Champion', desc: 'Organized community health programs', campaign: 'Community Health', date: '2024-02-05' },
+                { icon: '🥗', title: 'Nutrition Education Expert', desc: 'Promoted healthy eating habits', campaign: 'Nutrition Education', date: '2024-02-25' },
+                { icon: '🩺', title: 'Healthcare Access Facilitator', desc: 'Improved healthcare accessibility', campaign: 'Healthcare Access', date: '2024-03-10' },
+                { icon: '🛡️', title: 'Disease Prevention Specialist', desc: 'Led disease prevention campaigns', campaign: 'Disease Prevention', date: '2024-03-25' },
+                { icon: '💪', title: 'Wellness Program Coordinator', desc: 'Organized wellness programs', campaign: 'Wellness Programs', date: '2024-04-10' },
+                { icon: '⛑️', title: 'Medical Camp Organizer', desc: 'Coordinated medical camps', campaign: 'Medical Camps', date: '2024-04-20' },
+                { icon: '📋', title: 'Health Insurance Advocate', desc: 'Promoted health insurance awareness', campaign: 'Health Insurance', date: '2024-05-01' }
+            ],
+            'Arnald': [
+                { icon: '💻', title: 'Digital Literacy Pioneer', desc: 'Taught digital skills to communities', campaign: 'Digital Literacy', date: '2024-01-25' },
+                { icon: '🔒', title: 'Online Safety Expert', desc: 'Promoted online safety practices', campaign: 'Online Safety', date: '2024-02-15' },
+                { icon: '🎓', title: 'Tech Education Leader', desc: 'Led technology education programs', campaign: 'Tech Education', date: '2024-03-01' },
+                { icon: '🛡️', title: 'Cybersecurity Specialist', desc: 'Educated about cybersecurity threats', campaign: 'Cybersecurity', date: '2024-03-18' },
+                { icon: '⚖️', title: 'Digital Rights Advocate', desc: 'Promoted digital rights awareness', campaign: 'Digital Rights', date: '2024-04-05' },
+                { icon: '📚', title: 'E-learning Facilitator', desc: 'Facilitated online learning programs', campaign: 'E-learning', date: '2024-04-18' },
+                { icon: '🌐', title: 'Internet Access Champion', desc: 'Promoted internet accessibility', campaign: 'Internet Access', date: '2024-05-10' }
+            ],
+            'Nishanth': [
+                { icon: '🌍', title: 'Climate Action Leader', desc: 'Led climate action initiatives', campaign: 'Climate Action', date: '2024-02-01' },
+                { icon: '⚡', title: 'Renewable Energy Advocate', desc: 'Promoted renewable energy adoption', campaign: 'Renewable Energy', date: '2024-02-20' },
+                { icon: '👣', title: 'Carbon Footprint Reducer', desc: 'Educated about carbon footprint reduction', campaign: 'Carbon Footprint', date: '2024-03-08' },
+                { icon: '🌱', title: 'Sustainable Living Expert', desc: 'Promoted sustainable lifestyle choices', campaign: 'Sustainable Living', date: '2024-03-28' },
+                { icon: '🔋', title: 'Green Technology Pioneer', desc: 'Introduced green technologies', campaign: 'Green Technology', date: '2024-04-12' },
+                { icon: '🛡️', title: 'Environmental Protector', desc: 'Led environmental protection campaigns', campaign: 'Environmental Protection', date: '2024-05-08' }
+            ],
+            'Gowtham': [
+                { icon: '🧠', title: 'Mental Health Champion', desc: 'Promoted mental health awareness', campaign: 'Mental Health', date: '2024-02-08' },
+                { icon: '🌟', title: 'Youth Empowerment Leader', desc: 'Empowered young people', campaign: 'Youth Empowerment', date: '2024-02-28' },
+                { icon: '😌', title: 'Stress Management Expert', desc: 'Taught stress management techniques', campaign: 'Stress Management', date: '2024-03-15' },
+                { icon: '🎓', title: 'Student Wellness Advocate', desc: 'Promoted student wellness programs', campaign: 'Student Wellness', date: '2024-04-08' },
+                { icon: '💬', title: 'Counseling Services Coordinator', desc: 'Organized counseling services', campaign: 'Counseling Services', date: '2024-05-03' }
+            ]
+        };
+
+        // Initialize leaderboard with animations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add fade-in class to elements with delay
+            const fadeElements = document.querySelectorAll('.fade-in');
+            fadeElements.forEach((el, index) => {
+                setTimeout(() => {
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0)';
+                }, index * 200);
+            });
+
+            // Animate leaderboard items
+            const leaderboardItems = document.querySelectorAll('.leaderboard-item');
+            leaderboardItems.forEach((item, index) => {
+                setTimeout(() => {
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateX(0)';
+                }, (index + 3) * 100);
+            });
+        });
+
+        // Show certificates modal
+        function showCertificates(userName) {
+            const modal = document.getElementById('certificateModal');
+            const modalUserName = document.getElementById('modalUserName');
+            const certificatesGrid = document.getElementById('certificatesGrid');
+            
+            modalUserName.textContent = `${userName}'s Certificates`;
+            
+            const userCertificates = certificatesData[userName] || [];
+            certificatesGrid.innerHTML = '';
+            
+            userCertificates.forEach((cert, index) => {
+                const certElement = document.createElement('div');
+                certElement.className = 'certificate-item';
+                certElement.innerHTML = `
+                    <div class="certificate-icon">${cert.icon}</div>
+                    <div class="certificate-title">${cert.title}</div>
+                    <div class="certificate-desc">${cert.desc}</div>
+                    <button class="download-btn" onclick="downloadCertificate('${userName}', ${index})">
+                        <i class="fas fa-download"></i> Download
+                    </button>
+                `;
+                certificatesGrid.appendChild(certElement);
+            });
+            
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close certificates modal
+        function closeCertificateModal() {
+            const modal = document.getElementById('certificateModal');
+            modal.classList.remove('show');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Download individual certificate
+        function downloadCertificate(userName, index) {
+            const certificate = certificatesData[userName][index];
+            const canvas = document.getElementById('certificateCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Create certificate design
+            createCertificateDesign(ctx, canvas, userName, certificate);
+            
+            // Download the certificate
+            canvas.toBlob(function(blob) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${userName}_${certificate.campaign.replace(/\s+/g, '_')}_Certificate.png`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                showSuccessToast('Certificate downloaded successfully!');
+            });
+        }
+
+        // Download all certificates as a master certificate
+        function downloadAllCertificates() {
+            const modalUserName = document.getElementById('modalUserName').textContent;
+            const userName = modalUserName.split("'s")[0];
+            const userCertificates = certificatesData[userName] || [];
+            
+            const canvas = document.getElementById('certificateCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Create master certificate
+            createMasterCertificate(ctx, canvas, userName, userCertificates);
+            
+            // Download the master certificate
+            canvas.toBlob(function(blob) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${userName}_Master_Certificate_ChangeWave.png`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                showSuccessToast('Master certificate downloaded successfully!');
+            });
+        }
+
+        // Create certificate design
+        function createCertificateDesign(ctx, canvas, userName, certificate) {
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Background gradient
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            gradient.addColorStop(0, '#1a1a1a');
+            gradient.addColorStop(1, '#2d2d2d');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Decorative border
+            ctx.strokeStyle = '#8B6B4A';
+            ctx.lineWidth = 10;
+            ctx.strokeRect(30, 30, canvas.width - 60, canvas.height - 60);
+            
+            // Inner border
+            ctx.strokeStyle = '#A67C52';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(50, 50, canvas.width - 100, canvas.height - 100);
+            
+            // Add decorative corners
+            drawDecorativeCorners(ctx, canvas);
+            
+            // Certificate header
+            ctx.fillStyle = '#A67C52';
+            ctx.font = 'bold 48px Inter, Arial, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('CERTIFICATE OF ACHIEVEMENT', canvas.width / 2, 120);
+            
+            // Subtitle
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '24px Inter, Arial, sans-serif';
+            ctx.fillText('ChangeWave Social Impact Platform', canvas.width / 2, 160);
+            
+            // Decorative line
+            drawDecorativeLine(ctx, canvas.width / 2 - 150, 180, 300);
+            
+            // Certificate body
+            ctx.fillStyle = '#e5e5e5';
+            ctx.font = '22px Inter, Arial, sans-serif';
+            ctx.fillText('This is to certify that', canvas.width / 2, 230);
+            
+            // User name (highlighted)
+            ctx.fillStyle = '#8B6B4A';
+            ctx.font = 'bold 42px Inter, Arial, sans-serif';
+            ctx.fillText(userName.toUpperCase(), canvas.width / 2, 290);
+            
+            // Achievement text
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '22px Inter, Arial, sans-serif';
+            ctx.fillText('has successfully completed the', canvas.width / 2, 340);
+            
+            // Campaign name (highlighted)
+            ctx.fillStyle = '#A67C52';
+            ctx.font = 'bold 32px Inter, Arial, sans-serif';
+            ctx.fillText(certificate.campaign.toUpperCase(), canvas.width / 2, 390);
+            
+            // Campaign icon (larger)
+            ctx.font = '72px Arial, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(certificate.icon, canvas.width / 2, 470);
+            
+            // Description with word wrap
+            ctx.fillStyle = '#e5e5e5';
+            ctx.font = '20px Inter, Arial, sans-serif';
+            wrapText(ctx, certificate.desc, canvas.width / 2, 520, 800, 28);
+            
+            // Date section
+            ctx.fillStyle = '#6b6b6b';
+            ctx.font = '18px Inter, Arial, sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText(`Date: ${formatDate(certificate.date)}`, 100, canvas.height - 120);
+            
+            // Certificate ID
+            ctx.textAlign = 'right';
+            ctx.fillText(`Certificate ID: CW-${generateCertId(userName, certificate.campaign)}`, canvas.width - 100, canvas.height - 120);
+            
+            // Signature section
+            drawSignatureSection(ctx, canvas);
+            
+            // Add watermark
+            addWatermark(ctx, canvas);
+        }
+
+        // Create master certificate
+        function createMasterCertificate(ctx, canvas, userName, certificates) {
+            // Increase canvas height for master certificate
+            canvas.height = 1200;
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Background gradient
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            gradient.addColorStop(0, '#1a1a1a');
+            gradient.addColorStop(1, '#2d2d2d');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Gold border for master certificate
+            ctx.strokeStyle = '#FFD700';
+            ctx.lineWidth = 12;
+            ctx.strokeRect(30, 30, canvas.width - 60, canvas.height - 60);
+            
+            // Inner border
+            ctx.strokeStyle = '#8B6B4A';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(50, 50, canvas.width - 100, canvas.height - 100);
+            
+            // Add decorative corners
+            drawDecorativeCorners(ctx, canvas);
+            
+            // Crown icon
+            ctx.font = '80px Arial, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('👑', canvas.width / 2, 120);
+            
+            // Title
+            ctx.fillStyle = '#FFD700';
+            ctx.font = 'bold 52px Inter, Arial, sans-serif';
+            ctx.fillText('MASTER CERTIFICATE', canvas.width / 2, 180);
+            
+            // Subtitle
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '26px Inter, Arial, sans-serif';
+            ctx.fillText('ChangeWave Social Impact Platform', canvas.width / 2, 220);
+            
+            // Decorative line
+            drawDecorativeLine(ctx, canvas.width / 2 - 200, 240, 400);
+            
+            // User name
+            ctx.fillStyle = '#8B6B4A';
+            ctx.font = 'bold 48px Inter, Arial, sans-serif';
+            ctx.fillText(userName.toUpperCase(), canvas.width / 2, 300);
+            
+            // Achievement text
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '24px Inter, Arial, sans-serif';
+            ctx.fillText(`has successfully completed ${certificates.length} social impact campaigns`, canvas.width / 2, 350);
+            
+            // Campaign list
+            ctx.fillStyle = '#e5e5e5';
+            ctx.font = '18px Inter, Arial, sans-serif';
+            ctx.textAlign = 'left';
+            
+            let y = 410;
+            const columnWidth = 500;
+            const columnX1 = 100;
+            const columnX2 = canvas.width / 2 + 50;
+            
+            certificates.forEach((cert, index) => {
+                const x = index < 6 ? columnX1 : columnX2;
+                const adjustedY = index < 6 ? y + (index * 35) : y + ((index - 6) * 35);
+                
+                ctx.fillText(`${cert.icon} ${cert.campaign}`, x, adjustedY);
+            });
+            
+            // Statistics section
+            y = Math.max(y + 250, 700);
+            drawStatisticsSection(ctx, canvas, userName, certificates, y);
+            
+            // Footer
+            ctx.fillStyle = '#6b6b6b';
+            ctx.font = '18px Inter, Arial, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(`Generated on: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`, canvas.width / 2, canvas.height - 100);
+            
+            // Signature section
+            drawMasterSignatureSection(ctx, canvas);
+            
+            // Add watermark
+            addWatermark(ctx, canvas);
+        }
+
+        // Helper functions for certificate generation
+        function drawDecorativeCorners(ctx, canvas) {
+            const cornerSize = 60;
+            ctx.strokeStyle = '#A67C52';
+            ctx.lineWidth = 3;
+            
+            // Top-left
+            ctx.beginPath();
+            ctx.moveTo(80, 80);
+            ctx.lineTo(80 + cornerSize, 80);
+            ctx.moveTo(80, 80);
+            ctx.lineTo(80, 80 + cornerSize);
+            ctx.stroke();
+            
+            // Top-right
+            ctx.beginPath();
+            ctx.moveTo(canvas.width - 80, 80);
+            ctx.lineTo(canvas.width - 80 - cornerSize, 80);
+            ctx.moveTo(canvas.width - 80, 80);
+            ctx.lineTo(canvas.width - 80, 80 + cornerSize);
+            ctx.stroke();
+            
+            // Bottom-left
+            ctx.beginPath();
+            ctx.moveTo(80, canvas.height - 80);
+            ctx.lineTo(80 + cornerSize, canvas.height - 80);
+            ctx.moveTo(80, canvas.height - 80);
+            ctx.lineTo(80, canvas.height - 80 - cornerSize);
+            ctx.stroke();
+            
+            // Bottom-right
+            ctx.beginPath();
+            ctx.moveTo(canvas.width - 80, canvas.height - 80);
+            ctx.lineTo(canvas.width - 80 - cornerSize, canvas.height - 80);
+            ctx.moveTo(canvas.width - 80, canvas.height - 80);
+            ctx.lineTo(canvas.width - 80, canvas.height - 80 - cornerSize);
+            ctx.stroke();
+        }
+
+        function drawDecorativeLine(ctx, x, y, width) {
+            ctx.strokeStyle = '#8B6B4A';
+            ctx.lineWidth = 2;
+            
+            // Draw decorative line with flourish
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            
+            // Left flourish
+            ctx.quadraticCurveTo(x + 20, y - 5, x + 40, y);
+            
+            // Center line
+            ctx.lineTo(x + width - 40, y);
+            
+            // Right flourish
+            ctx.quadraticCurveTo(x + width - 20, y - 5, x + width, y);
+            
+            ctx.stroke();
+        }
+
+        function drawSignatureSection(ctx, canvas) {
+            const signY = canvas.height - 180;
+            
+            // Signature line
+            ctx.strokeStyle = '#8B6B4A';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(canvas.width - 350, signY);
+            ctx.lineTo(canvas.width - 100, signY);
+            ctx.stroke();
+            
+            // Signature text
+            ctx.fillStyle = '#A67C52';
+            ctx.font = '20px Inter, Arial, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('ChangeWave Team', canvas.width - 225, signY + 30);
+            
+            // Organization seal
+            ctx.fillStyle = '#8B6B4A';
+            ctx.font = '60px Arial, sans-serif';
+            ctx.fillText('🏅', 150, signY);
+        }
+
+        function drawMasterSignatureSection(ctx, canvas) {
+            const signY = canvas.height - 180;
+            
+            // CEO Signature
+            ctx.strokeStyle = '#8B6B4A';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(150, signY);
+            ctx.lineTo(400, signY);
+            ctx.stroke();
+            
+            ctx.fillStyle = '#A67C52';
+            ctx.font = '18px Inter, Arial, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('CEO, ChangeWave', 275, signY + 25);
+            
+            // Director Signature
+            ctx.beginPath();
+            ctx.moveTo(canvas.width - 400, signY);
+            ctx.lineTo(canvas.width - 150, signY);
+            ctx.stroke();
+            
+            ctx.fillText('Director of Impact', canvas.width - 275, signY + 25);
+            
+            // Organization seal
+            ctx.fillStyle = '#FFD700';
+            ctx.font = '80px Arial, sans-serif';
+            ctx.fillText('🏆', canvas.width / 2, signY + 10);
+        }
+
+        function drawStatisticsSection(ctx, canvas, userName, certificates, startY) {
+            ctx.fillStyle = '#A67C52';
+            ctx.font = 'bold 24px Inter, Arial, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('IMPACT STATISTICS', canvas.width / 2, startY);
+            
+            // Stats background
+            ctx.fillStyle = 'rgba(139, 107, 74, 0.1)';
+            ctx.fillRect(150, startY + 20, canvas.width - 300, 100);
+            
+            // Stats content
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '20px Inter, Arial, sans-serif';
+            
+            const stats = [
+                { label: 'Total Campaigns:', value: certificates.length },
+                { label: 'Impact Score:', value: certificates.length * 100 },
+                { label: 'Achievement Level:', value: getAchievementLevel(certificates.length) }
+            ];
+            
+            stats.forEach((stat, index) => {
+                const x = 250 + (index * 250);
+                ctx.textAlign = 'left';
+                ctx.fillText(stat.label, x, startY + 60);
+                ctx.fillStyle = '#FFD700';
+                ctx.font = 'bold 24px Inter, Arial, sans-serif';
+                ctx.fillText(stat.value, x, startY + 85);
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '20px Inter, Arial, sans-serif';
+            });
+        }
+
+        function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+            const words = text.split(' ');
+            let line = '';
+            let currentY = y;
+            
+            for (let n = 0; n < words.length; n++) {
+                const testLine = line + words[n] + ' ';
+                const metrics = ctx.measureText(testLine);
+                const testWidth = metrics.width;
+                
+                if (testWidth > maxWidth && n > 0) {
+                    ctx.fillText(line, x, currentY);
+                    line = words[n] + ' ';
+                    currentY += lineHeight;
+                } else {
+                    line = testLine;
+                }
+            }
+            ctx.fillText(line, x, currentY);
+        }
+
+        function addWatermark(ctx, canvas) {
+            ctx.save();
+            ctx.globalAlpha = 0.05;
+            ctx.fillStyle = '#8B6B4A';
+            ctx.font = 'bold 120px Inter, Arial, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.translate(canvas.width / 2, canvas.height / 2);
+            ctx.rotate(-Math.PI / 6);
+            ctx.fillText('CHANGEWAVE', 0, 0);
+            ctx.restore();
+        }
+
+        function generateCertId(userName, campaign) {
+            const userCode = userName.substring(0, 3).toUpperCase();
+            const campaignCode = campaign.substring(0, 3).toUpperCase();
+            const timestamp = Date.now().toString().slice(-6);
+            return `${userCode}-${campaignCode}-${timestamp}`;
+        }
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+        }
+
+        function getAchievementLevel(campaignCount) {
+            if (campaignCount >= 10) return 'Master';
+            if (campaignCount >= 7) return 'Expert';
+            if (campaignCount >= 5) return 'Advanced';
+            if (campaignCount >= 3) return 'Intermediate';
+            return 'Beginner';
+        }
+
+        function showSuccessToast(message) {
+            const toast = document.getElementById('successToast');
+            const toastMessage = document.getElementById('toastMessage');
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('certificateModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeCertificateModal();
+            }
+        });
+
+        // Smooth navbar background on scroll
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.style.background = 'rgba(26, 26, 26, 0.98)';
+                navbar.style.boxShadow = '0 5px 20px rgba(0, 0, 0, 0.3)';
+            } else {
+                navbar.style.background = 'rgba(26, 26, 26, 0.95)';
+                navbar.style.boxShadow = 'none';
+            }
+        });
+
+        // Add click effects to badge items
+        document.querySelectorAll('.badge-item').forEach(badge => {
+            badge.addEventListener('click', function() {
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1.05)';
+                }, 150);
+            });
+        });
+
+        // Set initial styles for animation
+        const initialStyles = `
+            .leaderboard-item {
+                opacity: 0;
+                transform: translateX(-20px);
+                transition: all 0.5s ease;
+            }
+            .fade-in {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+        `;
+        
+        const styleSheet = document.createElement('style');
+        styleSheet.textContent = initialStyles;
+        document.head.appendChild(styleSheet);
+    </script>
+</body>
+</html>

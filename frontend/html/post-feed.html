@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campaign Feed - ChangeWave</title>
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="stylesheet" href="../css/posts.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --black: #0a0a0a;
+            --dark-grey: #1a1a1a;
+            --medium-grey: #2d2d2d;
+            --light-grey: #6b6b6b;
+            --lighter-grey: #e5e5e5;
+            --white: #ffffff;
+            --off-white: #f5f5f5;
+            --brown: #8B6B4A;
+            --light-brown: #A67C52;
+            --dark-brown: #6B4423;
+            --orange: #F97316;
+            --orange-light: #FB923C;
+            --purple: #8B5CF6;
+            --purple-light: #A78BFA;
+            --green: #38ef7d;
+            --green-light: #11998e;
+            --blue: #6dd5ed;
+            --blue-light: #2193b0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--black);
+            color: var(--white);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Background Effect */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(139, 107, 74, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(107, 68, 35, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Feed Container */
+        .feed-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 120px 20px 80px;
+        }
+
+        /* Feed Header */
+        .feed-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .feed-header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, var(--white) 0%, var(--light-brown) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+
+        /* Feed Filters */
+        .feed-filters {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            background: var(--dark-grey);
+            border: 1px solid rgba(139, 107, 74, 0.2);
+            color: var(--lighter-grey);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .filter-btn:hover {
+            background: rgba(139, 107, 74, 0.1);
+            border-color: var(--brown);
+            color: var(--white);
+            transform: translateY(-1px);
+        }
+
+        .filter-btn.active {
+            background: var(--brown);
+            color: var(--white);
+            border-color: var(--brown);
+        }
+
+        /* Posts Container */
+        .posts-container {
+            display: grid;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        /* Post Card Base Styles - Slimmer Design */
+        .post-card {
+            background: var(--dark-grey);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(139, 107, 74, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* User Post Styles - Purple Theme */
+        .post-card.user-post {
+            background: linear-gradient(to bottom, var(--dark-grey), rgba(139, 92, 246, 0.05));
+            border-color: rgba(139, 92, 246, 0.2);
+        }
+
+        .post-card.user-post::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--purple), var(--purple-light));
+        }
+
+        .post-card.user-post:hover {
+            transform: translateY(-3px);
+            border-color: rgba(139, 92, 246, 0.4);
+            box-shadow: 0 15px 40px rgba(139, 92, 246, 0.1);
+        }
+
+        /* Campaign Manager Post Styles - Orange/Brown Theme */
+        .post-card.campaign-post {
+            background: linear-gradient(to bottom, var(--dark-grey), rgba(249, 115, 22, 0.05));
+            border-color: rgba(249, 115, 22, 0.2);
+        }
+
+        .post-card.campaign-post::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--orange), var(--orange-light));
+        }
+
+        .post-card.campaign-post:hover {
+            transform: translateY(-3px);
+            border-color: rgba(249, 115, 22, 0.4);
+            box-shadow: 0 15px 40px rgba(249, 115, 22, 0.1);
+        }
+
+        /* Post Header - Compact */
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .post-author {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .author-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1rem;
+            color: var(--white);
+        }
+
+        /* Different avatar colors for user types */
+        .user-post .author-avatar {
+            background: linear-gradient(135deg, var(--purple) 0%, var(--purple-light) 100%);
+        }
+
+        .campaign-post .author-avatar {
+            background: linear-gradient(135deg, var(--orange) 0%, var(--orange-light) 100%);
+        }
+
+        .author-info h3 {
+            font-size: 0.95rem;
+            color: var(--white);
+            margin-bottom: 2px;
+        }
+
+        .author-info p {
+            font-size: 0.8rem;
+            color: var(--light-grey);
+        }
+
+        .post-type {
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .user-post .post-type {
+            background: rgba(139, 92, 246, 0.2);
+            color: var(--purple-light);
+        }
+
+        .campaign-post .post-type {
+            background: rgba(249, 115, 22, 0.2);
+            color: var(--orange-light);
+        }
+
+        /* Post Content - Compact */
+        .post-content {
+            margin-bottom: 15px;
+        }
+
+        .post-content h2 {
+            font-size: 1.2rem;
+            color: var(--white);
+            margin-bottom: 10px;
+            line-height: 1.3;
+        }
+
+        .post-content p {
+            color: var(--lighter-grey);
+            line-height: 1.6;
+            font-size: 0.95rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .post-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin: 15px 0;
+        }
+
+        /* Post Tags - Compact */
+        .post-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .tag {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .user-post .tag {
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            color: var(--purple-light);
+        }
+
+        .user-post .tag:hover {
+            background: rgba(139, 92, 246, 0.2);
+        }
+
+        .campaign-post .tag {
+            background: rgba(249, 115, 22, 0.1);
+            border: 1px solid rgba(249, 115, 22, 0.3);
+            color: var(--orange-light);
+        }
+
+        .campaign-post .tag:hover {
+            background: rgba(249, 115, 22, 0.2);
+        }
+
+        /* Post Actions - Simplified */
+        .post-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid rgba(139, 107, 74, 0.1);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: transparent;
+            border: none;
+            color: var(--lighter-grey);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 15px;
+            font-size: 0.85rem;
+        }
+
+        .action-btn:hover {
+            background: rgba(139, 107, 74, 0.1);
+            color: var(--white);
+        }
+
+        .action-btn.liked {
+            color: #e74c3c;
+        }
+
+        .user-post .action-btn:hover {
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        .campaign-post .action-btn:hover {
+            background: rgba(249, 115, 22, 0.1);
+        }
+
+        .action-btn i {
+            font-size: 0.95rem;
+        }
+
+        .engagement-stats {
+            display: flex;
+            gap: 15px;
+            color: var(--light-grey);
+            font-size: 0.8rem;
+        }
+
+        /* Sentiment Indicator - Compact */
+        .sentiment-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .sentiment-positive {
+            background: rgba(56, 239, 125, 0.2);
+            color: #38ef7d;
+        }
+
+        .sentiment-neutral {
+            background: rgba(109, 213, 237, 0.2);
+            color: #6dd5ed;
+        }
+
+        .sentiment-negative {
+            background: rgba(244, 92, 67, 0.2);
+            color: #f45c43;
+        }
+
+        /* Campaign Badge for Manager Posts */
+        .campaign-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: linear-gradient(135deg, var(--orange) 0%, var(--orange-light) 100%);
+            color: var(--white);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Load More Button */
+        .load-more {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .btn-load-more {
+            padding: 12px 35px;
+            background: var(--brown);
+            color: var(--white);
+            border: none;
+            border-radius: 30px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(139, 107, 74, 0.3);
+        }
+
+        .btn-load-more:hover {
+            background: var(--light-brown);
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(139, 107, 74, 0.4);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--lighter-grey);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--white);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .feed-container {
+                padding: 100px 15px 60px;
+            }
+
+            .feed-header h1 {
+                font-size: 2rem;
+            }
+
+            .feed-filters {
+                gap: 8px;
+            }
+
+            .filter-btn {
+                padding: 8px 16px;
+                font-size: 0.85rem;
+            }
+
+            .post-card {
+                padding: 15px;
+            }
+
+            .post-header {
+                margin-bottom: 10px;
+            }
+
+            .author-avatar {
+                width: 35px;
+                height: 35px;
+                font-size: 0.9rem;
+            }
+
+            .post-content h2 {
+                font-size: 1.1rem;
+            }
+
+            .post-image {
+                height: 150px;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .post-card {
+            animation: fadeInUp 0.5s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar"></nav>
+
+    <main class="feed-container">
+        <div class="feed-header">
+            <h1>Campaign Feed</h1>
+            <div class="feed-filters">
+                <button class="filter-btn active" data-filter="all">All Posts</button>
+                <button class="filter-btn" data-filter="trending">Trending</button>
+                <button class="filter-btn" data-filter="recent">Recent</button>
+                <button class="filter-btn" data-filter="campaign">Campaign Posts</button>
+                <button class="filter-btn" data-filter="personal">Personal Stories</button>
+            </div>
+        </div>
+
+        <div class="posts-container" id="postsContainer">
+            <!-- Example of Campaign Manager Post -->
+            <div class="post-card campaign-post">
+                <span class="campaign-badge"><i class="fas fa-bullhorn"></i> Official</span>
+                <div class="post-header">
+                    <div class="post-author">
+                        <div class="author-avatar">CM</div>
+                        <div class="author-info">
+                            <h3>Campaign Manager</h3>
+                            <p>Climate Action Initiative • 2 hours ago</p>
+                        </div>
+                    </div>
+                    <span class="post-type">Campaign</span>
+                </div>
+                <div class="post-content">
+                    <h2>Join us for Global Climate Action Day!</h2>
+                    <p>We're organizing a massive cleanup drive across 50 cities. Register now to be part of this movement and make a real difference in your community...</p>
+                </div>
+                <div class="post-tags">
+                    <span class="tag">#ClimateAction</span>
+                    <span class="tag">#Sustainability</span>
+                </div>
+                <div class="post-actions">
+                    <div class="action-buttons">
+                        <button class="action-btn"><i class="far fa-heart"></i> 234</button>
+                        <button class="action-btn"><i class="far fa-comment"></i> 45</button>
+                        <button class="action-btn"><i class="fas fa-share"></i></button>
+                    </div>
+                    <div class="engagement-stats">
+                        <span class="sentiment-indicator sentiment-positive">😊 85% Positive</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example of User Post -->
+            <div class="post-card user-post">
+                <div class="post-header">
+                    <div class="post-author">
+                        <div class="author-avatar">JD</div>
+                        <div class="author-info">
+                            <h3>Jane Doe</h3>
+                            <p>Community Member • 5 hours ago</p>
+                        </div>
+                    </div>
+                    <span class="post-type">Personal</span>
+                </div>
+                <div class="post-content">
+                    <h2>My experience at the local beach cleanup</h2>
+                    <p>Today I joined the beach cleanup initiative and it was amazing! We collected over 200kg of plastic waste. It's incredible how much impact we can make when we work together...</p>
+                </div>
+                <div class="post-tags">
+                    <span class="tag">#BeachCleanup</span>
+                    <span class="tag">#PersonalStory</span>
+                </div>
+                <div class="post-actions">
+                    <div class="action-buttons">
+                        <button class="action-btn liked"><i class="fas fa-heart"></i> 156</button>
+                        <button class="action-btn"><i class="far fa-comment"></i> 23</button>
+                        <button class="action-btn"><i class="fas fa-share"></i></button>
+                    </div>
+                    <div class="engagement-stats">
+                        <span class="sentiment-indicator sentiment-positive">😊 92% Positive</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="load-more">
+            <button class="btn-load-more" onclick="loadMorePosts()">Load More Posts</button>
+        </div>
+    </main>
+
+    <script src="../js/common/auth.js"></script>
+    <script src="../js/common/navigation.js"></script>
+    <script src="../js/posts/post-feed.js"></script>
+    <script src="../js/posts/comments.js"></script>
+    <script src="../js/posts/sentiment-display.js"></script>
+</body>
+</html>

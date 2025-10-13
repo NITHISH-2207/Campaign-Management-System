@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Join ChangeWave</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="../css/common.css" rel="stylesheet">
+    <style>
+        :root {
+            --black: #0a0a0a;
+            --dark-grey: #1a1a1a;
+            --medium-grey: #2d2d2d;
+            --light-grey: #6b6b6b;
+            --lighter-grey: #e5e5e5;
+            --white: #ffffff;
+            --off-white: #f5f5f5;
+            --brown: #8B6B4A;
+            --light-brown: #A67C52;
+            --dark-brown: #6B4423;
+            --success: #48c774;
+            --success-hover: #3ec46d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--black);
+            color: var(--white);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Override common.css button styles */
+        button[type="submit"] {
+            background: var(--brown);
+            color: white;
+        }
+
+        button[type="submit"]:hover {
+            background: var(--light-brown);
+        }
+
+        /* Left Registration Form Section */
+        .register-section {
+            background: var(--black);
+            min-height: 100vh;
+            padding: 40px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .register-container {
+            background: var(--dark-grey);
+            border: 1px solid rgba(139, 107, 74, 0.2);
+            border-radius: 25px;
+            padding: 60px;
+            width: 100%;
+            max-width: 700px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .register-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(139, 107, 74, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            transform: translate(50%, -50%);
+        }
+
+        /* Progress Bar */
+        .progress {
+            height: 8px;
+            background: var(--medium-grey);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 40px;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, var(--brown) 0%, var(--light-brown) 100%);
+            transition: width 0.6s ease;
+        }
+
+        /* Step Headers */
+        .step-header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-header h4 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .step-header h4 i {
+            color: var(--light-brown);
+        }
+
+        /* Role Indicator */
+        .selected-role-indicator {
+            margin-bottom: 20px;
+        }
+
+        .selected-role-indicator .alert {
+            background: rgba(139, 107, 74, 0.1) !important;
+            border: 1px solid var(--brown) !important;
+            color: var(--lighter-grey);
+            padding: 12px 20px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .selected-role-indicator strong {
+            color: var(--light-brown);
+            font-size: 1.1rem;
+        }
+
+        /* Form Styling */
+        .form-label {
+            color: var(--lighter-grey);
+            font-weight: 500;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+
+        .form-control, .form-select {
+            background: var(--medium-grey);
+            border: 1px solid rgba(139, 107, 74, 0.3);
+            color: var(--white);
+            padding: 12px 15px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background: var(--black);
+            border-color: var(--brown);
+            box-shadow: 0 0 0 3px rgba(139, 107, 74, 0.1);
+            color: var(--white);
+            outline: none;
+        }
+
+        .form-control::placeholder {
+            color: var(--light-grey);
+        }
+
+        .input-group {
+            position: relative;
+            display: flex;
+            align-items: stretch;
+        }
+
+        .input-group-text {
+            background: var(--medium-grey);
+            border: 1px solid rgba(139, 107, 74, 0.3);
+            border-right: none;
+            color: var(--light-brown);
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            border-radius: 8px 0 0 8px;
+        }
+
+        .input-group .form-control {
+            border-left: none;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .btn-outline-secondary {
+            background: var(--medium-grey);
+            border: 1px solid rgba(139, 107, 74, 0.3);
+            border-left: none;
+            color: var(--light-grey);
+            padding: 12px 15px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .btn-outline-secondary:hover {
+            background: var(--black);
+            border-color: var(--brown);
+            color: var(--light-brown);
+        }
+
+        /* Account Type Cards */
+        .account-type-card {
+            background: var(--medium-grey);
+            border: 2px solid transparent;
+            border-radius: 15px;
+            padding: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .account-type-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at top right, rgba(139, 107, 74, 0.1) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .account-type-card:hover::before {
+            opacity: 1;
+        }
+
+        .account-type-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(139, 107, 74, 0.5);
+        }
+
+        .account-type-card.selected {
+            border-color: var(--brown) !important;
+            background: var(--black);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(139, 107, 74, 0.3);
+        }
+
+        .account-type-card i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .account-type-card h5 {
+            color: var(--white);
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .account-type-card p {
+            color: var(--light-grey);
+            margin-bottom: 20px;
+        }
+
+        .account-type-card .features {
+            text-align: left;
+        }
+
+        .account-type-card .features i {
+            font-size: 1rem;
+            color: var(--light-brown);
+            margin-right: 5px;
+            display: inline;
+        }
+
+        /* Checkboxes */
+        .form-check-input {
+            background-color: var(--medium-grey);
+            border: 1px solid rgba(139, 107, 74, 0.3);
+            width: 20px;
+            height: 20px;
+            margin-top: 2px;
+        }
+
+        .form-check-input:checked {
+            background-color: var(--brown);
+            border-color: var(--brown);
+        }
+
+        .form-check-label {
+            color: var(--lighter-grey);
+            margin-left: 5px;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: var(--brown);
+            border: none;
+            color: var(--white);
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(139, 107, 74, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: var(--light-brown);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(139, 107, 74, 0.4);
+        }
+
+        .btn-outline-secondary {
+            background: transparent;
+            border: 2px solid var(--medium-grey);
+            color: var(--lighter-grey);
+        }
+
+        .btn-outline-secondary:hover {
+            background: var(--medium-grey);
+            border-color: var(--brown);
+            color: var(--white);
+        }
+
+        .btn-success {
+            background: var(--light-brown);
+            border: none;
+            color: var(--white);
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(166, 124, 82, 0.3);
+        }
+
+        .btn-success:hover {
+            background: var(--brown);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(139, 107, 74, 0.4);
+        }
+
+        /* Right Side - Features */
+        .features-section {
+            background: linear-gradient(135deg, var(--dark-grey) 0%, var(--medium-grey) 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Animated Background Pattern */
+        .features-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(139, 107, 74, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(166, 124, 82, 0.1) 0%, transparent 50%);
+            animation: float-bg 20s ease-in-out infinite;
+        }
+
+        @keyframes float-bg {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-20px, 20px); }
+        }
+
+        .features-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 50px;
+        }
+
+        .features-content h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--white) 0%, var(--light-brown) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .feature-highlight {
+            background: rgba(45, 45, 45, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(139, 107, 74, 0.2);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .feature-highlight:hover {
+            transform: translateX(-10px);
+            border-color: var(--brown);
+            background: rgba(45, 45, 45, 0.7);
+        }
+
+        .feature-highlight i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .feature-highlight h5 {
+            color: var(--white);
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        /* Statistics */
+        .stats-container {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 50px;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-item h3 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--light-brown);
+            margin-bottom: 5px;
+        }
+
+        .stat-item small {
+            color: var(--lighter-grey);
+            font-size: 0.9rem;
+        }
+
+        /* Links */
+        a {
+            color: var(--light-brown);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--brown);
+        }
+
+        /* Alert Messages */
+        .alert {
+            border: none;
+            border-radius: 10px;
+            padding: 15px 20px;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+
+        .alert-danger {
+            background: rgba(220, 38, 38, 0.1);
+            color: #dc2626;
+            border: 1px solid rgba(220, 38, 38, 0.2);
+        }
+
+        .alert-success {
+            background: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        /* Form Text */
+        .form-text {
+            color: var(--light-grey);
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+
+        /* Navigation Link */
+        .auth-link {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .auth-link p {
+            color: var(--light-grey);
+            margin-bottom: 0;
+        }
+
+        .auth-link a {
+            color: var(--light-brown);
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .auth-link a:hover {
+            color: var(--brown);
+        }
+
+        /* Logo Link */
+        .logo-link {
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .logo-link h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--white) 0%, var(--light-brown) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+            transition: transform 0.3s ease;
+        }
+
+        .logo-link:hover h1 {
+            transform: scale(1.05);
+        }
+
+        /* Step Animation */
+        .registration-step {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .features-section {
+                display: none;
+            }
+
+            .register-container {
+                max-width: 600px;
+                padding: 40px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .register-container {
+                padding: 30px 20px;
+                margin: 20px;
+            }
+
+            .step-header h4 {
+                font-size: 1.5rem;
+            }
+
+            .account-type-card {
+                padding: 20px;
+            }
+
+            .btn-primary, .btn-success {
+                padding: 12px 25px;
+                font-size: 1rem;
+            }
+        }
+
+        /* Loading state */
+        .fa-spinner {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row min-vh-100">
+            <!-- Left Side - Registration Form -->
+            <div class="col-lg-7 register-section">
+                <div class="register-container">
+                    <div class="text-center">
+                        <a href="index.html" class="logo-link">
+                            <h1>
+                                <i class="fas fa-wave-square"></i> ChangeWave
+                            </h1>
+                        </a>
+                        <h2 class="fw-bold text-white mb-2">Join the Movement</h2>
+                        <p class="text-muted mb-4">Choose your role and start making an impact today</p>
+                    </div>
+
+                    <!-- Registration Progress -->
+                    <div class="progress">
+                        <div class="progress-bar" role="progressbar" style="width: 33%" id="progressBar"></div>
+                    </div>
+
+                    <!-- Error/Success Messages -->
+                    <div id="registerError" class="alert alert-danger d-none"></div>
+                    <div id="registerSuccess" class="alert alert-success d-none"></div>
+
+                    <form id="registerForm">
+                        <!-- Step 1: Account Type -->
+                        <div class="registration-step" id="step1">
+                            <div class="step-header">
+                                <h4><i class="fas fa-user-tag"></i> Choose Your Role</h4>
+                            </div>
+
+                            <div class="row g-4 mb-4">
+                                <div class="col-md-6">
+                                    <div class="account-type-card" onclick="selectAccountType('participant', event)">
+                                        <i class="fas fa-heart text-warning"></i>
+                                        <h5>Participant</h5>
+                                        <p>Join campaigns, make impact, and support causes you care about</p>
+                                        <div class="features">
+                                            <small>
+                                                <i class="fas fa-check"></i> Browse campaigns<br>
+                                                <i class="fas fa-check"></i> Join movements<br>
+                                                <i class="fas fa-check"></i> Earn badges<br>
+                                                <i class="fas fa-check"></i> Share campaigns
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="account-type-card" onclick="selectAccountType('campaign_manager', event)">
+                                        <i class="fas fa-megaphone text-info"></i>
+                                        <h5>Campaign Manager</h5>
+                                        <p>Create and manage campaigns to drive social change</p>
+                                        <div class="features">
+                                            <small>
+                                                <i class="fas fa-check"></i> Create campaigns<br>
+                                                <i class="fas fa-check"></i> Track analytics<br>
+                                                <i class="fas fa-check"></i> Manage participants<br>
+                                                <i class="fas fa-check"></i> Measure impact
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <input type="hidden" id="accountType" name="role" required>
+
+                            <div class="d-grid">
+                                <button type="button" class="btn btn-primary btn-lg" onclick="nextStep(2)">
+                                    Continue <i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Basic Information -->
+                        <div class="registration-step" id="step2" style="display: none;">
+                            <div class="selected-role-indicator" id="roleIndicator" style="display: none;">
+                                <div class="alert">
+                                    <i class="fas fa-info-circle"></i> Registering as: <strong id="selectedRoleText"></strong>
+                                </div>
+                            </div>
+
+                            <div class="step-header">
+                                <h4><i class="fas fa-user-circle"></i> Basic Information</h4>
+                            </div>
+
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <label for="firstName" class="form-label">First Name *</label>
+                                    <input type="text" class="form-control" id="firstName" name="firstName" 
+                                           placeholder="Enter your first name" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="lastName" class="form-label">Last Name *</label>
+                                    <input type="text" class="form-control" id="lastName" name="lastName" 
+                                           placeholder="Enter your last name" required>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="email" class="form-label">Email Address *</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-envelope"></i>
+                                    </span>
+                                    <input type="email" class="form-control" id="email" name="email" 
+                                           placeholder="Enter your email" required>
+                                </div>
+                                <div class="form-text">We'll send you a verification email</div>
+                            </div>
+
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <label for="password" class="form-label">Password *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-lock"></i>
+                                        </span>
+                                        <input type="password" class="form-control" id="password" name="password" 
+                                               placeholder="Create password" required>
+                                        <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('password')">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                    <div class="form-text">At least 8 characters with numbers and symbols</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="confirmPassword" class="form-label">Confirm Password *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-lock"></i>
+                                        </span>
+                                        <input type="password" class="form-control" id="confirmPassword" 
+                                               name="confirmPassword" placeholder="Confirm password" required>
+                                        <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('confirmPassword')">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-3">
+                                <button type="button" class="btn btn-outline-secondary btn-lg" onclick="prevStep(1)">
+                                    <i class="fas fa-arrow-left"></i> Back
+                                </button>
+                                <button type="button" class="btn btn-primary btn-lg flex-fill" onclick="nextStep(3)">
+                                    Continue <i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Additional Information -->
+                        <div class="registration-step" id="step3" style="display: none;">
+                            <div class="selected-role-indicator" id="roleIndicator2" style="display: none;">
+                                <div class="alert">
+                                    <i class="fas fa-info-circle"></i> Registering as: <strong id="selectedRoleText2"></strong>
+                                </div>
+                            </div>
+
+                            <div class="step-header">
+                                <h4><i class="fas fa-info-circle"></i> Additional Information</h4>
+                            </div>
+
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <label for="phone" class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-control" id="phone" name="phone" 
+                                           placeholder="+1-234-567-8900">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="location" class="form-label">Location</label>
+                                    <select class="form-select" id="location" name="location">
+                                        <option value="">Select Location</option>
+                                        <option value="New York">New York</option>
+                                        <option value="Los Angeles">Los Angeles</option>
+                                        <option value="Chicago">Chicago</option>
+                                        <option value="Houston">Houston</option>
+                                        <option value="Phoenix">Phoenix</option>
+                                        <option value="Philadelphia">Philadelphia</option>
+                                        <option value="San Antonio">San Antonio</option>
+                                        <option value="San Diego">San Diego</option>
+                                        <option value="Dallas">Dallas</option>
+                                        <option value="San Jose">San Jose</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label">Areas of Interest</label>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" value="climate" id="interest1">
+                                            <label class="form-check-label" for="interest1">Climate Action</label>
+                                        </div>
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" value="health" id="interest2">
+                                            <label class="form-check-label" for="interest2">Health Awareness</label>
+                                        </div>
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" value="education" id="interest3">
+                                            <label class="form-check-label" for="interest3">Education</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" value="social" id="interest4">
+                                            <label class="form-check-label" for="interest4">Social Justice</label>
+                                        </div>
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" value="poverty" id="interest5">
+                                            <label class="form-check-label" for="interest5">Poverty Alleviation</label>
+                                        </div>
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" value="animal" id="interest6">
+                                            <label class="form-check-label" for="interest6">Animal Welfare</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" value="community" id="interest7">
+                                            <label class="form-check-label" for="interest7">Community Development</label>
+                                        </div>
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" value="technology" id="interest8">
+                                            <label class="form-check-label" for="interest8">Technology for Good</label>
+                                        </div>
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" value="arts" id="interest9">
+                                            <label class="form-check-label" for="interest9">Arts & Culture</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Campaign Manager specific fields -->
+                            <div id="campaignManagerFields" style="display: none;">
+                                <div class="mb-4">
+                                    <label for="organization" class="form-label">Organization Name</label>
+                                    <input type="text" class="form-control" id="organization" name="organization" 
+                                           placeholder="Enter your organization name">
+                                </div>
+                                <div class="mb-4">
+                                    <label for="bio" class="form-label">Brief Bio</label>
+                                    <textarea class="form-control" id="bio" name="bio" rows="3" 
+                                              placeholder="Tell us about yourself and your mission"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="agreeTerms" required>
+                                    <label class="form-check-label" for="agreeTerms">
+                                        I agree to the <a href="#" target="_blank">Terms of Service</a> 
+                                        and <a href="#" target="_blank">Privacy Policy</a> *
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="emailUpdates" name="emailUpdates">
+                                    <label class="form-check-label" for="emailUpdates">
+                                        I want to receive email updates about campaigns and platform news
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-3">
+                                <button type="button" class="btn btn-outline-secondary btn-lg" onclick="prevStep(2)">
+                                    <i class="fas fa-arrow-left"></i> Back
+                                </button>
+                                <button type="submit" class="btn btn-success btn-lg flex-fill">
+                                    <i class="fas fa-user-plus"></i> Create Account
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="auth-link">
+                        <p>Already have an account? 
+                            <a href="login.html">Sign In</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side - Features Showcase -->
+            <div class="col-lg-5 features-section d-none d-lg-block">
+                <div class="features-content">
+                    <h1 class="mb-4">Start Your Impact Journey</h1>
+                    <p class="lead mb-5 text-light">Join thousands of changemakers creating viral campaigns for social good</p>
+                    
+                    <!-- Feature Cards -->
+                    <div class="row g-4">
+                        <div class="col-12">
+                            <div class="feature-highlight">
+                                <i class="fas fa-rocket text-warning"></i>
+                                <h5>Launch Campaigns</h5>
+                                <p class="mb-0 small text-light">Create impactful campaigns with our easy-to-use tools</p>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="feature-highlight">
+                                <i class="fas fa-chart-bar text-info"></i>
+                                <h5>Track Impact</h5>
+                                <p class="mb-0 small text-light">Measure your real-world impact with advanced analytics</p>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="feature-highlight">
+                                <i class="fas fa-users text-success"></i>
+                                <h5>Build Community</h5>
+                                <p class="mb-0 small text-light">Connect with like-minded people who share your passion</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Statistics -->
+                    <div class="stats-container">
+                        <div class="stat-item">
+                            <h3>50K+</h3>
+                            <small>Active Users</small>
+                        </div>
+                        <div class="stat-item">
+                            <h3>1M+</h3>
+                            <small>Lives Impacted</small>
+                        </div>
+                        <div class="stat-item">
+                            <h3>500+</h3>
+                            <small>Campaigns</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/common/auth.js"></script>
+    <script>
+        let currentStep = 1;
+
+        // Toggle password visibility
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const button = input.nextElementSibling;
+            const icon = button.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        // Navigate to next step
+        function nextStep(step) {
+            if (validateCurrentStep()) {
+                document.getElementById(`step${currentStep}`).style.display = 'none';
+                document.getElementById(`step${step}`).style.display = 'block';
+                currentStep = step;
+                updateProgressBar();
+                
+                // Show role indicator on steps 2 and 3
+                if (step === 2) {
+                    document.getElementById('roleIndicator').style.display = 'block';
+                } else if (step === 3) {
+                    document.getElementById('roleIndicator2').style.display = 'block';
+                    // Show campaign manager fields if campaign_manager is selected
+                    if (document.getElementById('accountType').value === 'campaign_manager') {
+                        document.getElementById('campaignManagerFields').style.display = 'block';
+                    }
+                }
+            }
+        }
+
+        // Navigate to previous step
+        function prevStep(step) {
+            document.getElementById(`step${currentStep}`).style.display = 'none';
+            document.getElementById(`step${step}`).style.display = 'block';
+            currentStep = step;
+            updateProgressBar();
+        }
+
+        // Update progress bar
+        function updateProgressBar() {
+            const progress = (currentStep / 3) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        // Validate current step
+        function validateCurrentStep() {
+            switch (currentStep) {
+                case 1:
+                    return validateStep1();
+                case 2:
+                    return validateStep2();
+                case 3:
+                    return validateStep3();
+                default:
+                    return true;
+            }
+        }
+
+        // Validate Step 1 (Account Type)
+        function validateStep1() {
+            const accountType = document.getElementById('accountType').value;
+            if (!accountType) {                showAlert('Please select an account type', 'danger');
+                return false;
+            }
+            return true;
+        }
+
+        // Validate Step 2 (Basic Information)
+        function validateStep2() {
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (!firstName || !lastName || !email || !password || !confirmPassword) {
+                showAlert('Please fill in all required fields', 'danger');
+                return false;
+            }
+
+            // Validate email format
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showAlert('Please enter a valid email address', 'danger');
+                return false;
+            }
+
+            // Validate password
+            if (password.length < 8) {
+                showAlert('Password must be at least 8 characters long', 'danger');
+                return false;
+            }
+
+            // Check password strength
+            const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*])/;
+            if (!passwordRegex.test(password)) {
+                showAlert('Password must contain at least one number and one special character', 'danger');
+                return false;
+            }
+
+            if (password !== confirmPassword) {
+                showAlert('Passwords do not match', 'danger');
+                return false;
+            }
+
+            return true;
+        }
+
+        // Validate Step 3
+        function validateStep3() {
+            const agreeTerms = document.getElementById('agreeTerms').checked;
+            if (!agreeTerms) {
+                showAlert('Please agree to the terms and conditions', 'danger');
+                return false;
+            }
+            return true;
+        }
+
+        // Select account type with event parameter fix
+        function selectAccountType(type, event) {
+            // Remove active class from all cards
+            document.querySelectorAll('.account-type-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Add active class to clicked card
+            if (event && event.currentTarget) {
+                event.currentTarget.classList.add('selected');
+            }
+            
+            // Set the account type value
+            document.getElementById('accountType').value = type;
+            
+            // Update role indicator for next steps
+            const roleText = type === 'campaign_manager' ? 'Campaign Manager' : 'Participant';
+            document.getElementById('selectedRoleText').textContent = roleText;
+            document.getElementById('selectedRoleText2').textContent = roleText;
+        }
+
+        // Show alert messages
+        function showAlert(message, type) {
+            const alertDiv = type === 'danger' ? document.getElementById('registerError') : document.getElementById('registerSuccess');
+            const otherDiv = type === 'danger' ? document.getElementById('registerSuccess') : document.getElementById('registerError');
+            
+            alertDiv.textContent = message;
+            alertDiv.classList.remove('d-none');
+            otherDiv.classList.add('d-none');
+            
+            // Scroll to top to show message
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            setTimeout(() => {
+                alertDiv.classList.add('d-none');
+            }, 5000);
+        }
+
+        // Form submission
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (!validateCurrentStep()) {
+                return;
+            }
+
+            // Show loading state
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
+            submitBtn.disabled = true;
+
+            // Collect form data
+            const formData = new FormData(this);
+            
+            // Collect interests
+            const interests = [];
+            document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+                if (checkbox.value && !['agreeTerms', 'emailUpdates'].includes(checkbox.id)) {
+                    interests.push(checkbox.value);
+                }
+            });
+
+            // Build user data object
+            const userData = {
+                name: `${formData.get('firstName')} ${formData.get('lastName')}`,
+                email: formData.get('email'),
+                password: formData.get('password'),
+                role: formData.get('role'),
+                phone: formData.get('phone') || '',
+                location: formData.get('location') || '',
+                organization: formData.get('organization') || '',
+                bio: formData.get('bio') || '',
+                interests: interests,
+                emailUpdates: formData.get('emailUpdates') === 'on'
+            };
+
+            try {
+                const response = await fetch('http://localhost:3000/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(userData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showAlert('Account created successfully! Redirecting to login...', 'success');
+                    
+                    // Clear form
+                    this.reset();
+                    
+                    // Redirect to login after 2 seconds
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                } else {
+                    showAlert(data.message || 'Registration failed. Please try again.', 'danger');
+                }
+            } catch (error) {
+                console.error('Registration error:', error);
+                showAlert('An error occurred during registration. Please try again.', 'danger');
+            } finally {
+                // Reset button state
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set initial progress
+            updateProgressBar();
+            
+            // Add enter key support for form fields
+            document.querySelectorAll('input').forEach(input => {
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter' && e.target.type !== 'submit') {
+                        e.preventDefault();
+                        const nextButton = document.querySelector(`#step${currentStep} button[onclick*="nextStep"]`);
+                        if (nextButton) {
+                            nextButton.click();
+                        }
+                    }
+                });
+            });
+
+            // Add animation to feature cards on the right side
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateX(0)';
+                    }
+                });
+            }, observerOptions);
+
+            // Observe feature highlights
+            document.querySelectorAll('.feature-highlight').forEach((el, index) => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateX(50px)';
+                el.style.transition = `all 0.6s ease ${index * 0.2}s`;
+                observer.observe(el);
+            });
+        });
+
+        // Add smooth scroll behavior
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Tab') {
+                // Allow normal tab behavior
+                return;
+            }
+            
+            if (e.key === 'ArrowRight' && currentStep < 3) {
+                const nextButton = document.querySelector(`#step${currentStep} button[onclick*="nextStep"]`);
+                if (nextButton && !nextButton.disabled) {
+                    nextButton.click();
+                }
+            } else if (e.key === 'ArrowLeft' && currentStep > 1) {
+                const prevButton = document.querySelector(`#step${currentStep} button[onclick*="prevStep"]`);
+                if (prevButton) {
+                    prevButton.click();
+                }
+            }
+        });
+
+        // Add hover effect to account type cards
+        document.querySelectorAll('.account-type-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                if (!this.classList.contains('selected')) {
+                    this.style.transform = 'translateY(-5px)';
+                }
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                if (!this.classList.contains('selected')) {
+                    this.style.transform = 'translateY(0)';
+                }
+            });
+        });
+
+        // Fix for form-select styling in dark theme
+        document.querySelectorAll('.form-select').forEach(select => {
+            select.addEventListener('change', function() {
+                if (this.value) {
+                    this.style.color = 'var(--white)';
+                } else {
+                    this.style.color = 'var(--light-grey)';
+                }
+            });
+        });
+
+        // Password strength indicator
+        document.getElementById('password').addEventListener('input', function(e) {
+            const password = e.target.value;
+            const strengthText = e.target.parentElement.nextElementSibling;
+            
+            if (password.length === 0) {
+                strengthText.textContent = 'At least 8 characters with numbers and symbols';
+                strengthText.style.color = 'var(--light-grey)';
+            } else if (password.length < 8) {
+                strengthText.textContent = 'Password must be at least 8 characters';
+                strengthText.style.color = '#dc2626';
+            } else if (!/(?=.*[0-9])(?=.*[!@#$%^&*])/.test(password)) {
+                strengthText.textContent = 'Add numbers and special characters for stronger security';
+                strengthText.style.color = '#fbbf24';
+            } else {
+                strengthText.textContent = 'Strong password ✓';
+                strengthText.style.color = '#10b981';
+            }
+        });
+
+        // Confirm password validation
+        document.getElementById('confirmPassword').addEventListener('input', function(e) {
+            const password = document.getElementById('password').value;
+            const confirmPassword = e.target.value;
+            
+            if (confirmPassword && password !== confirmPassword) {
+                e.target.setCustomValidity('Passwords do not match');
+                e.target.classList.add('is-invalid');
+            } else {
+                e.target.setCustomValidity('');
+                e.target.classList.remove('is-invalid');
+            }
+        });
+
+        // Auto-focus on first input of current step
+        function focusFirstInput() {
+            const firstInput = document.querySelector(`#step${currentStep} input:not([type="hidden"])`);
+            if (firstInput) {
+                setTimeout(() => firstInput.focus(), 300);
+            }
+        }
+
+        // Enhanced account type selection with keyboard support
+        document.querySelectorAll('.account-type-card').forEach((card, index) => {
+            card.setAttribute('tabindex', '0');
+            card.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    this.click();
+                }
+            });
+        });
+
+        // Role-based field visibility
+        document.getElementById('accountType').addEventListener('change', function() {
+            const campaignManagerFields = document.getElementById('campaignManagerFields');
+            if (this.value === 'campaign_manager' && currentStep === 3) {
+                campaignManagerFields.style.display = 'block';
+            } else {
+                campaignManagerFields.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

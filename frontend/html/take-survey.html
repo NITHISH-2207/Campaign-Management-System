@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Take Surveys - ChangeWave</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Remove or comment out these CSS links that are overriding the dark theme -->
+    <!-- <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/surveys.css"> -->
+    
+    <!-- Only keep navbar CSS -->
+    <link rel="stylesheet" href="../css/navbar.css">
+    
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --black: #0a0a0a;
+            --dark-grey: #1a1a1a;
+            --medium-grey: #2d2d2d;
+            --light-grey: #6b6b6b;
+            --lighter-grey: #e5e5e5;
+            --white: #ffffff;
+            --brown: #8B6B4A;
+            --light-brown: #A67C52;
+            --gradient-primary: linear-gradient(135deg, var(--brown) 0%, var(--light-brown) 100%);
+            --gradient-info: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%);
+        }
+
+        /* Force dark theme on body */
+        body {
+            font-family: 'Inter', sans-serif !important;
+            background-color: var(--black) !important;
+            color: var(--white) !important;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Background effect */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(139, 107, 74, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(107, 68, 35, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Main container */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 100px 40px 80px;
+            min-height: calc(100vh - 80px);
+            position: relative;
+        }
+
+        /* Page header */
+        .page-header {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .page-header h1 {
+            font-size: 48px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--white) 0%, var(--light-brown) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        .page-header p {
+            font-size: 20px;
+            color: var(--lighter-grey);
+            font-weight: 400;
+        }
+
+        /* Survey tabs */
+        .survey-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 60px;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .tab-btn {
+            padding: 12px 32px;
+            border: 2px solid rgba(139, 107, 74, 0.2);
+            background: var(--dark-grey);
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--lighter-grey);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .tab-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            border-color: var(--brown);
+            background: rgba(139, 107, 74, 0.1);
+            color: var(--white);
+        }
+
+        .tab-btn.active {
+            background: var(--gradient-primary);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 8px 25px rgba(139, 107, 74, 0.4);
+        }
+
+        /* Content area - fixed alignment */
+        .content-wrapper {
+            max-width: 1000px;
+            margin: 0 auto;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+
+        /* Survey grid - fixed to 2 columns */
+        .surveys-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-bottom: 48px;
+            padding: 0 20px;
+        }
+
+        /* Survey card styling */
+        .survey-card {
+            background: var(--dark-grey) !important;
+            border: 1px solid rgba(139, 107, 74, 0.2) !important;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            color: var(--white) !important;
+        }
+
+        .survey-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: var(--gradient-primary);
+            border-radius: 20px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .survey-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+            border-color: var(--brown) !important;
+        }
+
+        .survey-card:hover::before {
+            opacity: 0.1;
+        }
+
+        /* Survey type badge */
+        .survey-type {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+        }
+
+        .survey-type.before {
+            background: rgba(33, 147, 176, 0.2);
+            color: #6dd5ed;
+        }
+
+        .survey-type.after {
+            background: rgba(139, 92, 246, 0.2);
+            color: #A78BFA;
+        }
+
+        /* Survey card content */
+        .survey-card h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--white) !important;
+            margin-bottom: 8px;
+        }
+
+        .survey-card p {
+            color: var(--lighter-grey) !important;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+
+        /* Survey meta */
+        .survey-meta {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: var(--lighter-grey) !important;
+        }
+
+        .survey-meta span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--lighter-grey) !important;
+        }
+
+        .survey-meta i {
+            color: var(--light-brown);
+        }
+
+        /* Action buttons */
+        .take-survey-btn {
+            width: 100%;
+            padding: 12px 24px;
+            background: var(--gradient-info);
+            color: white !important;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .take-survey-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(33, 147, 176, 0.4);
+        }
+
+        .completed-btn {
+            width: 100%;
+            padding: 12px 24px;
+            background: var(--medium-grey);
+            color: var(--lighter-grey) !important;
+            border: 1px solid rgba(139, 107, 74, 0.1);
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: not-allowed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .completed-btn i {
+            color: #10B981;
+        }
+
+        /* Empty state */
+        .empty-state {
+            grid-column: 1 / -1; /* Span full width */
+            text-align: center;
+            padding: 120px 40px;
+            background: var(--dark-grey);
+            border: 1px solid rgba(139, 107, 74, 0.2);
+            border-radius: 30px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .empty-state-icon {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 24px;
+            background: var(--medium-grey);
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .empty-state-icon i {
+            font-size: 48px;
+            color: var(--light-grey);
+            opacity: 0.7;
+        }
+
+        .empty-state h3 {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--lighter-grey);
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            color: var(--light-grey);
+            font-size: 16px;
+        }
+
+        /* Completed section */
+        .completed-section {
+            margin-top: 80px;
+            animation: fadeInUp 0.8s ease-out 0.6s both;
+        }
+
+        .completed-section h2 {
+            font-size: 32px;
+            font-weight: 600;
+            text-align: center;
+            color: var(--white);
+            margin-bottom: 40px;
+        }
+
+        .completed-list {
+            max-width: 700px;
+            margin: 0 auto;
+            display: grid;
+            gap: 16px;
+        }
+
+        .completed-item {
+            background: var(--dark-grey);
+            border: 1px solid rgba(139, 107, 74, 0.2);
+            padding: 24px;
+            border-radius: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .completed-item:hover {
+            transform: translateX(4px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+            border-color: var(--brown);
+        }
+
+        .completed-info h4 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--white);
+            margin-bottom: 4px;
+        }
+
+        .completed-info p {
+            color: var(--lighter-grey);
+            font-size: 14px;
+        }
+
+        .completed-date {
+            color: #10B981;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* Loading state */
+        .loading-surveys {
+            grid-column: 1 / -1; /* Span full width */
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 3px solid var(--medium-grey);
+            border-top: 3px solid var(--brown);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-surveys p {
+            color: var(--lighter-grey);
+            font-size: 16px;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .surveys-grid {
+                grid-template-columns: 1fr;
+                padding: 0 10px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 80px 20px 60px;
+            }
+            
+            .page-header h1 {
+                font-size: 36px;
+            }
+            
+            .page-header p {
+                font-size: 18px;
+            }
+            
+            .survey-tabs {
+                flex-wrap: wrap;
+            }
+            
+            .tab-btn {
+                flex: 1;
+                min-width: 120px;
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+            
+            .empty-state {
+                padding: 80px 20px;
+            }
+            
+            .completed-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .survey-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation will be loaded by navigation.js -->
+    <nav class="navbar"></nav>
+
+    <main class="main-content">
+        <div class="page-header">
+            <h1>Impact Surveys</h1>
+            <p>Help us measure the effectiveness of our campaigns</p>
+        </div>
+
+        <!-- Survey Tabs -->
+        <div class="survey-tabs">
+            <button class="tab-btn active" onclick="filterSurveys('all')">All Surveys</button>
+            <button class="tab-btn" onclick="filterSurveys('available')">Available</button>
+            <button class="tab-btn" onclick="filterSurveys('completed')">Completed</button>
+        </div>
+
+        <!-- Content wrapper for proper centering -->
+        <div class="content-wrapper">
+            <!-- Available Surveys -->
+            <div id="available-surveys">
+                <div class="surveys-grid" id="surveysGrid">
+                    <div class="loading-surveys">
+                        <div class="spinner"></div>
+                        <p>Loading surveys...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Completed Surveys -->
+            <div class="completed-section" id="completedSection" style="display: none;">
+                <h2>Completed Surveys</h2>
+                <div class="completed-list" id="completedList">
+                    <!-- Completed surveys will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../js/common/auth.js"></script>
+    <script src="../js/common/navigation.js"></script>
+    <script>
+        let allSurveys = [];
+        let currentFilter = 'all';
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            await loadSurveys();
+        });
+
+        async function loadSurveys() {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    showError('Please login to view surveys');
+                    return;
+                }
+
+                const response = await fetch('http://localhost:3000/api/surveys', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to load surveys');
+                }
+
+                const data = await response.json();
+                allSurveys = data.surveys || data;
+                displaySurveys();
+            } catch (error) {
+                console.error('Error loading surveys:', error);
+                showError('Unable to load surveys. Please try again later.');
+            }
+        }
+
+        function displaySurveys() {
+            const available = allSurveys.filter(s => !s.completed);
+            const completed = allSurveys.filter(s => s.completed);
+            
+            let surveysToShow = [];
+            
+            switch(currentFilter) {
+                case 'available':
+                    surveysToShow = available;
+                    document.getElementById('completedSection').style.display = 'none';
+                    break;
+                case 'completed':
+                    surveysToShow = [];
+                    document.getElementById('completedSection').style.display = 'block';
+                    displayCompletedSurveys(completed);
+                    break;
+                default:
+                    surveysToShow = available;
+                    document.getElementById('completedSection').style.display = completed.length > 0 ? 'block' : 'none';
+                    if (completed.length > 0) {
+                        displayCompletedSurveys(completed);
+                    }
+            }
+            
+            const grid = document.getElementById('surveysGrid');
+            
+            if (surveysToShow.length === 0 && currentFilter !== 'completed') {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <h3>No available surveys</h3>
+                        <p>Check back later for new surveys to participate in</p>
+                    </div>
+                `;
+            } else if (currentFilter !== 'completed') {
+                grid.innerHTML = surveysToShow.map(survey => createSurveyCard(survey)).join('');
+            } else {
+                grid.innerHTML = '';
+            }
+        }
+
+        function createSurveyCard(survey) {
+            const typeText = survey.type === 'before' ? 'Pre-Campaign' : 'Post-Campaign';
+            const questionCount = survey.questions ? survey.questions.length : 0;
+            const estimatedTime = Math.ceil(questionCount * 0.5);
+            
+            return `
+                <div class="survey-card">
+                    <span class="survey-type ${survey.type}">
+                        ${typeText}
+                    </span>
+                    <h3>${survey.title}</h3>
+                    <p>${survey.description || 'Share your thoughts and help us measure campaign impact'}</p>
+                    <div class="survey-meta">
+                        <span><i class="fas fa-list-check"></i> ${questionCount} questions</span>
+                        <span><i class="fas fa-clock"></i> ~${estimatedTime} minutes</span>
+                    </div>
+                    ${survey.completed ? 
+                        '<button class="completed-btn"><i class="fas fa-check-circle"></i> Completed</button>' :
+                        `<button class="take-survey-btn" onclick="takeSurvey('${survey._id}')">Take Survey</button>`
+                    }
+                </div>
+            `;
+        }
+
+        function displayCompletedSurveys(surveys) {
+            const list = document.getElementById('completedList');
+            
+            if (surveys.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <i class="fas fa-clipboard-check"></i>
+                        </div>
+                        <h3>No completed surveys yet</h3>
+                        <p>Complete surveys to see them here</p>
+                    </div>
+                `;
+            } else {
+                list.innerHTML = surveys.map(survey => `
+                    <div class="completed-item">
+                        <div class="completed-info">
+                            <h4>${survey.title}</h4>
+                            <p>${survey.type === 'before' ? 'Pre-Campaign' : 'Post-Campaign'} Survey • ${survey.questions?.length || 0} questions</p>
+                        </div>
+                        <div class="completed-date">
+                            Completed ${formatDate(survey.completedAt)}
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function filterSurveys(filter) {
+            currentFilter = filter;
+            
+            // Update active tab
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            displaySurveys();
+        }
+
+        function takeSurvey(surveyId) {
+            window.location.href = `take-survey.html?id=${surveyId}`;
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return 'Recently';
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffTime = Math.abs(now - date);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffDays === 0) return 'Today';
+            if (diffDays === 1) return 'Yesterday';
+            if (diffDays < 7) return `${diffDays} days ago`;
+            
+            return date.toLocaleDateString('en-US', { 
+                month: 'short', 
+                day: 'numeric', 
+                year: 'numeric' 
+            });
+        }
+
+        function showError(message) {
+            document.getElementById('surveysGrid').innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </div>
+                    <h3>Error</h3>
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>

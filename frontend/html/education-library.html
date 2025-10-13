@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Education Library - ChangeWave</title>
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --black: #0a0a0a;
+            --dark-grey: #1a1a1a;
+            --medium-grey: #2d2d2d;
+            --light-grey: #6b6b6b;
+            --lighter-grey: #e5e5e5;
+            --white: #ffffff;
+            --off-white: #f5f5f5;
+            --brown: #8B6B4A;
+            --light-brown: #A67C52;
+            --dark-brown: #6B4423;
+            --orange: #F97316;
+            --orange-light: #FB923C;
+            --purple: #8B5CF6;
+            --purple-light: #A78BFA;
+            --gradient-primary: linear-gradient(135deg, var(--brown) 0%, var(--light-brown) 100%);
+            --gradient-success: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            --gradient-warning: linear-gradient(135deg, var(--orange) 0%, var(--orange-light) 100%);
+            --gradient-info: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--black);
+            color: var(--white);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Navigation - Remove old nav styling */
+        .navbar {
+            /* Will be styled by navbar.css */
+        }
+
+        /* Main Container */
+        .education-container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 120px 40px 80px;
+            position: relative;
+        }
+
+        /* Background Effect */
+        .education-container::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(139, 107, 74, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(107, 68, 35, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Header Section */
+        .education-header {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .education-header h1 {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--white) 0%, var(--light-brown) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .education-header p {
+            font-size: 20px;
+            color: var(--lighter-grey);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Search and Filter Section */
+        .search-filter-section {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 30px;
+            margin-bottom: 50px;
+            animation: fadeInUp 0.6s ease-out 0.1s;
+            animation-fill-mode: both;
+        }
+
+        .search-box {
+            position: relative;
+            background: var(--dark-grey);
+            border: 1px solid rgba(139, 107, 74, 0.2);
+            border-radius: 20px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .search-box:focus-within {
+            border-color: var(--brown);
+            box-shadow: 0 0 20px rgba(139, 107, 74, 0.2);
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 15px 25px;
+            border: none;
+            background: transparent;
+            color: var(--white);
+            font-size: 16px;
+            outline: none;
+        }
+
+        .search-box input::placeholder {
+            color: var(--light-grey);
+        }
+
+        .search-box button {
+            padding: 15px 25px;
+            background: var(--gradient-primary);
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .search-box button:hover {
+            transform: scale(1.1);
+        }
+
+        .filter-options select {
+            padding: 15px 25px;
+            background: var(--dark-grey);
+            border: 1px solid rgba(139, 107, 74, 0.2);
+            border-radius: 20px;
+            color: var(--white);
+            font-size: 16px;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .filter-options select:hover,
+        .filter-options select:focus {
+            border-color: var(--brown);
+        }
+
+        .filter-options select option {
+            background: var(--dark-grey);
+            color: var(--white);
+        }
+
+        /* Loading and Error States */
+        #loadingIndicator {
+            text-align: center;
+            padding: 80px 40px;
+            color: var(--lighter-grey);
+            font-size: 18px;
+        }
+
+        #errorMessage {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #EF4444;
+            padding: 20px 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 40px auto;
+            max-width: 600px;
+        }
+
+        /* Modules Grid */
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+            animation: fadeInUp 0.6s ease-out 0.3s;
+            animation-fill-mode: both;
+        }
+
+        /* Coming Soon Section */
+        .coming-soon {
+            text-align: center;
+            padding: 80px 40px;
+            background: var(--dark-grey);
+            border: 1px solid rgba(139, 107, 74, 0.2);
+            border-radius: 30px;
+            margin-top: 60px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            animation: fadeInUp 0.6s ease-out 0.4s;
+            animation-fill-mode: both;
+        }
+
+        .coming-soon::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(139, 107, 74, 0.1) 0%, transparent 70%);
+        }
+
+        .coming-soon h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+            background: linear-gradient(135deg, var(--white) 0%, var(--light-brown) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .coming-soon p {
+            font-size: 18px;
+            color: var(--lighter-grey);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Module Viewer Modal */
+        .module-viewer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .viewer-content {
+            background: var(--dark-grey);
+            border: 1px solid rgba(139, 107, 74, 0.2);
+            border-radius: 30px;
+            max-width: 1000px;
+            max-height: 90vh;
+            width: 100%;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.3s ease;
+        }
+
+        .close-viewer {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(139, 107, 74, 0.2);
+            border: 1px solid rgba(139, 107, 74, 0.3);
+            color: var(--white);
+            font-size: 28px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .close-viewer:hover {
+            background: var(--brown);
+            transform: rotate(90deg) scale(1.1);
+        }
+
+        #moduleContent {
+            padding: 60px 40px 40px;
+            color: var(--white);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+/* Module Card Styles */
+.module-card {
+    background: var(--dark-grey);
+    border: 1px solid rgba(139, 107, 74, 0.2);
+    border-radius: 25px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.module-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--brown);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+}
+
+.module-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: var(--gradient-primary);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+}
+
+.module-card:hover::before {
+    transform: scaleX(1);
+}
+
+/* Module Card Header */
+.module-card h3 {
+    font-size: 22px;
+    color: var(--white);
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.module-card p {
+    color: var(--lighter-grey);
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    flex-grow: 1;
+}
+
+/* Module Card Footer */
+.module-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 20px;
+    border-top: 1px solid rgba(139, 107, 74, 0.2);
+    margin-top: auto;
+}
+
+.module-meta {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.module-meta span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--lighter-grey);
+    font-size: 13px;
+}
+
+.module-meta i {
+    color: var(--brown);
+    font-size: 14px;
+}
+
+/* Module Tags */
+.module-tag {
+    padding: 5px 15px;
+    background: rgba(139, 107, 74, 0.2);
+    border-radius: 15px;
+    font-size: 12px;
+    color: var(--light-brown);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Module Progress Badge */
+.module-status {
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.module-status.new {
+    background: var(--gradient-info);
+    color: white;
+}
+
+.module-status.in-progress {
+    background: var(--gradient-warning);
+    color: white;
+}
+
+.module-status.completed {
+    background: var(--gradient-success);
+    color: white;
+}
+
+/* Module Button */
+.module-btn {
+    background: var(--gradient-primary);
+    color: white;
+    padding: 10px 25px;
+    border: none;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 15px;
+    width: 100%;
+    text-align: center;
+}
+
+.module-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(139, 107, 74, 0.3);
+}
+
+.module-btn.completed {
+    background: var(--medium-grey);
+    color: var(--lighter-grey);
+    cursor: not-allowed;
+}
+
+/* Module Icon/Image Area */
+.module-image {
+    width: 100%;
+    height: 150px;
+    background: linear-gradient(135deg, rgba(139, 107, 74, 0.2) 0%, rgba(167, 124, 82, 0.1) 100%);
+    border-radius: 15px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    color: var(--brown);
+    position: relative;
+    overflow: hidden;
+}
+
+.module-image::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.module-card:hover .module-image::after {
+    opacity: 1;
+}
+
+/* Module Progress Bar */
+.module-progress {
+    width: 100%;
+    height: 6px;
+    background: rgba(139, 107, 74, 0.2);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 15px;
+}
+
+.module-progress-bar {
+    height: 100%;
+    background: var(--gradient-primary);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+/* Module Difficulty Badge */
+.module-difficulty {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.module-difficulty.beginner {
+    color: #4ADE80;
+}
+
+.module-difficulty.intermediate {
+    color: var(--orange-light);
+}
+
+.module-difficulty.advanced {
+    color: #EF4444;
+}
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .education-container {
+                padding: 100px 30px 60px;
+            }
+
+            .modules-grid {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                gap: 25px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .education-container {
+                padding: 80px 20px 40px;
+            }
+
+            .education-header h1 {
+                font-size: 32px;
+            }
+
+            .education-header p {
+                font-size: 16px;
+            }
+
+            .search-filter-section {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .modules-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .coming-soon {
+                padding: 60px 30px;
+            }
+
+            .coming-soon h2 {
+                font-size: 28px;
+            }
+
+            .viewer-content {
+                margin: 20px;
+            }
+
+            #moduleContent {
+                padding: 40px 20px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation will be inserted by navigation.js -->
+    <nav class="navbar"></nav>
+
+    <!-- Main Content -->
+    <main class="education-container">
+        <!-- Header Section -->
+        <div class="education-header">
+            <h1>Educational Content Library</h1>
+            <p>Learn about important social causes through interactive modules and quizzes</p>
+        </div>
+
+        <!-- Search and Filter -->
+        <div class="search-filter-section">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search modules...">
+                <button onclick="searchModules()">🔍</button>
+            </div>
+            <div class="filter-options">
+                <select id="categoryFilter" onchange="filterModules()">
+                    <option value="">All Categories</option>
+                    <option value="climate">Climate Change</option>
+                    <option value="social">Social Justice</option>
+                    <option value="health">Health Awareness</option>
+                    <option value="education">Education</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Progress Overview -->
+        
+        <!-- Loading indicator -->
+        <div id="loadingIndicator" style="text-align: center; padding: 40px; display: none;">
+            <p>Loading modules...</p>
+        </div>
+
+        <!-- Error message container -->
+        <div id="errorMessage" style="display: none;"></div>
+
+        <!-- Education Modules Grid -->
+        <div class="modules-grid" id="modulesGrid">
+            <!-- Dynamic modules will be loaded here -->
+        </div>
+
+        <!-- Coming Soon Section -->
+        <div class="coming-soon">
+            <h2>More Modules Coming Soon!</h2>
+            <p>We're constantly adding new educational content. Check back regularly for updates.</p>
+        </div>
+    </main>
+
+    <!-- Module Viewer Modal (Hidden by default) -->
+    <div id="moduleViewer" class="module-viewer" style="display: none;">
+        <div class="viewer-content">
+            <button class="close-viewer" onclick="closeModule()">×</button>
+            <div id="moduleContent">
+                <!-- Dynamic content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/common/auth.js"></script>
+    <script src="../js/common/navigation.js"></script>
+    <script src="../js/education/library.js"></script>
+</body>
+</html>

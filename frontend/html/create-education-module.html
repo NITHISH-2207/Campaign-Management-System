@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Education Module - ChangeWave</title>
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --black: #0a0a0a;
+            --dark-grey: #1a1a1a;
+            --medium-grey: #2d2d2d;
+            --light-grey: #6b6b6b;
+            --lighter-grey: #e5e5e5;
+            --white: #ffffff;
+            --off-white: #f5f5f5;
+            --brown: #8B6B4A;
+            --light-brown: #A67C52;
+            --dark-brown: #6B4423;
+            --orange: #F97316;
+            --orange-light: #FB923C;
+            --purple: #8B5CF6;
+            --purple-light: #A78BFA;
+            --gradient-primary: linear-gradient(135deg, var(--brown) 0%, var(--light-brown) 100%);
+            --gradient-success: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            --gradient-warning: linear-gradient(135deg, var(--orange) 0%, var(--orange-light) 100%);
+            --gradient-info: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%);
+            --gradient-purple: linear-gradient(135deg, var(--purple) 0%, var(--purple-light) 100%);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--black);
+            color: var(--white);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Background Effect */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(107, 68, 35, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Module Builder Container */
+        .module-builder {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 120px 40px 80px;
+            position: relative;
+        }
+
+        /* Page Title */
+        h1 {
+            text-align: center;
+            margin-bottom: 50px;
+            font-size: 48px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--white) 0%, var(--purple-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        /* Form Sections */
+        .form-section, .content-editor, .quiz-section {
+            background: var(--dark-grey);
+            padding: 40px;
+            margin-bottom: 30px;
+            border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease-out both;
+        }
+
+        .form-section:nth-child(2) { animation-delay: 0.2s; }
+        .content-editor { animation-delay: 0.4s; }
+        .form-section:nth-child(4) { animation-delay: 0.6s; }
+        .quiz-section { animation-delay: 0.8s; }
+
+        .form-section::before,
+        .content-editor::before,
+        .quiz-section::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: var(--gradient-purple);
+            border-radius: 30px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .form-section:hover::before,
+        .content-editor:hover::before,
+        .quiz-section:hover::before {
+            opacity: 0.1;
+        }
+
+        .form-section:hover,
+        .content-editor:hover,
+        .quiz-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+        }
+
+        h2 {
+            color: var(--white);
+            margin-bottom: 30px;
+            font-size: 24px;
+            font-weight: 700;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        h2::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--gradient-purple);
+            border-radius: 2px;
+        }
+
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--white);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px 20px;
+            background: var(--medium-grey);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 15px;
+            font-size: 15px;
+            color: var(--white);
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--purple);
+            background: rgba(139, 92, 246, 0.05);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 92, 246, 0.2);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+
+        /* Editor Toolbar */
+        .editor-toolbar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+        }
+
+        .editor-btn {
+            padding: 12px 24px;
+            background: var(--medium-grey);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 15px;
+            cursor: pointer;
+            color: var(--lighter-grey);
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .editor-btn:hover {
+            background: rgba(139, 92, 246, 0.1);
+            border-color: var(--purple);
+            color: var(--white);
+            transform: translateY(-2px);
+        }
+
+        .editor-btn.active {
+            background: var(--gradient-purple);
+            color: white;
+            border-color: transparent;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 92, 246, 0.3);
+        }
+
+        /* Content Editor */
+        #contentEditor {
+            min-height: 400px;
+            background: var(--medium-grey);
+            border: 2px dashed rgba(139, 92, 246, 0.3);
+            border-radius: 20px;
+            padding: 25px;
+            color: var(--white);
+            font-size: 16px;
+            line-height: 1.8;
+            transition: all 0.3s ease;
+        }
+
+        #contentEditor:focus {
+            outline: none;
+            border-color: var(--purple);
+            background: rgba(139, 92, 246, 0.05);
+        }
+
+        #contentEditor[placeholder]:empty:before {
+            content: attr(placeholder);
+            color: var(--light-grey);
+        }
+
+        /* Resource Items */
+        .resource-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 20px;
+            background: var(--medium-grey);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 15px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+            animation: slideInLeft 0.3s ease-out;
+        }
+
+        .resource-item:hover {
+            background: rgba(139, 92, 246, 0.05);
+            transform: translateX(10px);
+        }
+
+        .resource-item input {
+            flex: 1;
+            background: var(--dark-grey);
+        }
+
+        .remove-btn {
+            background: rgba(249, 115, 22, 0.2);
+            color: var(--orange);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .remove-btn:hover {
+            background: var(--gradient-warning);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        /* Quiz Section Specific */
+        .quiz-section label {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            color: var(--lighter-grey);
+            font-size: 16px;
+        }
+
+        .quiz-section input[type="checkbox"] {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            accent-color: var(--purple);
+        }
+
+        #quizBuilder {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(139, 92, 246, 0.2);
+        }
+
+        /* Buttons */
+        .btn-secondary,
+        .btn-primary {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-secondary {
+            background: var(--gradient-info);
+            color: white;
+        }
+
+        .btn-primary {
+            background: var(--gradient-success);
+            color: white;
+        }
+
+        .btn-secondary:hover,
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 10px 30px rgba(17, 153, 142, 0.3);
+        }
+
+        /* Form Actions */
+        .form-actions {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 50px;
+            animation: fadeInUp 1s ease-out 1s both;
+        }
+
+        /* Content Type Sections */
+        .content-type {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Loading State */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        /* Quiz Question Styles */
+        .quiz-question {
+            background: var(--medium-grey);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            animation: slideInLeft 0.3s ease-out;
+        }
+
+        .quiz-question input,
+        .quiz-question textarea {
+            background: var(--dark-grey);
+            margin-bottom: 10px;
+        }
+
+        .quiz-options {
+            margin-top: 15px;
+        }
+
+        .quiz-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .quiz-option input[type="text"] {
+            flex: 1;
+            background: var(--dark-grey);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .module-builder {
+                padding: 100px 20px 60px;
+            }
+
+            h1 {
+                font-size: 32px;
+            }
+
+            .form-section,
+            .content-editor,
+            .quiz-section {
+                padding: 25px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .editor-toolbar {
+                flex-wrap: wrap;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .btn-secondary,
+            .btn-primary {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Icon additions */
+        .btn-secondary::before {
+            content: '\f06e';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+        }
+
+        .btn-primary::before {
+            content: '\f0c7';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation will be inserted by navigation.js -->
+    <nav class="navbar"></nav>
+
+    <main class="module-builder">
+        <h1>Create Education Module</h1>
+        
+        <form id="createModuleForm">
+            <div class="form-section">
+                <h2>Module Information</h2>
+                <div class="form-group">
+                    <label for="moduleTitle">Module Title</label>
+                    <input type="text" id="moduleTitle" placeholder="Enter an engaging module title" required>
+                </div>
+                <div class="form-group">
+                    <label for="moduleDescription">Description</label>
+                    <textarea id="moduleDescription" rows="3" placeholder="Describe what learners will gain from this module" required></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="moduleCategory">Category</label>
+                        <select id="moduleCategory" required>
+                            <option value="">Select Category</option>
+                            <option value="climate">Climate Change</option>
+                            <option value="social">Social Justice</option>
+                            <option value="health">Health Awareness</option>
+                            <option value="education">Education</option>
+                            <option value="environment">Environment</option>
+                            <option value="technology">Technology</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="moduleDifficulty">Difficulty</label>
+                        <select id="moduleDifficulty" required>
+                            <option value="">Select Level</option>
+                            <option value="beginner">Beginner</option>
+                            <option value="intermediate">Intermediate</option>
+                            <option value="advanced">Advanced</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="moduleDuration">Duration (minutes)</label>
+                        <input type="number" id="moduleDuration" min="5" max="180" value="30" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-editor">
+                <h2>Module Content</h2>
+                <div class="editor-toolbar">
+                    <button type="button" class="editor-btn active" onclick="switchContentType('text')">
+                        <i class="fas fa-file-alt"></i> Text Content
+                    </button>
+                    <button type="button" class="editor-btn" onclick="switchContentType('video')">
+                        <i class="fas fa-video"></i> Video
+                    </button>
+                    <button type="button" class="editor-btn" onclick="switchContentType('mixed')">
+                        <i class="fas fa-photo-video"></i> Mixed Media
+                    </button>
+                </div>
+                
+                <div id="textContent" class="content-type">
+                    <div id="contentEditor" contenteditable="true" placeholder="Enter your module content here. You can format text, add paragraphs, and create engaging educational content..."></div>
+                </div>
+                
+                <div id="videoContent" class="content-type" style="display: none;">
+                    <div class="form-group">
+                        <label for="videoUrl">Video URL</label>
+                        <input type="url" id="videoUrl" placeholder="https://youtube.com/watch?v=...">
+                    </div>
+                    <div class="form-group">
+                        <label for="videoDescription">Video Description</label>
+                        <textarea id="videoDescription" rows="3" placeholder="Provide context or summary for the video"></textarea>
+                    </div>
+                </div>
+                
+                <div id="mixedContent" class="content-type" style="display: none;">
+                    <div class="form-group">
+                        <label>Mixed Media Content</label>
+                        <p style="color: var(--light-grey); font-size: 14px;">Combine text, images, and videos for an engaging learning experience</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>Additional Resources</h2>
+                <div id="resourcesContainer"></div>
+                <button type="button" class="btn-secondary" onclick="addResource()">
+                    <i class="fas fa-plus"></i> Add Resource
+                </button>
+            </div>
+
+            <div class="quiz-section">
+                <h2>Add Quiz (Optional)</h2>
+                <label>
+                    <input type="checkbox" id="includeQuiz" onchange="toggleQuizBuilder()">
+                    Include a quiz at the end of this module
+                </label>
+                <div id="quizBuilder" style="display: none;">
+                    <div id="quizQuestionsContainer"></div>
+                    <button type="button" class="btn-secondary" onclick="addQuizQuestion()">
+                        <i class="fas fa-plus"></i> Add Quiz Question
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn-secondary" onclick="previewModule()">
+                     Preview
+                </button>
+                <button type="submit" class="btn-primary">
+                     Create Module
+                </button>
+            </div>
+        </form>
+    </main>
+
+    <script src="../js/common/auth.js"></script>
+    <script src="../js/common/navigation.js"></script>
+    <script src="../js/education/create-module.js"></script>
+    <script>
+        let resourceCount = 0;
+        let questionCount = 0;
+
+        function switchContentType(type) {
+            // Hide all content types
+            document.querySelectorAll('.content-type').forEach(el => el.style.display = 'none');
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.editor-btn').forEach(btn => btn.classList.remove('active'));
+            
+            // Show selected content type and activate button
+            if (type === 'text') {
+                document.getElementById('textContent').style.display = 'block';
+            } else if (type === 'video') {
+                document.getElementById('videoContent').style.display = 'block';
+            } else if (type === 'mixed') {
+                document.getElementById('mixedContent').style.display = 'block';
+            }
+            
+            // Activate the clicked button
+            event.target.closest('.editor-btn').classList.add('active');
+        }
+
+        function addResource() {
+            resourceCount++;
+            const container = document.getElementById('resourcesContainer');
+            const resourceDiv = document.createElement('div');
+            resourceDiv.className = 'resource-item';
+            resourceDiv.innerHTML = `
+                <i class="fas fa-link" style="color: var(--purple-light);"></i>
+                <input type="text" placeholder="Resource title" required>
+                <input type="url" placeholder="Resource URL" required>
+                <button type="button" class="remove-btn" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i> Remove
+                </button>
+            `;
+            container.appendChild(resourceDiv);
+        }
+
+        function toggleQuizBuilder() {
+            const quizBuilder = document.getElementById('quizBuilder');
+            const includeQuiz = document.getElementById('includeQuiz');
+            quizBuilder.style.display = includeQuiz.checked ? 'block' : 'none';
+        }
+
+        function addQuizQuestion() {
+            questionCount++;
+            const container = document.getElementById('quizQuestionsContainer');
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'quiz-question';
+            questionDiv.innerHTML = `
+                <h4 style="color: var(--white); margin-bottom: 15px;">Question ${questionCount}</h4>
+                <input type="text" placeholder="Enter your question" required style="width: 100%;">
+                <div class="quiz-options">
+                    <div class="quiz-option">
+                        <input type="radio" name="correct${questionCount}" required>
+                        <input type="text" placeholder="Option A" required>
+                    </div>
+                    <div class="quiz-option">
+                        <input type="radio" name="correct${questionCount}" required>
+                        <input type="text" placeholder="Option B" required>
+                    </div>
+                    <div class="quiz-option">
+                        <input type="radio" name="correct${questionCount}" required>
+                        <input type="text" placeholder="Option C" required>
+                    </div>
+                    <div class="quiz-option">
+                        <input type="radio" name="correct${questionCount}" required>
+                        <input type="text" placeholder="Option D" required>
+                    </div>
+                </div>
+                <button type="button" class="remove-btn" onclick="this.parentElement.remove()" style="margin-top: 15px;">
+                    <i class="fas fa-trash"></i> Remove Question
+                </button>
+            `;
+            container.appendChild(questionDiv);
+        }
+
+        function previewModule() {
+            // Add preview functionality
+            alert('Preview functionality will open in a modal window');
+        }
+
+        // Form submission
+        document.getElementById('createModuleForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            this.classList.add('loading');
+            
+            // Simulate API call
+            setTimeout(() => {
+                this.classList.remove('loading');
+                alert('Education module created successfully!');
+                // Redirect to education library
+                // window.location.href = 'education-library.html';
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
