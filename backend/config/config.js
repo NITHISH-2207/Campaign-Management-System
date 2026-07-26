@@ -5,7 +5,7 @@ module.exports = {
     jwtSecret: process.env.JWT_SECRET || 'default-secret-change-this',
     jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
     mongoUri: process.env.MONGODB_URI || 'mongodb://localhost:27017/changewave',
-    
+
     corsOptions: {
         origin: function (origin, callback) {
             // Allow requests with no origin (file://, mobile apps, curl, etc.)
@@ -13,7 +13,7 @@ module.exports = {
             const allowedOrigins = [
                 'http://localhost:5500',
                 'http://127.0.0.1:5500',
-                'http://localhost:3000',
+                'http://campaign-management-system-zquy.onrender.com',
                 'http://localhost:3001',
                 'http://127.0.0.1:3000'
             ];
@@ -25,11 +25,11 @@ module.exports = {
         },
         credentials: true
     },
-    
+
     uploadLimits: {
         fileSize: parseInt(process.env.MAX_FILE_SIZE) || 5 * 1024 * 1024
     },
-    
+
     // Email configuration
     email: {
         host: process.env.EMAIL_HOST || 'smtp.gmail.com',
@@ -38,7 +38,7 @@ module.exports = {
         pass: process.env.EMAIL_PASS,
         from: process.env.EMAIL_FROM || 'ChangeWave <noreply@changewave.com>'
     },
-    
+
     // Notification configuration
     notifications: {
         enabled: process.env.ENABLE_NOTIFICATIONS !== 'false',

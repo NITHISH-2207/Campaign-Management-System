@@ -2,7 +2,7 @@
 
 document.addEventListener('DOMContentLoaded', async () => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
-    
+
     // Check if user has access
     if (!['campaign_manager', 'admin'].includes(user.role)) {
         window.location.href = 'user-dashboard.html';
@@ -17,13 +17,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Initial load
     await loadDashboardData();
-    
+
     // Set up real-time updates
     startRealtimeUpdates();
-    
+
     // Set up date range change listener
     document.getElementById('dateRange').addEventListener('change', loadDashboardData);
-    
+
     // Load campaign-specific data if available
     const campaignId = new URLSearchParams(window.location.search).get('campaign');
     if (campaignId) {
@@ -34,15 +34,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function loadDashboardData() {
     try {
         showLoadingState(true);
-        
+
         const dateRange = document.getElementById('dateRange').value;
         const campaignId = new URLSearchParams(window.location.search).get('campaign');
-        
-        let url = `http://localhost:3000/api/analytics/dashboard?dateRange=${dateRange}`;
+
+        let url = `http://campaign-management-system-zquy.onrender.com/api/analytics/dashboard?dateRange=${dateRange}`;
         if (campaignId) {
             url += `&campaignId=${campaignId}`;
         }
-        
+
         const response = await fetch(url, {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -52,19 +52,19 @@ async function loadDashboardData() {
         if (!response.ok) throw new Error('Failed to load analytics');
 
         const { data } = await response.json();
-        
+
         // Update metrics with animation
         animateNumber('totalEngagement', data.totals.engagement);
         updateSentimentDisplay(data.sentiment);
         animateNumber('activeUsers', data.totals.uniqueUsers);
         animateNumber('campaignReach', data.totals.views);
-        
+
         // Update charts
         updateCharts(data);
-        
+
         // Update top posts table
         updateTopPostsTable(data.topPosts || []);
-        
+
     } catch (error) {
         console.error('Dashboard error:', error);
         showErrorMessage('Failed to load dashboard data');
@@ -76,20 +76,20 @@ async function loadDashboardData() {
 function animateNumber(elementId, targetValue) {
     const element = document.getElementById(elementId);
     if (!element) return;
-    
+
     const startValue = parseInt(element.textContent.replace(/,/g, '')) || 0;
     const duration = 1000; // 1 second
     const steps = 30;
     const stepValue = (targetValue - startValue) / steps;
     const stepDuration = duration / steps;
-    
+
     let currentValue = startValue;
     let currentStep = 0;
-    
+
     const interval = setInterval(() => {
         currentValue += stepValue;
         currentStep++;
-        
+
         if (currentStep >= steps) {
             element.textContent = formatNumber(targetValue);
             clearInterval(interval);
@@ -102,12 +102,12 @@ function animateNumber(elementId, targetValue) {
 function updateSentimentDisplay(sentiment) {
     const sentimentEl = document.getElementById('avgSentiment');
     const scoreEl = document.querySelector('.sentiment-score');
-    
+
     if (sentimentEl) {
         sentimentEl.textContent = sentiment.label.charAt(0).toUpperCase() + sentiment.label.slice(1);
         sentimentEl.className = `metric-value sentiment-${sentiment.label}`;
     }
-    
+
     if (scoreEl) {
         scoreEl.textContent = `${sentiment.overall}%`;
     }
@@ -116,17 +116,17 @@ function updateSentimentDisplay(sentiment) {
 function startRealtimeUpdates() {
     // Load realtime activity immediately
     loadRealtimeActivity();
-    
+
     // Then refresh every 5 seconds
     setInterval(loadRealtimeActivity, 5000);
-    
+
     // Refresh main dashboard every 30 seconds
     setInterval(loadDashboardData, 30000);
 }
 
 async function loadRealtimeActivity() {
     try {
-        const response = await fetch('http://localhost:3000/api/analytics/realtime', {
+        const response = await fetch('http://campaign-management-system-zquy.onrender.com/api/analytics/realtime', {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
@@ -136,9 +136,9 @@ async function loadRealtimeActivity() {
 
         const { activities } = await response.json();
         const feedContainer = document.getElementById('activityFeed');
-        
+
         if (!feedContainer) return;
-        
+
         feedContainer.innerHTML = activities.length > 0 ? activities.map(activity => `
             <div class="activity-item ${getActivityClass(activity)}">
                 <span class="activity-time">${getTimeAgo(activity.time)}</span>
@@ -151,7 +151,7 @@ async function loadRealtimeActivity() {
                 </span>
             </div>
         `).join('') : '<div class="no-activity">No recent activity</div>';
-        
+
         // Add fade-in animation for new items
         feedContainer.querySelectorAll('.activity-item').forEach((item, index) => {
             if (index < 3) { // Only animate first 3 items
@@ -182,10 +182,10 @@ function initializeCharts(data) {
         engagementChart = new Chart(engagementCtx.getContext('2d'), {
             type: 'line',
             data: {
-                labels: data.timeline.map(item => 
-                    new Date(item.date).toLocaleDateString('en-US', { 
-                        month: 'short', 
-                        day: 'numeric' 
+                labels: data.timeline.map(item =>
+                    new Date(item.date).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric'
                     })
                 ),
                 datasets: [{
@@ -273,9 +273,9 @@ function initializeCharts(data) {
                     },
                     tooltip: {
                         callbacks: {
-                            label: function(context) {
+                            label: function (context) {
                                 const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                const percentage = total > 0 ? 
+                                const percentage = total > 0 ?
                                     Math.round((context.parsed / total) * 100) : 0;
                                 return context.label + ': ' + percentage + '%';
                             }
@@ -290,10 +290,10 @@ function initializeCharts(data) {
 function updateExistingCharts(data) {
     // Update engagement chart
     if (engagementChart) {
-        engagementChart.data.labels = data.timeline.map(item => 
-            new Date(item.date).toLocaleDateString('en-US', { 
-                month: 'short', 
-                day: 'numeric' 
+        engagementChart.data.labels = data.timeline.map(item =>
+            new Date(item.date).toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric'
             })
         );
         engagementChart.data.datasets[0].data = data.timeline.map(item => item.engagement);
@@ -329,7 +329,7 @@ function updateTopPostsTable(posts) {
 
 async function loadSurveyImpact(campaignId) {
     try {
-        const response = await fetch(`http://localhost:3000/api/analytics/survey-impact/${campaignId}`, {
+        const response = await fetch(`http://campaign-management-system-zquy.onrender.com/api/analytics/survey-impact/${campaignId}`, {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
@@ -356,7 +356,7 @@ function formatNumber(num) {
 }
 async function loadSurveyImpact(campaignId) {
     try {
-        const response = await fetch(`http://localhost:3000/api/analytics/survey-impact/${campaignId}`, {
+        const response = await fetch(`http://campaign-management-system-zquy.onrender.com/api/analytics/survey-impact/${campaignId}`, {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
@@ -365,7 +365,7 @@ async function loadSurveyImpact(campaignId) {
         if (!response.ok) return;
 
         const impactData = await response.json();
-        
+
         // Use the chart functions
         window.chartFunctions.displayImpactMetrics(impactData);
         window.chartFunctions.createImpactCharts(impactData);
@@ -376,7 +376,7 @@ async function loadSurveyImpact(campaignId) {
 
 function getTimeAgo(date) {
     const seconds = Math.floor((new Date() - new Date(date)) / 1000);
-    
+
     const intervals = [
         { label: 'year', seconds: 31536000 },
         { label: 'month', seconds: 2592000 },
@@ -384,16 +384,16 @@ function getTimeAgo(date) {
         { label: 'hour', seconds: 3600 },
         { label: 'minute', seconds: 60 }
     ];
-    
+
     for (const interval of intervals) {
         const count = Math.floor(seconds / interval.seconds);
         if (count > 0) {
-            return count === 1 ? 
-                `${count} ${interval.label} ago` : 
+            return count === 1 ?
+                `${count} ${interval.label} ago` :
                 `${count} ${interval.label}s ago`;
         }
     }
-    
+
     return 'Just now';
 }
 
@@ -449,7 +449,7 @@ function showErrorMessage(message) {
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     `;
     document.body.appendChild(notification);
-    
+
     setTimeout(() => {
         notification.remove();
     }, 5000);

@@ -1,30 +1,30 @@
 // Wrap in IIFE to avoid global conflicts
-(function() {
+(function () {
     // Use a different variable name to avoid conflicts
-    const EDU_API_URL = window.APP_CONFIG?.API_URL || 'http://localhost:3000/api';
+    const EDU_API_URL = window.APP_CONFIG?.API_URL || 'http://campaign-management-system-zquy.onrender.com/api';
     let currentUser = null;
     let allModules = [];
 
     // Initialize
     document.addEventListener('DOMContentLoaded', async () => {
         currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-        
+
         if (!currentUser.id) {
             window.location.href = 'login.html';
             return;
         }
-        
+
         // Update UI
         const userMenu = document.getElementById('userMenu');
         if (userMenu && currentUser.name) {
             userMenu.textContent = `Hi, ${currentUser.name}`;
         }
-        
+
         // Add create module button for campaign managers
         if (['campaign_manager', 'admin'].includes(currentUser.role)) {
             addCreateModuleButton();
         }
-        
+
         // Load modules and progress
         await Promise.all([
             loadModules(),
@@ -46,28 +46,28 @@
         const loadingIndicator = document.getElementById('loadingIndicator');
         const errorMessage = document.getElementById('errorMessage');
         const grid = document.getElementById('modulesGrid');
-        
+
         try {
             // Show loading indicator
             if (loadingIndicator) loadingIndicator.style.display = 'block';
             if (errorMessage) errorMessage.style.display = 'none';
             grid.innerHTML = '';
-            
+
             console.log('Loading modules from:', `${EDU_API_URL}/education/modules`);
             console.log('Token:', localStorage.getItem('token') ? 'Present' : 'Missing');
-            
+
             const response = await fetch(`${EDU_API_URL}/education/modules`, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
             });
-            
+
             console.log('Response status:', response.status);
-            
+
             // Get the raw text first to see what's coming back
             const responseText = await response.text();
             console.log('Raw response:', responseText);
-            
+
             // Try to parse as JSON
             let data;
             try {
@@ -76,12 +76,12 @@
                 console.error('Failed to parse response as JSON:', e);
                 throw new Error('Invalid response format');
             }
-            
+
             console.log('Parsed data:', data);
-            
+
             // Hide loading indicator
             if (loadingIndicator) loadingIndicator.style.display = 'none';
-            
+
             // Check different possible response formats
             if (data.success && data.modules) {
                 allModules = data.modules;
@@ -96,13 +96,13 @@
                 console.log('Unexpected data format:', data);
                 displayModules([]);
             }
-            
+
         } catch (error) {
             console.error('Error loading modules:', error);
-            
+
             // Hide loading indicator
             if (loadingIndicator) loadingIndicator.style.display = 'none';
-            
+
             // Show error message
             if (errorMessage) {
                 errorMessage.style.display = 'block';
@@ -114,7 +114,7 @@
                     </div>
                 `;
             }
-            
+
             // Show empty state
             displayModules([]);
         }
@@ -127,21 +127,21 @@
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
             });
-            
+
             console.log('User progress response:', response.status);
-            
+
             if (!response.ok) {
                 console.error('Failed to load progress:', await response.text());
                 return;
             }
-            
+
             const { stats } = await response.json();
-            
+
             // Update progress display
             document.getElementById('modulesCompleted').textContent = stats.modulesCompleted || '0';
             document.getElementById('quizzesPassed').textContent = stats.quizzesPassed || '0';
             document.getElementById('certificatesEarned').textContent = Math.floor(stats.modulesCompleted / 3) || '0';
-            
+
         } catch (error) {
             console.error('Error loading progress:', error);
         }
@@ -149,29 +149,29 @@
 
     function displayModules(modules) {
         const grid = document.getElementById('modulesGrid');
-        
+
         console.log('Displaying modules:', modules);
-        
+
         // Clear any existing content
         grid.innerHTML = '';
-        
+
         if (!modules || modules.length === 0) {
             grid.innerHTML = `
                 <div class="no-modules" style="grid-column: 1/-1; text-align: center; padding: 60px 20px; background: #f8f9fa; border-radius: 10px;">
                     <h3 style="color: #666; margin-bottom: 20px;">No modules available yet</h3>
-                    ${currentUser && currentUser.role === 'campaign_manager' ? 
-                        '<p style="color: #888;">Click the "Create New Module" button above to add your first educational module!</p>' :
-                        '<p style="color: #888;">Check back soon for new educational content!</p>'
-                    }
-                    ${currentUser && currentUser.role === 'campaign_manager' ? 
-                        '<a href="create-education-module.html" class="btn btn-primary" style="display: inline-block; margin-top: 20px;">Create Your First Module</a>' : 
-                        ''
-                    }
+                    ${currentUser && currentUser.role === 'campaign_manager' ?
+                    '<p style="color: #888;">Click the "Create New Module" button above to add your first educational module!</p>' :
+                    '<p style="color: #888;">Check back soon for new educational content!</p>'
+                }
+                    ${currentUser && currentUser.role === 'campaign_manager' ?
+                    '<a href="create-education-module.html" class="btn btn-primary" style="display: inline-block; margin-top: 20px;">Create Your First Module</a>' :
+                    ''
+                }
                 </div>
             `;
             return;
         }
-        
+
         // Display the modules
         modules.forEach(module => {
             const moduleCard = document.createElement('div');
@@ -184,7 +184,7 @@
         const progress = module.userProgress;
         const isCreator = module.isCreator;
         const canStart = !isCreator || currentUser.role === 'admin';
-        
+
         return `
             <div class="module-card" data-category="${module.category}" data-module-id="${module._id}">
                 <div class="module-image">
@@ -248,15 +248,15 @@
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
             });
-            
+
             if (!response.ok) {
                 const error = await response.json();
                 throw new Error(error.error || 'Failed to start module');
             }
-            
+
             // Open module viewer
             openModuleViewer(moduleId);
-            
+
         } catch (error) {
             console.error('Error starting module:', error);
             alert(error.message);
@@ -270,22 +270,22 @@
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
             });
-            
+
             if (!response.ok) throw new Error('Failed to load module');
-            
+
             const { module, canParticipate } = await response.json();
-            
+
             const viewer = document.getElementById('moduleViewer');
             const content = document.getElementById('moduleContent');
-            
+
             content.innerHTML = createModuleViewer(module, canParticipate);
             viewer.style.display = 'flex';
-            
+
             // Initialize module interaction
             if (canParticipate) {
                 initializeModuleInteraction(module);
             }
-            
+
         } catch (error) {
             console.error('Error loading module:', error);
             alert('Failed to load module content');
@@ -317,7 +317,7 @@
                 </div>
             `;
         }
-        
+
         return `
             <div class="module-viewer-content">
                 <div class="module-header">
@@ -382,7 +382,7 @@
             const seconds = timeSpent % 60;
             document.getElementById('timeSpent').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
         }, 1000);
-        
+
         // Track scroll progress
         const moduleBody = document.getElementById('moduleBody');
         moduleBody.addEventListener('scroll', updateProgress);
@@ -397,25 +397,25 @@
     async function completeModule(moduleId) {
         try {
             clearInterval(moduleTimer);
-            
+
             const response = await fetch(`${EDU_API_URL}/education/modules/${moduleId}/complete`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
             });
-            
+
             if (!response.ok) throw new Error('Failed to complete module');
-            
+
             const result = await response.json();
-            
+
             // Check if quiz is available
             const quizResponse = await fetch(`${EDU_API_URL}/education/modules/${moduleId}/quiz`, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
             });
-            
+
             if (quizResponse.ok) {
                 document.getElementById('completeBtn').style.display = 'none';
                 document.getElementById('takeQuizBtn').style.display = 'block';
@@ -424,7 +424,7 @@
                 closeModule();
                 loadModules(); // Refresh to show updated progress
             }
-            
+
         } catch (error) {
             console.error('Error completing module:', error);
             alert('Failed to complete module');
@@ -438,12 +438,12 @@
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
             });
-            
+
             if (!response.ok) throw new Error('Failed to load quiz');
-            
+
             const { quiz } = await response.json();
             showQuiz(quiz);
-            
+
         } catch (error) {
             console.error('Error loading quiz:', error);
             alert('Failed to load quiz');
@@ -495,18 +495,18 @@
 
     async function submitQuiz(event, quizId) {
         event.preventDefault();
-        
+
         const form = event.target;
         const formData = new FormData(form);
         const answers = [];
-        
+
         // Collect answers
         let questionIndex = 0;
         for (let [key, value] of formData.entries()) {
             answers[questionIndex] = value;
             questionIndex++;
         }
-        
+
         try {
             const response = await fetch(`${EDU_API_URL}/education/quiz/${quizId}/submit`, {
                 method: 'POST',
@@ -516,12 +516,12 @@
                 },
                 body: JSON.stringify({ answers })
             });
-            
+
             if (!response.ok) throw new Error('Failed to submit quiz');
-            
+
             const result = await response.json();
             showQuizResult(result);
-            
+
         } catch (error) {
             console.error('Error submitting quiz:', error);
             alert('Failed to submit quiz');
@@ -551,7 +551,7 @@
                 </div>
             </div>
         `;
-        
+
         if (result.passed) {
             // Update stats
             const quizzesPassed = document.getElementById('quizzesPassed');
@@ -574,12 +574,12 @@
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
             });
-            
+
             if (!response.ok) throw new Error('Failed to load stats');
-            
+
             const { stats } = await response.json();
             showModuleStats(stats);
-            
+
         } catch (error) {
             console.error('Error loading stats:', error);
             alert('Failed to load module statistics');
@@ -589,7 +589,7 @@
     function showModuleStats(stats) {
         const viewer = document.getElementById('moduleViewer');
         const content = document.getElementById('moduleContent');
-        
+
         content.innerHTML = `
             <div class="module-stats">
                 <h2>Module Statistics</h2>
@@ -627,7 +627,7 @@
                 <button onclick="closeModule()" class="btn-secondary">Close</button>
             </div>
         `;
-        
+
         viewer.style.display = 'flex';
     }
 
@@ -638,23 +638,23 @@
     // Search and filter functions
     function searchModules() {
         const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-        const filteredModules = allModules.filter(module => 
+        const filteredModules = allModules.filter(module =>
             module.title.toLowerCase().includes(searchTerm) ||
             module.description.toLowerCase().includes(searchTerm) ||
             module.tags?.some(tag => tag.toLowerCase().includes(searchTerm))
         );
-        
+
         displayModules(filteredModules);
     }
 
     function filterModules() {
         const category = document.getElementById('categoryFilter').value;
         let filteredModules = allModules;
-        
+
         if (category) {
             filteredModules = allModules.filter(module => module.category === category);
         }
-        
+
         displayModules(filteredModules);
     }
 
@@ -688,23 +688,23 @@
     window.filterModules = filterModules;
     window.logout = logout;
     window.loadModules = loadModules; // For retry button
-    window.retakeQuiz = function() {
+    window.retakeQuiz = function () {
         location.reload();
     };
-    window.previousSection = function() {
+    window.previousSection = function () {
         console.log('Previous section - implement navigation logic');
     };
-    window.nextSection = function() {
+    window.nextSection = function () {
         console.log('Next section - implement navigation logic');
     };
 
     // Debug function
-    window.debugModules = async function() {
+    window.debugModules = async function () {
         console.log('=== DEBUG START ===');
         console.log('API_URL:', EDU_API_URL);
         console.log('Token:', localStorage.getItem('token'));
         console.log('User:', localStorage.getItem('user'));
-        
+
         try {
             // Test the API directly
             const response = await fetch(`${EDU_API_URL}/education/modules`, {
@@ -712,15 +712,15 @@
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
             });
-            
+
             console.log('Response Status:', response.status);
             const text = await response.text();
             console.log('Response Text:', text);
-            
+
             try {
                 const json = JSON.parse(text);
                 console.log('Parsed JSON:', json);
-                
+
                 // Check the modules
                 if (json.modules) {
                     console.log('Modules found:', json.modules.length);
@@ -736,7 +736,7 @@
         } catch (error) {
             console.error('Fetch Error:', error);
         }
-        
+
         console.log('=== DEBUG END ===');
     };
 

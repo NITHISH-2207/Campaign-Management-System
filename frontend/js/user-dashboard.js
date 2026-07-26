@@ -1,24 +1,24 @@
 // frontend/js/user-dashboard.js
-const API_BASE_URL = 'http://localhost:3000';
+const API_BASE_URL = 'http://campaign-management-system-zquy.onrender.com';
 
 document.addEventListener('DOMContentLoaded', async () => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const token = localStorage.getItem('token');
-    
+
     if (!token || !user.id) {
         window.location.href = 'login.html';
         return;
     }
-    
+
     // Update user info in navbar
     updateUserInfo(user);
-    
+
     // Load dashboard data
     await loadDashboardData();
-    
+
     // Load available surveys
     await loadAvailableSurveys();
-    
+
     // Add fade-in animations
     const elements = document.querySelectorAll('.fade-in-up');
     elements.forEach((el, index) => {
@@ -42,27 +42,27 @@ async function loadDashboardData() {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
         });
-        
+
         if (!response.ok) throw new Error('Failed to fetch dashboard data');
-        
+
         const data = await response.json();
-        
+
         if (data.success) {
             // Update stats with animation
             animateCounter('myPostsCount', data.stats.postsCount);
             animateCounter('myImpactCount', data.stats.totalImpact);
             animateCounter('campaignsJoined', data.stats.campaignsJoined);
             animateCounter('learningProgress', data.stats.learningProgress, '%');
-            
+
             // Update level progress
             updateLevelProgress(data.stats.level, data.stats.points);
-            
+
             // Load campaigns
             displayActiveCampaigns(data.activeCampaigns);
-            
+
             // Load recent activity
             displayRecentActivity(data.recentActivity);
-            
+
             // Load badges
             displayRecentBadges(data.badges);
         }
@@ -76,7 +76,7 @@ async function loadDashboardData() {
 function animateCounter(id, finalValue, suffix = '') {
     const element = document.getElementById(id);
     if (!element) return;
-    
+
     const duration = 1500;
     const steps = 60;
     const stepValue = finalValue / steps;
@@ -97,10 +97,10 @@ function animateCounter(id, finalValue, suffix = '') {
 function updateLevelProgress(level, points) {
     const progressInLevel = points % 100;
     const pointsToNext = 100 - progressInLevel;
-    
+
     document.getElementById('userLevel').textContent = level;
     document.getElementById('pointsToNext').textContent = pointsToNext;
-    
+
     setTimeout(() => {
         document.getElementById('levelProgress').style.width = progressInLevel + '%';
     }, 500);
@@ -108,7 +108,7 @@ function updateLevelProgress(level, points) {
 
 function displayActiveCampaigns(campaigns) {
     const container = document.getElementById('activeCampaigns');
-    
+
     if (!campaigns || campaigns.length === 0) {
         container.innerHTML = `
             <div class="text-center text-muted py-4">
@@ -119,7 +119,7 @@ function displayActiveCampaigns(campaigns) {
         `;
         return;
     }
-    
+
     const campaignsHTML = campaigns.map(campaign => {
         const daysLeft = Math.ceil((new Date(campaign.endDate) - new Date()) / (1000 * 60 * 60 * 24));
         const urgencyClass = daysLeft <= 7 ? 'text-warning' : 'text-success';
@@ -132,7 +132,7 @@ function displayActiveCampaigns(campaigns) {
             'default': 'fa-flag'
         };
         const icon = iconMap[campaign.category] || iconMap.default;
-        
+
         return `
             <div class="campaign-item d-flex align-items-center">
                 <div class="me-3">
@@ -151,13 +151,13 @@ function displayActiveCampaigns(campaigns) {
             </div>
         `;
     }).join('');
-    
+
     container.innerHTML = campaignsHTML;
 }
 
 function displayRecentActivity(activities) {
     const container = document.getElementById('recentActivity');
-    
+
     if (!activities || activities.length === 0) {
         container.innerHTML = `
             <div class="text-center text-muted py-4">
@@ -167,7 +167,7 @@ function displayRecentActivity(activities) {
         `;
         return;
     }
-    
+
     const activitiesHTML = activities.map(activity => {
         const timeAgo = getTimeAgo(new Date(activity.date));
         const colorMap = {
@@ -176,7 +176,7 @@ function displayRecentActivity(activities) {
             'survey': 'text-primary',
             'badge': 'text-warning'
         };
-        
+
         return `
             <div class="activity-item d-flex align-items-center">
                 <div class="me-3">
@@ -192,13 +192,13 @@ function displayRecentActivity(activities) {
             </div>
         `;
     }).join('');
-    
+
     container.innerHTML = activitiesHTML;
 }
 
 function displayRecentBadges(badges) {
     const container = document.getElementById('recentBadges');
-    
+
     if (!badges || badges.length === 0) {
         container.innerHTML = `
             <div class="text-center text-muted py-4">
@@ -208,7 +208,7 @@ function displayRecentBadges(badges) {
         `;
         return;
     }
-    
+
     const badgesHTML = badges.map(badge => `
         <div class="d-flex align-items-center justify-content-center mb-3">
             <div class="badge-icon text-${badge.color} me-3">
@@ -220,7 +220,7 @@ function displayRecentBadges(badges) {
             </div>
         </div>
     `).join('');
-    
+
     container.innerHTML = badgesHTML;
 }
 
@@ -251,7 +251,7 @@ async function loadAvailableSurveys() {
 
 function displayAvailableSurveys(surveys) {
     const container = document.getElementById('available-surveys');
-    
+
     if (!surveys || surveys.length === 0) {
         displayNoSurveysMessage('No surveys available at the moment.');
         return;
@@ -265,10 +265,10 @@ function displayAvailableSurveys(surveys) {
                 <span class="survey-type ${survey.type}">${survey.type === 'before' ? 'Pre' : 'Post'}-Campaign Survey</span>
                 <span class="questions-count">${survey.questions ? survey.questions.length : 0} questions</span>
             </div>
-            ${survey.completed ? 
-                '<button class="completed-btn" disabled><i class="fas fa-check"></i> Completed</button>' :
-                `<button onclick="takeSurvey('${survey._id}')" class="take-survey-btn">Take Survey</button>`
-            }
+            ${survey.completed ?
+            '<button class="completed-btn" disabled><i class="fas fa-check"></i> Completed</button>' :
+            `<button onclick="takeSurvey('${survey._id}')" class="take-survey-btn">Take Survey</button>`
+        }
         </div>
     `).join('');
 
@@ -291,7 +291,7 @@ function displayErrorState() {
     document.getElementById('myImpactCount').textContent = '0';
     document.getElementById('campaignsJoined').textContent = '0';
     document.getElementById('learningProgress').textContent = '0%';
-    
+
     document.getElementById('activeCampaigns').innerHTML = `
         <div class="text-center text-muted py-4">
             <i class="fas fa-exclamation-circle fa-3x mb-3" style="opacity: 0.5"></i>
@@ -303,7 +303,7 @@ function displayErrorState() {
 
 function getTimeAgo(date) {
     const seconds = Math.floor((new Date() - date) / 1000);
-    
+
     const intervals = [
         { label: 'year', seconds: 31536000 },
         { label: 'month', seconds: 2592000 },
@@ -311,14 +311,14 @@ function getTimeAgo(date) {
         { label: 'hour', seconds: 3600 },
         { label: 'minute', seconds: 60 }
     ];
-    
+
     for (const interval of intervals) {
         const count = Math.floor(seconds / interval.seconds);
         if (count >= 1) {
             return count === 1 ? `1 ${interval.label} ago` : `${count} ${interval.label}s ago`;
         }
     }
-    
+
     return 'Just now';
 }
 
@@ -333,4 +333,3 @@ function logout() {
         window.location.href = 'login.html';
     }
 }
-    

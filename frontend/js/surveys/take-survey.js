@@ -28,7 +28,7 @@ class SurveyTaker {
 
     async loadSurvey() {
         try {
-            const response = await fetch(`http://localhost:3000/api/surveys/${this.surveyId}`, {
+            const response = await fetch(`http://campaign-management-system-zquy.onrender.com/api/surveys/${this.surveyId}`, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
@@ -39,7 +39,7 @@ class SurveyTaker {
             }
 
             this.survey = await response.json();
-            
+
             // Check if user already completed this survey
             if (this.survey.completed) {
                 alert('You have already completed this survey');
@@ -106,7 +106,7 @@ class SurveyTaker {
     generateRatingQuestion(question) {
         const scaleMax = question.scaleMax || 5;
         let html = '<div class="rating-scale">';
-        
+
         for (let i = 1; i <= scaleMax; i++) {
             html += `
                 <label class="rating-option">
@@ -118,7 +118,7 @@ class SurveyTaker {
                 </label>
             `;
         }
-        
+
         html += `
             </div>
             <div class="scale-labels">
@@ -126,13 +126,13 @@ class SurveyTaker {
                 <span>Strongly Agree</span>
             </div>
         `;
-        
+
         return html;
     }
 
     generateMultipleChoiceQuestion(question) {
         let html = '<div class="multiple-choice-options">';
-        
+
         question.options.forEach((option, index) => {
             html += `
                 <label class="mc-option">
@@ -144,7 +144,7 @@ class SurveyTaker {
                 </label>
             `;
         });
-        
+
         html += '</div>';
         return html;
     }
@@ -219,7 +219,7 @@ class SurveyTaker {
         const submitBtn = document.getElementById('submit-btn');
 
         prevBtn.disabled = this.currentQuestionIndex === 0;
-        
+
         if (this.currentQuestionIndex === this.survey.questions.length - 1) {
             nextBtn.style.display = 'none';
             submitBtn.style.display = 'inline-block';
@@ -237,7 +237,7 @@ class SurveyTaker {
 
     nextQuestion() {
         const currentQuestion = this.survey.questions[this.currentQuestionIndex];
-        
+
         // Validate if required question is answered
         if (currentQuestion.required && !this.responses[currentQuestion.questionId]) {
             alert('Please answer this question before proceeding');
@@ -251,7 +251,7 @@ class SurveyTaker {
 
     async submitSurvey() {
         // Validate all required questions are answered
-        const unanswered = this.survey.questions.filter(q => 
+        const unanswered = this.survey.questions.filter(q =>
             q.required && !this.responses[q.questionId]
         );
 
@@ -261,7 +261,7 @@ class SurveyTaker {
         }
 
         try {
-            const response = await fetch(`http://localhost:3000/api/surveys/${this.surveyId}/response`, {
+            const response = await fetch(`http://campaign-management-system-zquy.onrender.com/api/surveys/${this.surveyId}/response`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -290,10 +290,10 @@ class SurveyTaker {
                 <div class="success-icon">✓</div>
                 <h2>Thank you for completing the survey!</h2>
                 <p>Your responses have been recorded and will help us measure the impact of this campaign.</p>
-                ${this.survey.type === 'before' ? 
-                    '<p>We\'ll invite you to take the post-campaign survey once the campaign concludes.</p>' :
-                    '<p>Your feedback will help us understand the campaign\'s effectiveness.</p>'
-                }
+                ${this.survey.type === 'before' ?
+                '<p>We\'ll invite you to take the post-campaign survey once the campaign concludes.</p>' :
+                '<p>Your feedback will help us understand the campaign\'s effectiveness.</p>'
+            }
                 <button onclick="window.location.href='user-dashboard.html'" class="return-btn">
                     Return to Dashboard
                 </button>

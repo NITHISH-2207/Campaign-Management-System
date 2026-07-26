@@ -29,14 +29,14 @@ const storage = multer.diskStorage({
     }
 });
 
-const upload = multer({ 
+const upload = multer({
     storage: storage,
     limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
     fileFilter: (req, file, cb) => {
         const allowedTypes = /jpeg|jpg|png|gif/;
         const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
         const mimetype = allowedTypes.test(file.mimetype);
-        
+
         if (mimetype && extname) {
             return cb(null, true);
         } else {
@@ -52,14 +52,14 @@ const postController = {
             console.log('Creating post with data:', req.body);
             console.log('File uploaded:', req.file ? req.file.filename : 'No file');
             console.log('User role:', req.user.role);
-            
+
             const { campaignId, title, content, tags, enableComments, postType } = req.body;
             const authorId = req.user.id || req.user._id;
-            
+
             // Determine post type based on user role and selection
             const isRegularUser = ['user', 'participant'].includes(req.user.role);
             const finalPostType = (isRegularUser || postType === 'personal') ? 'personal' : 'campaign';
-            
+
             // For personal posts, campaignId is optional
             const postData = {
                 authorId,
@@ -71,7 +71,7 @@ const postController = {
                 postType: finalPostType,
                 authorRole: req.user.role
             };
-            
+
             // Only add campaignId if it's a campaign post
             if (finalPostType === 'campaign' && campaignId && campaignId !== 'personal') {
                 postData.campaignId = campaignId;
@@ -110,35 +110,35 @@ const postController = {
         try {
             const { campaignId, page = 1, limit = 10, filter = 'all', sort = 'recent' } = req.query;
             const userId = req.user.id || req.user._id;
-            
+
             let query = {};
-            
+
             // Apply filters
             if (campaignId && campaignId !== 'all') {
                 query.campaignId = campaignId;
             }
-            
+
             // Filter by post type
             if (filter === 'campaign') {
                 query.postType = 'campaign';
             } else if (filter === 'personal') {
                 query.postType = 'personal';
             }
-            
+
             // Determine sort order
             let sortOptions = { createdAt: -1 }; // Default: recent first
-            
+
             if (sort === 'trending') {
                 // Sort by total engagement
-                sortOptions = { 
+                sortOptions = {
                     'engagement.likes': -1,
                     'engagement.comments': -1,
-                    'engagement.views': -1 
+                    'engagement.views': -1
                 };
             } else if (sort === 'popular') {
                 sortOptions = { 'engagement.likes': -1 };
             }
-            
+
             const posts = await Post.find(query)
                 .populate('authorId', 'name avatar role')
                 .populate('campaignId', 'title')
@@ -149,16 +149,16 @@ const postController = {
 
             // Add user-specific data and calculate engagement metrics
             const postsWithMetrics = posts.map(post => {
-                const totalEngagement = (post.engagement.views || 0) + 
-                                      (post.engagement.likes || 0) + 
-                                      (post.engagement.shares || 0) + 
-                                      (post.engagement.comments || 0);
-                
+                const totalEngagement = (post.engagement.views || 0) +
+                    (post.engagement.likes || 0) +
+                    (post.engagement.shares || 0) +
+                    (post.engagement.comments || 0);
+
                 return {
                     ...post,
                     isAuthor: post.authorId._id.toString() === userId.toString(),
                     isLiked: post.likedBy && post.likedBy.some(id => id.toString() === userId.toString()),
-                    imageUrl: post.imageUrl ? `http://localhost:3000${post.imageUrl}` : null,
+                    imageUrl: post.imageUrl ? `http://campaign-management-system-zquy.onrender.com${post.imageUrl}` : null,
                     totalEngagement
                 };
             });
@@ -187,7 +187,7 @@ const postController = {
         try {
             const userId = req.user.id || req.user._id;
             const postId = req.params.id;
-            
+
             const post = await Post.findById(postId)
                 .populate('authorId', 'name avatar role')
                 .populate('campaignId', 'title')
@@ -213,7 +213,7 @@ const postController = {
 
             const isAuthor = post.authorId._id.toString() === userId.toString();
             const isLiked = post.likedBy && post.likedBy.some(id => id.toString() === userId.toString());
-            
+
             // Get comments with sentiment analysis
             let comments = [];
             if (isAuthor || post.enableComments) {
@@ -224,10 +224,10 @@ const postController = {
             }
 
             // Calculate engagement metrics
-            const totalEngagement = (post.engagement.views || 0) + 
-                                  (post.engagement.likes || 0) + 
-                                  (post.engagement.shares || 0) + 
-                                  (post.engagement.comments || 0);
+            const totalEngagement = (post.engagement.views || 0) +
+                (post.engagement.likes || 0) +
+                (post.engagement.shares || 0) +
+                (post.engagement.comments || 0);
 
             res.json({
                 success: true,
@@ -235,7 +235,7 @@ const postController = {
                     ...post,
                     isAuthor,
                     isLiked,
-                    imageUrl: post.imageUrl ? `http://localhost:3000${post.imageUrl}` : null,
+                    imageUrl: post.imageUrl ? `http://campaign-management-system-zquy.onrender.com${post.imageUrl}` : null,
                     totalEngagement
                 },
                 comments: isAuthor ? comments : comments.map(c => ({
@@ -258,7 +258,7 @@ const postController = {
         try {
             const postId = req.params.id;
             const userId = req.user.id || req.user._id;
-            
+
             const post = await Post.findById(postId);
 
             if (!post) {
@@ -269,7 +269,7 @@ const postController = {
             }
 
             const likeIndex = post.likedBy.findIndex(id => id.toString() === userId.toString());
-            
+
             if (likeIndex > -1) {
                 // Unlike
                 post.likedBy.splice(likeIndex, 1);
@@ -278,7 +278,7 @@ const postController = {
                 // Like
                 post.likedBy.push(userId);
                 post.engagement.likes += 1;
-                
+
                 // Track like analytics
                 if (post.campaignId) {
                     await updateAnalytics(postId, 'likes');
@@ -307,7 +307,7 @@ const postController = {
         try {
             const postId = req.params.id;
             const userId = req.user.id || req.user._id;
-            
+
             const post = await Post.findById(postId);
 
             if (!post) {
@@ -319,7 +319,7 @@ const postController = {
 
             // Increment share count
             post.engagement.shares = (post.engagement.shares || 0) + 1;
-            
+
             // Track who shared (optional)
             if (!post.sharedBy) {
                 post.sharedBy = [];
@@ -355,7 +355,7 @@ const postController = {
         try {
             const { limit = 10, timeframe = 7 } = req.query;
             const userId = req.user.id || req.user._id;
-            
+
             // Calculate date threshold
             const dateThreshold = new Date();
             dateThreshold.setDate(dateThreshold.getDate() - timeframe);
@@ -398,7 +398,7 @@ const postController = {
                 ...post,
                 isAuthor: post.authorId._id.toString() === userId.toString(),
                 isLiked: post.likedBy && post.likedBy.some(id => id.toString() === userId.toString()),
-                imageUrl: post.imageUrl ? `http://localhost:3000${post.imageUrl}` : null
+                imageUrl: post.imageUrl ? `http://campaign-management-system-zquy.onrender.com${post.imageUrl}` : null
             }));
 
             res.json({

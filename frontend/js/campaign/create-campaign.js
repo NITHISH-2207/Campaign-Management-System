@@ -1,7 +1,7 @@
 // frontend/js/campaign/create-campaign.js
-const API_BASE_URL = 'http://localhost:3000';
+const API_BASE_URL = 'http://campaign-management-system-zquy.onrender.com';
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Check if user is logged in
     const token = localStorage.getItem('token');
     if (!token) {
@@ -21,7 +21,7 @@ function initializeForm() {
     document.getElementById('endDate').min = today;
 
     // Update end date minimum when start date changes
-    document.getElementById('startDate').addEventListener('change', function() {
+    document.getElementById('startDate').addEventListener('change', function () {
         document.getElementById('endDate').min = this.value;
     });
 
@@ -48,8 +48,8 @@ function initializeForm() {
 function setupCharCounter(inputId, counterId, maxLength) {
     const input = document.getElementById(inputId);
     const counter = document.getElementById(counterId);
-    
-    input.addEventListener('input', function() {
+
+    input.addEventListener('input', function () {
         counter.textContent = this.value.length;
         if (this.value.length > maxLength * 0.9) {
             counter.style.color = '#ff6b6b';
@@ -62,10 +62,10 @@ function setupCharCounter(inputId, counterId, maxLength) {
 function previewImage(event) {
     const file = event.target.files[0];
     const preview = document.getElementById('imagePreview');
-    
+
     if (file) {
         const reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = function (e) {
             preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
         };
         reader.readAsDataURL(file);
@@ -77,14 +77,14 @@ function previewImage(event) {
 function saveDraft() {
     const formData = new FormData(document.getElementById('campaignForm'));
     const draftData = {};
-    
+
     // Convert FormData to object (excluding file)
     for (let [key, value] of formData.entries()) {
         if (key !== 'campaignImage') {
             draftData[key] = value;
         }
     }
-    
+
     localStorage.setItem('campaignDraft', JSON.stringify(draftData));
     alert('Draft saved successfully!');
 }
@@ -93,31 +93,31 @@ function loadDraft() {
     const draft = localStorage.getItem('campaignDraft');
     if (draft) {
         const draftData = JSON.parse(draft);
-        
+
         // Fill form fields
         Object.keys(draftData).forEach(key => {
             const field = document.getElementById(key);
             if (field) {
                 field.value = draftData[key];
-                
+
                 // Trigger input event for character counters
                 if (field.tagName === 'TEXTAREA' || field.tagName === 'INPUT') {
                     field.dispatchEvent(new Event('input'));
                 }
             }
         });
-        
+
         console.log('Draft loaded');
     }
 }
 
 async function handleSubmit(event) {
     event.preventDefault();
-    
+
     // Validate dates
     const startDate = new Date(document.getElementById('startDate').value);
     const endDate = new Date(document.getElementById('endDate').value);
-    
+
     if (endDate <= startDate) {
         alert('End date must be after start date');
         return;
@@ -131,7 +131,7 @@ async function handleSubmit(event) {
 
     // Prepare form data
     const formData = new FormData(event.target);
-    
+
     // Show loading state
     const submitBtn = event.target.querySelector('button[type="submit"]');
     const originalText = submitBtn.textContent;
@@ -150,25 +150,25 @@ async function handleSubmit(event) {
         const data = await response.json();
 
         // In the handleSubmit function, update the success case:
-if (response.ok && data.success) {
-    // Clear draft
-    localStorage.removeItem('campaignDraft');
-    
-    // Updated success message
-    alert('Campaign created successfully! Your campaign is now live and active.');
-    
-    // Remove or comment out the auto-approve function since it's not needed
-    // await autoApproveCampaign(data.campaign._id);
-    
-    // Redirect to dashboard or campaigns list
-    setTimeout(() => {
-        // Redirect to campaigns list to see the new campaign
-        window.location.href = 'campaigns-list.html';
-    }, 1500);
-} else {
-    alert(`Error: ${data.message || 'Failed to create campaign'}`);
-}
-   } catch (error) {
+        if (response.ok && data.success) {
+            // Clear draft
+            localStorage.removeItem('campaignDraft');
+
+            // Updated success message
+            alert('Campaign created successfully! Your campaign is now live and active.');
+
+            // Remove or comment out the auto-approve function since it's not needed
+            // await autoApproveCampaign(data.campaign._id);
+
+            // Redirect to dashboard or campaigns list
+            setTimeout(() => {
+                // Redirect to campaigns list to see the new campaign
+                window.location.href = 'campaigns-list.html';
+            }, 1500);
+        } else {
+            alert(`Error: ${data.message || 'Failed to create campaign'}`);
+        }
+    } catch (error) {
         console.error('Error submitting campaign:', error);
         alert('Failed to submit campaign. Please try again.');
     } finally {
@@ -180,11 +180,11 @@ if (response.ok && data.success) {
 // Temporary function to auto-approve campaigns for testing
 async function autoApproveCampaign(campaignId) {
     console.log('Auto-approving campaign for testing...');
-    
+
     // Since we don't have admin functionality yet, 
     // we'll need to manually update the campaign status in the database
     // or create a temporary endpoint for testing
-    
+
     // For now, the campaign will be created with 'pending' status
     // You can manually update it in MongoDB or create test campaigns
 }

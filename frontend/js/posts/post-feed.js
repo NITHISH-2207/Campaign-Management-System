@@ -1,21 +1,21 @@
 // frontend/js/posts/post-feed.js
-const API_BASE_URL = 'http://localhost:3000';
+const API_BASE_URL = 'http://campaign-management-system-zquy.onrender.com';
 
 document.addEventListener('DOMContentLoaded', async () => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
-    
+
     // Check authentication
     if (!user.id) {
         window.location.href = 'login.html';
         return;
     }
-    
+
     // Setup navigation based on role
     setupNavigation(user);
-    
+
     // Load posts
     await loadPosts();
-    
+
     // Set up filter buttons
     setupFilterButtons();
 });
@@ -26,7 +26,7 @@ function setupNavigation(user) {
     if (userMenu) {
         userMenu.textContent = `Hi, ${user.name}`;
     }
-    
+
     // Show/hide role-specific elements
     if (['campaign_manager', 'admin'].includes(user.role)) {
         const managerLinks = document.getElementById('managerLinks');
@@ -34,7 +34,7 @@ function setupNavigation(user) {
             managerLinks.style.display = 'block';
         }
     }
-    
+
     // Show create post link for all users
     const createPostLink = document.getElementById('createPostLink');
     if (createPostLink) {
@@ -55,9 +55,9 @@ function setupFilterButtons() {
 async function loadPosts(filter = 'all') {
     try {
         let url = `${API_BASE_URL}/api/posts?`;
-        
+
         // Apply filters
-        switch(filter) {
+        switch (filter) {
             case 'trending':
                 url += 'sort=engagement&limit=10';
                 break;
@@ -73,7 +73,7 @@ async function loadPosts(filter = 'all') {
             default:
                 url += 'filter=all';
         }
-        
+
         const response = await fetch(url, {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -86,14 +86,14 @@ async function loadPosts(filter = 'all') {
         displayPosts(posts);
     } catch (error) {
         console.error('Error loading posts:', error);
-        document.getElementById('postsContainer').innerHTML = 
+        document.getElementById('postsContainer').innerHTML =
             '<div class="error-message">Error loading posts. Please refresh the page.</div>';
     }
 }
 
 function displayPosts(posts) {
     const container = document.getElementById('postsContainer');
-    
+
     if (posts.length === 0) {
         container.innerHTML = `
             <div class="no-posts">
@@ -113,7 +113,7 @@ function createPostHTML(post) {
     const sentimentData = calculateSentimentPercentages(post.sentiment);
     const currentUserId = getCurrentUserId();
     const isLiked = post.likedBy && post.likedBy.includes(currentUserId);
-    
+
     return `
         <article class="post-card ${postTypeClass} ${isAuthor ? 'author-post' : ''}" data-post-id="${post._id}">
             ${post.postType === 'personal' ? '<div class="post-type-badge personal-badge">Personal Experience</div>' : ''}
@@ -227,14 +227,14 @@ function calculateSentimentPercentages(sentiment) {
     if (!sentiment || !sentiment.scores) {
         return { positive: 33, neutral: 34, negative: 33 };
     }
-    
+
     const { positive = 0, neutral = 0, negative = 0 } = sentiment.scores;
     const total = positive + neutral + negative;
-    
+
     if (total === 0) {
         return { positive: 33, neutral: 34, negative: 33 };
     }
-    
+
     return {
         positive: Math.round((positive / total) * 100),
         neutral: Math.round((neutral / total) * 100),
@@ -283,7 +283,7 @@ function updatePostLikes(postId, isLiked, likeCount) {
 
 async function toggleComments(postId) {
     const commentsSection = document.getElementById(`comments-${postId}`);
-    
+
     if (commentsSection.style.display === 'none') {
         commentsSection.style.display = 'block';
         await loadComments(postId);
@@ -298,7 +298,7 @@ async function toggleComments(postId) {
 async function loadComments(postId) {
     const postElement = document.querySelector(`[data-post-id="${postId}"]`);
     const isPostAuthor = postElement && postElement.classList.contains('author-post');
-    
+
     if (typeof commentManager !== 'undefined') {
         await commentManager.loadComments(postId, isPostAuthor);
     } else {
@@ -317,23 +317,23 @@ async function refreshPost(postId) {
 
         if (response.ok) {
             const { post } = await response.json();
-            
+
             // Update sentiment display
             const postElement = document.querySelector(`[data-post-id="${postId}"]`);
             if (postElement && post.isAuthor) {
                 const sentimentData = calculateSentimentPercentages(post.sentiment);
                 const sentimentBar = postElement.querySelector('.sentiment-bar');
-                
+
                 if (sentimentBar) {
                     sentimentBar.innerHTML = `
                         <div class="sentiment-positive" style="width: ${sentimentData.positive}%" title="Positive: ${sentimentData.positive}%"></div>
                         <div class="sentiment-neutral" style="width: ${sentimentData.neutral}%" title="Neutral: ${sentimentData.neutral}%"></div>
                         <div class="sentiment-negative" style="width: ${sentimentData.negative}%" title="Negative: ${sentimentData.negative}%"></div>
                     `;
-                    
-                    postElement.querySelector('.sentiment-label').innerHTML = 
+
+                    postElement.querySelector('.sentiment-label').innerHTML =
                         `Overall: ${getSentimentEmoji(post.sentiment.overall)} ${post.sentiment.overall}`;
-                    postElement.querySelector('.sentiment-breakdown').textContent = 
+                    postElement.querySelector('.sentiment-breakdown').textContent =
                         `(${post.engagement.comments} comments analyzed)`;
                 }
             }
@@ -372,7 +372,7 @@ function editPost(postId) {
 
 async function deletePost(postId) {
     if (!confirm('Are you sure you want to delete this post?')) return;
-    
+
     // Implement delete functionality
     console.log('Delete post:', postId);
 }
@@ -384,7 +384,7 @@ function showPostStats(postId) {
 
 function sharePost(postId) {
     const url = `${window.location.origin}/post/${postId}`;
-    
+
     if (navigator.share) {
         navigator.share({
             title: 'Check out this post on ChangeWave',
@@ -401,7 +401,7 @@ function handleCommentKeypress(event, postId) {
     const input = event.target;
     const charCount = document.getElementById(`comment-char-${postId}`);
     charCount.textContent = `${input.value.length}/500`;
-    
+
     // Submit on Ctrl+Enter
     if (event.ctrlKey && event.key === 'Enter') {
         submitComment(postId);
@@ -410,7 +410,7 @@ function handleCommentKeypress(event, postId) {
 
 function getTimeAgo(date) {
     const seconds = Math.floor((new Date() - new Date(date)) / 1000);
-    
+
     const intervals = [
         { label: 'year', seconds: 31536000 },
         { label: 'month', seconds: 2592000 },
@@ -418,25 +418,25 @@ function getTimeAgo(date) {
         { label: 'hour', seconds: 3600 },
         { label: 'minute', seconds: 60 }
     ];
-    
+
     for (const interval of intervals) {
         const count = Math.floor(seconds / interval.seconds);
         if (count >= 1) {
             return count === 1 ? `1 ${interval.label} ago` : `${count} ${interval.label}s ago`;
         }
     }
-    
+
     return 'Just now';
 }
 
 // Global functions
-window.logout = function() {
+window.logout = function () {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     window.location.href = 'login.html';
 };
 
-window.loadMorePosts = function() {
+window.loadMorePosts = function () {
     // Implement pagination
     console.log('Load more posts');
 };

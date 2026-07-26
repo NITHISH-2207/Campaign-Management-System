@@ -17,19 +17,19 @@ class SurveyBuilder {
 
         await this.loadCampaigns();
         this.setupEventListeners();
-        
+
         // Add initial question
         this.addQuestion();
     }
 
     async loadCampaigns() {
         try {
-            const response = await fetch('http://localhost:3000/api/campaigns/my-campaigns', {
+            const response = await fetch('http://campaign-management-system-zquy.onrender.com/api/campaigns/my-campaigns', {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
             });
-            
+
             if (response.ok) {
                 const campaigns = await response.json();
                 this.populateCampaignDropdown(campaigns);
@@ -49,14 +49,14 @@ class SurveyBuilder {
             console.error('Campaign select element not found');
             return;
         }
-        
+
         select.innerHTML = '<option value="">Select a campaign</option>';
-        
+
         if (campaigns.length === 0) {
             select.innerHTML += '<option value="" disabled>No campaigns available</option>';
             return;
         }
-        
+
         campaigns.forEach(campaign => {
             const option = document.createElement('option');
             option.value = campaign._id;
@@ -68,7 +68,7 @@ class SurveyBuilder {
     setupEventListeners() {
         const addBtn = document.getElementById('add-question-btn');
         const form = document.getElementById('survey-form');
-        
+
         if (addBtn) {
             addBtn.addEventListener('click', () => this.addQuestion());
         }
@@ -85,7 +85,7 @@ class SurveyBuilder {
         this.questionCounter++;
         const questionId = `q_${Date.now()}_${this.questionCounter}`;
         const questionNumber = document.querySelectorAll('.question-block').length + 1;
-        
+
         const questionHtml = `
             <div class="question-block" data-question-id="${questionId}">
                 <div class="question-header">
@@ -131,7 +131,7 @@ class SurveyBuilder {
                 </div>
             </div>
         `;
-        
+
         const container = document.getElementById('questions-container');
         if (container) {
             container.insertAdjacentHTML('beforeend', questionHtml);
@@ -143,13 +143,13 @@ class SurveyBuilder {
     updateQuestionType(questionId) {
         const block = document.querySelector(`[data-question-id="${questionId}"]`);
         if (!block) return;
-        
+
         const type = block.querySelector('.question-type').value;
         const optionsContainer = document.getElementById(`options-${questionId}`);
-        
+
         let optionsHtml = '';
-        
-        switch(type) {
+
+        switch (type) {
             case 'scale':
                 optionsHtml = `
                     <div class="scale-options form-group">
@@ -168,7 +168,7 @@ class SurveyBuilder {
                     </div>
                 `;
                 break;
-                
+
             case 'multiple-choice':
                 optionsHtml = `
                     <div class="options-container">
@@ -185,7 +185,7 @@ class SurveyBuilder {
                 `;
                 break;
         }
-        
+
         if (optionsContainer) {
             optionsContainer.innerHTML = optionsHtml;
         }
@@ -207,17 +207,17 @@ class SurveyBuilder {
     addOption(questionId) {
         const optionsList = document.getElementById(`options-list-${questionId}`);
         if (!optionsList) return;
-        
+
         const optionCount = optionsList.children.length + 1;
         const optionHtml = this.createOptionInput(questionId, optionCount);
-        
+
         optionsList.insertAdjacentHTML('beforeend', optionHtml);
     }
 
     removeOption(button) {
         const optionInput = button.closest('.option-input');
         const optionsList = optionInput.closest('.options-list');
-        
+
         // Ensure at least 2 options remain
         if (optionsList.children.length > 2) {
             optionInput.remove();
@@ -237,7 +237,7 @@ class SurveyBuilder {
             alert('Survey must have at least one question');
             return;
         }
-        
+
         const block = document.querySelector(`[data-question-id="${questionId}"]`);
         if (block) {
             block.remove();
@@ -259,7 +259,7 @@ class SurveyBuilder {
     collectQuestions() {
         const questions = [];
         const questionBlocks = document.querySelectorAll('.question-block');
-        
+
         questionBlocks.forEach((block, index) => {
             const questionId = block.dataset.questionId;
             const question = {
@@ -270,9 +270,9 @@ class SurveyBuilder {
                 required: true,
                 order: index + 1
             };
-            
+
             // Handle type-specific data
-            switch(question.type) {
+            switch (question.type) {
                 case 'scale':
                     const scaleMin = block.querySelector('.scale-min');
                     const scaleMax = block.querySelector('.scale-max');
@@ -281,7 +281,7 @@ class SurveyBuilder {
                         question.scaleMax = parseInt(scaleMax.value) || 5;
                     }
                     break;
-                    
+
                 case 'multiple-choice':
                     const options = Array.from(block.querySelectorAll('.option-input input'))
                         .map(input => input.value.trim())
@@ -289,68 +289,68 @@ class SurveyBuilder {
                     question.options = options;
                     break;
             }
-            
+
             questions.push(question);
         });
-        
+
         return questions;
     }
 
     validateSurvey(surveyData) {
         const errors = [];
-        
+
         if (!surveyData.title || surveyData.title.trim() === '') {
             errors.push('Survey title is required');
         }
-        
+
         if (!surveyData.campaignId) {
             errors.push('Please select a campaign');
         }
-        
+
         if (!surveyData.type) {
             errors.push('Please select survey type');
         }
-        
+
         if (surveyData.questions.length === 0) {
             errors.push('Survey must have at least one question');
         }
-        
+
         // Validate each question
         surveyData.questions.forEach((question, index) => {
             if (!question.text || question.text === '') {
                 errors.push(`Question ${index + 1} text is required`);
             }
-            
+
             if (!question.category) {
                 errors.push(`Question ${index + 1} category is required`);
             }
-            
+
             if (question.type === 'multiple-choice') {
                 if (!question.options || question.options.length < 2) {
                     errors.push(`Question ${index + 1} must have at least 2 options`);
                 }
             }
-            
+
             if (question.type === 'scale') {
                 if (question.scaleMin >= question.scaleMax) {
                     errors.push(`Question ${index + 1}: Scale minimum must be less than maximum`);
                 }
             }
         });
-        
+
         return errors;
     }
 
     async createSurvey() {
-    const questions = this.collectQuestions();
-    
-    const surveyData = {
-        title: document.getElementById('survey-title')?.value.trim(),
-        description: document.getElementById('survey-description')?.value.trim(),
-        campaignId: document.getElementById('campaign-select')?.value, // This should match backend
-        type: document.getElementById('survey-type')?.value,
-        questions
-    };
+        const questions = this.collectQuestions();
+
+        const surveyData = {
+            title: document.getElementById('survey-title')?.value.trim(),
+            description: document.getElementById('survey-description')?.value.trim(),
+            campaignId: document.getElementById('campaign-select')?.value, // This should match backend
+            type: document.getElementById('survey-type')?.value,
+            questions
+        };
 
         // Validate
         const errors = this.validateSurvey(surveyData);
@@ -366,7 +366,7 @@ class SurveyBuilder {
         submitBtn.textContent = 'Creating survey...';
 
         try {
-            const response = await fetch('http://localhost:3000/api/surveys/create', {
+            const response = await fetch('http://campaign-management-system-zquy.onrender.com/api/surveys/create', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

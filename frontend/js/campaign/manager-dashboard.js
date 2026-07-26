@@ -1,7 +1,7 @@
 // frontend/js/campaign/manager-dashboard.js
 document.addEventListener('DOMContentLoaded', async () => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
-    
+
     // Verify campaign manager access
     if (!['campaign_manager', 'admin'].includes(user.role)) {
         window.location.href = 'education-library.html';
@@ -29,13 +29,13 @@ function loadDashboardDataMock() {
 }
 
 function updateDashboardStats(stats) {
-    document.getElementById('totalEngagement').textContent = 
+    document.getElementById('totalEngagement').textContent =
         (stats.totalEngagement || 0).toLocaleString();
-    document.getElementById('activeUsers').textContent = 
+    document.getElementById('activeUsers').textContent =
         (stats.activeUsers || 0).toLocaleString();
-    document.getElementById('surveyResponses').textContent = 
+    document.getElementById('surveyResponses').textContent =
         (stats.surveyResponses || 0).toLocaleString();
-    document.getElementById('moduleComplete').textContent = 
+    document.getElementById('moduleComplete').textContent =
         (stats.moduleCompletions || 0).toLocaleString();
 }
 
@@ -69,13 +69,13 @@ function loadCampaignsMock() {
             }
         }
     ];
-    
+
     displayCampaigns(mockCampaigns);
 }
 
 function displayCampaigns(campaigns) {
     const container = document.getElementById('campaignsGrid');
-    
+
     if (campaigns.length === 0) {
         container.innerHTML = `
             <div class="empty-state">
@@ -120,7 +120,7 @@ function displayCampaigns(campaigns) {
 async function loadRecentActivity() {
     // Load recent posts from API (dynamic)
     await loadRecentPosts();
-    
+
     // Load mock data for surveys and modules
     loadRecentSurveyResponsesMock();
     loadModuleCompletionsMock();
@@ -129,7 +129,7 @@ async function loadRecentActivity() {
 // REAL DATA - Recent posts from API
 async function loadRecentPosts() {
     try {
-        const response = await fetch('http://localhost:3000/api/posts?limit=5', {
+        const response = await fetch('http://campaign-management-system-zquy.onrender.com/api/posts?limit=5', {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
@@ -138,7 +138,7 @@ async function loadRecentPosts() {
         if (response.ok) {
             const { posts } = await response.json();
             const container = document.getElementById('recentPosts');
-            
+
             if (posts && posts.length > 0) {
                 container.innerHTML = posts.map(post => `
                     <div class="activity-item">
@@ -180,7 +180,7 @@ function loadRecentPostsMock() {
             createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000)
         }
     ];
-    
+
     const postsContainer = document.getElementById('recentPosts');
     postsContainer.innerHTML = mockPosts.map(post => `
         <div class="activity-item">
@@ -218,7 +218,7 @@ function loadRecentSurveyResponsesMock() {
             lastResponse: new Date(Date.now() - 20 * 60 * 60 * 1000)
         }
     ];
-    
+
     const surveysContainer = document.getElementById('recentSurveys');
     surveysContainer.innerHTML = mockSurveys.map(survey => `
         <div class="activity-item">
@@ -255,7 +255,7 @@ function loadModuleCompletionsMock() {
             averageScore: 88
         }
     ];
-    
+
     const modulesContainer = document.getElementById('moduleCompletions');
     modulesContainer.innerHTML = mockCompletions.map(completion => `
         <div class="activity-item">
@@ -286,7 +286,7 @@ function getTimeAgo(date) {
 }
 
 // Close modal when clicking outside
-window.onclick = function(event) {
+window.onclick = function (event) {
     const modal = document.getElementById('createCampaignModal');
     if (event.target === modal) {
         modal.style.display = 'none';

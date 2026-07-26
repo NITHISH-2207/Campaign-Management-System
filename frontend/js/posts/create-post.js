@@ -1,5 +1,5 @@
 // frontend/js/posts/create-post.js
-const API_BASE_URL = 'http://localhost:3000';
+const API_BASE_URL = 'http://campaign-management-system-zquy.onrender.com';
 
 class PostCreator {
     constructor() {
@@ -16,39 +16,39 @@ class PostCreator {
         this.setupCharCounters();
     }
 
-   // In the setupPostTypeSelector method
-setupPostTypeSelector() {
-    const campaignSelect = document.getElementById('campaign-select');
-    
-    // Clear any existing options
-    campaignSelect.innerHTML = '';
-    
-    // Add personal post option for all users
-    const personalOption = document.createElement('option');
-    personalOption.value = 'personal';
-    personalOption.textContent = '📝 Personal Experience';
-    personalOption.selected = true; // Select by default
-    campaignSelect.appendChild(personalOption);
-}
+    // In the setupPostTypeSelector method
+    setupPostTypeSelector() {
+        const campaignSelect = document.getElementById('campaign-select');
+
+        // Clear any existing options
+        campaignSelect.innerHTML = '';
+
+        // Add personal post option for all users
+        const personalOption = document.createElement('option');
+        personalOption.value = 'personal';
+        personalOption.textContent = '📝 Personal Experience';
+        personalOption.selected = true; // Select by default
+        campaignSelect.appendChild(personalOption);
+    }
 
 
-   async loadCampaigns() {
-    try {
-        // Only load campaigns for campaign managers and admins
-        if (!['campaign_manager', 'admin'].includes(this.user.role)) {
-            return;
-        }
-            
+    async loadCampaigns() {
+        try {
+            // Only load campaigns for campaign managers and admins
+            if (!['campaign_manager', 'admin'].includes(this.user.role)) {
+                return;
+            }
+
             const response = await fetch(`${API_BASE_URL}/api/campaigns/my-campaigns`, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
             });
-            
+
             if (response.ok) {
                 const campaigns = await response.json();
                 const select = document.getElementById('campaign-select');
-                
+
                 campaigns.forEach(campaign => {
                     const option = document.createElement('option');
                     option.value = campaign._id;
@@ -63,12 +63,12 @@ setupPostTypeSelector() {
 
     setupEventListeners() {
         this.form.addEventListener('submit', (e) => this.handleSubmit(e));
-        
+
         const imageInput = document.getElementById('post-image');
         if (imageInput) {
             imageInput.addEventListener('change', (e) => this.handleImageUpload(e));
         }
-        
+
         // Update form based on post type selection
         document.getElementById('campaign-select').addEventListener('change', (e) => {
             const isPersonal = e.target.value === 'personal';
@@ -101,46 +101,46 @@ setupPostTypeSelector() {
                 event.target.value = '';
                 return;
             }
-            
+
             this.imageFile = file;
             const reader = new FileReader();
-            
+
             reader.onload = (e) => {
                 const preview = document.getElementById('image-preview');
                 if (preview) {
                     preview.innerHTML = `<img src="${e.target.result}" alt="Preview" style="max-width: 300px;">`;
                 }
             };
-            
+
             reader.readAsDataURL(file);
         }
     }
-    
+
     async handleSubmit(event) {
         event.preventDefault();
-        
+
         const token = localStorage.getItem('token');
         if (!token) {
             alert('Please log in first');
             window.location.href = 'login.html';
             return;
         }
-        
+
         const campaignValue = document.getElementById('campaign-select').value;
         const formData = new FormData();
-        
+
         if (campaignValue === 'personal') {
             formData.append('postType', 'personal');
         } else {
             formData.append('campaignId', campaignValue);
             formData.append('postType', 'campaign');
         }
-        
+
         formData.append('title', document.getElementById('post-title').value);
         formData.append('content', document.getElementById('post-content').value);
         formData.append('tags', document.getElementById('post-tags').value || '');
         formData.append('enableComments', document.getElementById('enable-comments').checked.toString());
-        
+
         if (this.imageFile) {
             formData.append('image', this.imageFile);
         }
@@ -181,7 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = 'login.html';
         return;
     }
-    
+
     new PostCreator();
 });
 
@@ -193,7 +193,7 @@ function saveDraft() {
         content: document.getElementById('post-content').value,
         tags: document.getElementById('post-tags').value
     };
-    
+
     localStorage.setItem('postDraft', JSON.stringify(draftData));
     alert('Draft saved!');
 }
@@ -205,7 +205,7 @@ async function createQuickCampaign() {
         alert('Please enter a campaign title');
         return;
     }
-    
+
     try {
         const response = await fetch(`${API_BASE_URL}/api/campaigns/create`, {
             method: 'POST',
@@ -219,7 +219,7 @@ async function createQuickCampaign() {
                 tags: ['community']
             })
         });
-        
+
         const data = await response.json();
         if (data.success) {
             alert('Campaign created successfully!');

@@ -1,5 +1,5 @@
 // frontend/js/campaign/campaigns-list.js
-const API_BASE_URL = 'http://localhost:3000';
+const API_BASE_URL = 'http://campaign-management-system-zquy.onrender.com';
 let currentPage = 1;
 let isLoading = false;
 let filters = {
@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         modal.style.display = 'none';
         modal.classList.remove('active');
     }
-    
+
     // Check authentication
     const user = getCurrentUser();
     if (!user) {
@@ -72,7 +72,7 @@ async function loadCampaigns(append = false) {
 
         const data = await response.json();
         displayCampaigns(data.campaigns || [], append);
-        
+
         // Show/hide load more button
         const loadMoreContainer = document.getElementById('loadMoreContainer');
         if (!data.campaigns || data.campaigns.length < 9 || currentPage >= data.totalPages) {
@@ -92,7 +92,7 @@ async function loadCampaigns(append = false) {
 // Display campaigns
 function displayCampaigns(campaigns, append = false) {
     const grid = document.getElementById('campaignsGrid');
-    
+
     if (!append) {
         grid.innerHTML = '';
     }
@@ -129,18 +129,18 @@ function createCampaignCard(campaign) {
     const participantCount = campaign.metrics?.totalParticipants || 0;
     const canJoin = canUserJoinCampaigns();
     const isOwnCampaign = user && campaign.managerId && (campaign.managerId._id === user.id || campaign.managerId === user.id);
-    
+
     const campaignType = campaign.type || 'Online';
     const campaignTypeLower = campaignType.toLowerCase();
-    
+
     const card = document.createElement('div');
     card.className = `campaign-card ${isJoined ? 'joined' : ''}`;
-    
+
     // Store campaign data on the card element
     card.dataset.campaignId = campaign._id;
-    
+
     card.innerHTML = `
-        ${campaign.media?.imageUrl ? 
+        ${campaign.media?.imageUrl ?
             `<img src="${API_BASE_URL}${campaign.media.imageUrl}" alt="${campaign.title}" class="campaign-image" onerror="this.src='https://via.placeholder.com/350x200?text=Campaign'">` :
             `<div class="campaign-image" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>`
         }
@@ -188,7 +188,7 @@ function createCampaignCard(campaign) {
             </div>
         </div>
     `;
-    
+
     // Add event listeners after creating the card
     const detailsBtn = card.querySelector('.btn-details');
     if (detailsBtn) {
@@ -197,19 +197,19 @@ function createCampaignCard(campaign) {
             showCampaignDetails(campaign);
         });
     }
-    
+
     // Add click handler to the card itself
     card.addEventListener('click', () => {
         showCampaignDetails(campaign);
     });
-    
+
     return card;
 }
 
 // Toggle join/leave campaign
 async function toggleJoinCampaign(campaignId, button) {
     const isJoined = joinedCampaigns.has(campaignId);
-    
+
     try {
         const endpoint = isJoined ? `/campaigns/${campaignId}/leave` : `/campaigns/${campaignId}/join`;
         const response = await apiRequest(endpoint, {
@@ -230,13 +230,13 @@ async function toggleJoinCampaign(campaignId, button) {
                 button.textContent = '✓ Joined';
                 showNotification('Successfully joined the campaign!', 'success');
             }
-            
+
             // Update the card styling
             const card = button.closest('.campaign-card');
             if (card) {
                 card.classList.toggle('joined');
             }
-            
+
             // Update stats
             updateStats();
         } else {
@@ -253,17 +253,17 @@ async function toggleJoinCampaign(campaignId, button) {
 function showCampaignDetails(campaign) {
     const modal = document.getElementById('campaignModal');
     const modalContent = document.getElementById('modalContent');
-    
+
     if (!modal || !modalContent) {
         console.error('Modal elements not found');
         return;
     }
-    
+
     const user = getCurrentUser();
     const isJoined = joinedCampaigns.has(campaign._id);
     const canJoin = canUserJoinCampaigns();
     const isOwnCampaign = user && campaign.managerId && (campaign.managerId._id === user.id || campaign.managerId === user.id);
-    
+
     modalContent.innerHTML = `
         <div class="modal-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px;">
             <h2>${escapeHtml(campaign.title)}</h2>
@@ -272,10 +272,10 @@ function showCampaignDetails(campaign) {
         </div>
         
         <div class="modal-body" style="padding: 30px;">
-            ${campaign.media?.imageUrl ? 
-                `<img src="${API_BASE_URL}${campaign.media.imageUrl}" alt="${campaign.title}" style="width: 100%; height: 300px; object-fit: cover; border-radius: 10px; margin-bottom: 20px;">` : 
-                ''
-            }
+            ${campaign.media?.imageUrl ?
+            `<img src="${API_BASE_URL}${campaign.media.imageUrl}" alt="${campaign.title}" style="width: 100%; height: 300px; object-fit: cover; border-radius: 10px; margin-bottom: 20px;">` :
+            ''
+        }
             
             <div class="campaign-detail-section">
                 <h3><i class="fas fa-info-circle"></i> About This Campaign</h3>
@@ -365,7 +365,7 @@ function showCampaignDetails(campaign) {
             </div>
         </div>
     `;
-    
+
     // Remove the CSS classes that hide the modal
     modal.style.display = 'block';
     modal.style.opacity = '1';
@@ -383,7 +383,7 @@ function closeCampaignModal() {
         modal.style.opacity = '0';
         modal.style.pointerEvents = 'none';
         modal.classList.remove('active');
-        
+
         // Clear the content
         const modalContent = document.getElementById('modalContent');
         if (modalContent) {
@@ -398,7 +398,7 @@ function applyFilters() {
     filters.category = document.getElementById('categoryFilter').value;
     filters.type = document.getElementById('typeFilter').value;
     filters.sort = document.getElementById('sortFilter').value;
-    
+
     currentPage = 1;
     loadCampaigns();
 }
@@ -438,10 +438,10 @@ function getDaysLeft(endDate) {
 
 function formatDate(dateString) {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-        year: 'numeric', 
-        month: 'short', 
-        day: 'numeric' 
+    return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
     });
 }
 
@@ -463,7 +463,7 @@ function formatNumber(num) {
 function getCurrentUser() {
     const userStr = localStorage.getItem('user');
     if (!userStr) return null;
-    
+
     try {
         return JSON.parse(userStr);
     } catch (error) {
@@ -474,11 +474,11 @@ function getCurrentUser() {
 
 async function apiRequest(endpoint, options = {}) {
     const token = localStorage.getItem('token');
-    
+
     if (!token) {
         throw new Error('No authentication token');
     }
-    
+
     const defaultOptions = {
         headers: {
             'Authorization': `Bearer ${token}`,
@@ -486,19 +486,19 @@ async function apiRequest(endpoint, options = {}) {
             ...options.headers
         }
     };
-    
+
     const response = await fetch(`${API_BASE_URL}/api${endpoint}`, {
         ...options,
         ...defaultOptions
     });
-    
+
     if (response.status === 401) {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         window.location.href = 'login.html';
         throw new Error('Authentication failed');
     }
-    
+
     return response;
 }
 
@@ -509,7 +509,7 @@ function showNotification(message, type = 'info') {
         <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
         <span>${message}</span>
     `;
-    
+
     notification.style.cssText = `
         position: fixed;
         top: 80px;
@@ -525,9 +525,9 @@ function showNotification(message, type = 'info') {
         animation: slideIn 0.3s ease-out;
         background: ${type === 'success' ? '#4CAF50' : type === 'error' ? '#f44336' : '#2196F3'};
     `;
-    
+
     document.body.appendChild(notification);
-    
+
     setTimeout(() => {
         notification.remove();
     }, 3000);
@@ -548,7 +548,7 @@ function displayError() {
 }
 
 // Close modal when clicking outside
-window.onclick = function(event) {
+window.onclick = function (event) {
     const modal = document.getElementById('campaignModal');
     if (event.target === modal) {
         closeCampaignModal();
