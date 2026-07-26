@@ -1,21 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Take Surveys - ChangeWave</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    
+
     <!-- Remove or comment out these CSS links that are overriding the dark theme -->
     <!-- <link rel="stylesheet" href="../css/common.css">
     <link rel="stylesheet" href="../css/surveys.css"> -->
-    
+
     <!-- Only keep navbar CSS -->
     <link rel="stylesheet" href="../css/navbar.css">
-    
+
     <style>
         /* Reset and base styles */
         * {
@@ -54,7 +56,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: 
+            background:
                 radial-gradient(circle at 20% 50%, rgba(139, 107, 74, 0.08) 0%, transparent 50%),
                 radial-gradient(circle at 80% 80%, rgba(107, 68, 35, 0.05) 0%, transparent 50%);
             pointer-events: none;
@@ -285,7 +287,8 @@
 
         /* Empty state */
         .empty-state {
-            grid-column: 1 / -1; /* Span full width */
+            grid-column: 1 / -1;
+            /* Span full width */
             text-align: center;
             padding: 120px 40px;
             background: var(--dark-grey);
@@ -382,7 +385,8 @@
 
         /* Loading state */
         .loading-surveys {
-            grid-column: 1 / -1; /* Span full width */
+            grid-column: 1 / -1;
+            /* Span full width */
             text-align: center;
             padding: 80px 20px;
         }
@@ -398,8 +402,13 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         .loading-surveys p {
@@ -413,6 +422,7 @@
                 opacity: 0;
                 transform: translateY(-30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -424,6 +434,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -442,30 +453,30 @@
             .main-content {
                 padding: 80px 20px 60px;
             }
-            
+
             .page-header h1 {
                 font-size: 36px;
             }
-            
+
             .page-header p {
                 font-size: 18px;
             }
-            
+
             .survey-tabs {
                 flex-wrap: wrap;
             }
-            
+
             .tab-btn {
                 flex: 1;
                 min-width: 120px;
                 padding: 10px 20px;
                 font-size: 14px;
             }
-            
+
             .empty-state {
                 padding: 80px 20px;
             }
-            
+
             .completed-item {
                 flex-direction: column;
                 align-items: flex-start;
@@ -478,6 +489,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Navigation will be loaded by navigation.js -->
     <nav class="navbar"></nav>
@@ -536,7 +548,7 @@
                     return;
                 }
 
-                const response = await fetch('http://campaign-management-system-zquy.onrender.com/api/surveys', {
+                const response = await fetch('https://campaign-management-system-zquy.onrender.com/api/surveys', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -558,10 +570,10 @@
         function displaySurveys() {
             const available = allSurveys.filter(s => !s.completed);
             const completed = allSurveys.filter(s => s.completed);
-            
+
             let surveysToShow = [];
-            
-            switch(currentFilter) {
+
+            switch (currentFilter) {
                 case 'available':
                     surveysToShow = available;
                     document.getElementById('completedSection').style.display = 'none';
@@ -578,9 +590,9 @@
                         displayCompletedSurveys(completed);
                     }
             }
-            
+
             const grid = document.getElementById('surveysGrid');
-            
+
             if (surveysToShow.length === 0 && currentFilter !== 'completed') {
                 grid.innerHTML = `
                     <div class="empty-state">
@@ -602,7 +614,7 @@
             const typeText = survey.type === 'before' ? 'Pre-Campaign' : 'Post-Campaign';
             const questionCount = survey.questions ? survey.questions.length : 0;
             const estimatedTime = Math.ceil(questionCount * 0.5);
-            
+
             return `
                 <div class="survey-card">
                     <span class="survey-type ${survey.type}">
@@ -614,17 +626,17 @@
                         <span><i class="fas fa-list-check"></i> ${questionCount} questions</span>
                         <span><i class="fas fa-clock"></i> ~${estimatedTime} minutes</span>
                     </div>
-                    ${survey.completed ? 
-                        '<button class="completed-btn"><i class="fas fa-check-circle"></i> Completed</button>' :
-                        `<button class="take-survey-btn" onclick="takeSurvey('${survey._id}')">Take Survey</button>`
-                    }
+                    ${survey.completed ?
+                    '<button class="completed-btn"><i class="fas fa-check-circle"></i> Completed</button>' :
+                    `<button class="take-survey-btn" onclick="takeSurvey('${survey._id}')">Take Survey</button>`
+                }
                 </div>
             `;
         }
 
         function displayCompletedSurveys(surveys) {
             const list = document.getElementById('completedList');
-            
+
             if (surveys.length === 0) {
                 list.innerHTML = `
                     <div class="empty-state">
@@ -652,13 +664,13 @@
 
         function filterSurveys(filter) {
             currentFilter = filter;
-            
+
             // Update active tab
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
             event.target.classList.add('active');
-            
+
             displaySurveys();
         }
 
@@ -672,15 +684,15 @@
             const now = new Date();
             const diffTime = Math.abs(now - date);
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            
+
             if (diffDays === 0) return 'Today';
             if (diffDays === 1) return 'Yesterday';
             if (diffDays < 7) return `${diffDays} days ago`;
-            
-            return date.toLocaleDateString('en-US', { 
-                month: 'short', 
-                day: 'numeric', 
-                year: 'numeric' 
+
+            return date.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
             });
         }
 
@@ -703,4 +715,5 @@
         }
     </script>
 </body>
+
 </html>

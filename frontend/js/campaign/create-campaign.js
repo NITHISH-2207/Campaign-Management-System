@@ -1,5 +1,5 @@
 // frontend/js/campaign/create-campaign.js
-const API_BASE_URL = 'http://campaign-management-system-zquy.onrender.com';
+const API_BASE_URL = 'https://campaign-management-system-zquy.onrender.com';
 
 document.addEventListener('DOMContentLoaded', function () {
     // Check if user is logged in

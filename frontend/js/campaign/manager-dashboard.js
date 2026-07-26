@@ -129,7 +129,7 @@ async function loadRecentActivity() {
 // REAL DATA - Recent posts from API
 async function loadRecentPosts() {
     try {
-        const response = await fetch('http://campaign-management-system-zquy.onrender.com/api/posts?limit=5', {
+        const response = await fetch('https://campaign-management-system-zquy.onrender.com/api/posts?limit=5', {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             }

@@ -1,5 +1,5 @@
 // frontend/js/posts/post-feed.js
-const API_BASE_URL = 'http://campaign-management-system-zquy.onrender.com';
+const API_BASE_URL = 'https://campaign-management-system-zquy.onrender.com';
 
 document.addEventListener('DOMContentLoaded', async () => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');

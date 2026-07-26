@@ -1,5 +1,5 @@
 // frontend/js/common/auth.js
-const API_URL = 'http://campaign-management-system-zquy.onrender.com/api';
+const API_URL = 'https://campaign-management-system-zquy.onrender.com/api';
 
 // Tab switching
 function switchTab(tab) {

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +9,8 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link href="../css/common.css" rel="stylesheet">
     <style>
         :root {
@@ -55,7 +57,8 @@
             z-index: 1;
             text-align: center;
             padding: 0 50px;
-            margin-top: -80px; /* Move content up */
+            margin-top: -80px;
+            /* Move content up */
         }
 
         .branding-section::before {
@@ -65,7 +68,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: 
+            background:
                 radial-gradient(circle at 20% 50%, rgba(139, 107, 74, 0.15) 0%, transparent 50%),
                 radial-gradient(circle at 80% 80%, rgba(107, 68, 35, 0.1) 0%, transparent 50%),
                 radial-gradient(circle at 40% 20%, rgba(255, 255, 255, 0.02) 0%, transparent 50%);
@@ -97,9 +100,19 @@
         }
 
         @keyframes float {
-            0%, 100% { transform: translate(0, 0) rotate(0deg); }
-            33% { transform: translate(30px, -30px) rotate(120deg); }
-            66% { transform: translate(-20px, 20px) rotate(240deg); }
+
+            0%,
+            100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+
+            33% {
+                transform: translate(30px, -30px) rotate(120deg);
+            }
+
+            66% {
+                transform: translate(-20px, 20px) rotate(240deg);
+            }
         }
 
         .brand-logo {
@@ -182,8 +195,13 @@
         }
 
         @keyframes rotate {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         .login-header {
@@ -255,26 +273,27 @@
         .input-group:not(:has(.btn-outline-secondary)) .form-control {
             border-radius: 0 8px 8px 0;
         }
-        /* Override common.css button styles */
-#loginForm button[type="submit"].btn-primary {
-    background: var(--brown) !important;
-    border: none;
-    color: var(--white);
-    padding: 15px 30px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    border-radius: 10px;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(139, 107, 74, 0.3);
-}
 
-#loginForm button[type="submit"].btn-primary:hover {
-    background: var(--light-brown) !important;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(139, 107, 74, 0.4);
-}
+        /* Override common.css button styles */
+        #loginForm button[type="submit"].btn-primary {
+            background: var(--brown) !important;
+            border: none;
+            color: var(--white);
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(139, 107, 74, 0.3);
+        }
+
+        #loginForm button[type="submit"].btn-primary:hover {
+            background: var(--light-brown) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(139, 107, 74, 0.4);
+        }
 
 
         .form-control:focus {
@@ -321,7 +340,7 @@
             border-color: var(--brown);
         }
 
-        .input-group > * {
+        .input-group>* {
             position: relative;
             min-width: 0;
         }
@@ -557,8 +576,13 @@
         }
 
         @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         /* Responsive */
@@ -592,6 +616,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container-fluid">
         <div class="row min-vh-100">
@@ -599,13 +624,13 @@
             <div class="col-lg-6 branding-section d-none d-lg-flex">
                 <div class="shape"></div>
                 <div class="shape"></div>
-                
+
                 <div class="branding-content">
                     <h1 class="brand-logo">
                         <i class="fas fa-wave-square"></i> ChangeWave
                     </h1>
                     <p class="brand-tagline">Join the movement that's changing the world, one campaign at a time.</p>
-                    
+
                     <div class="feature-list">
                         <div class="feature-item d-flex align-items-center">
                             <div class="feature-icon">
@@ -616,7 +641,7 @@
                                 <p class="mb-0 text-light">Connect with like-minded changemakers</p>
                             </div>
                         </div>
-                        
+
                         <div class="feature-item d-flex align-items-center">
                             <div class="feature-icon">
                                 <i class="fas fa-chart-line"></i>
@@ -626,7 +651,7 @@
                                 <p class="mb-0 text-light">Track your campaign's real-world impact</p>
                             </div>
                         </div>
-                        
+
                         <div class="feature-item d-flex align-items-center">
                             <div class="feature-icon">
                                 <i class="fas fa-share-alt"></i>
@@ -656,8 +681,8 @@
                                     <span class="input-group-text">
                                         <i class="fas fa-envelope"></i>
                                     </span>
-                                    <input type="email" class="form-control" id="email" name="email" 
-                                           placeholder="Enter your email" required>
+                                    <input type="email" class="form-control" id="email" name="email"
+                                        placeholder="Enter your email" required>
                                 </div>
                             </div>
 
@@ -667,8 +692,8 @@
                                     <span class="input-group-text">
                                         <i class="fas fa-lock"></i>
                                     </span>
-                                    <input type="password" class="form-control" id="password" name="password" 
-                                           placeholder="Enter your password" required>
+                                    <input type="password" class="form-control" id="password" name="password"
+                                        placeholder="Enter your password" required>
                                     <button class="btn btn-outline-secondary" type="button" onclick="togglePassword()">
                                         <i class="fas fa-eye" id="toggleIcon"></i>
                                     </button>
@@ -678,7 +703,8 @@
                             <div class="row mb-4">
                                 <div class="col-6">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="rememberMe" name="rememberMe">
+                                        <input class="form-check-input" type="checkbox" id="rememberMe"
+                                            name="rememberMe">
                                         <label class="form-check-label" for="rememberMe">
                                             Remember me
                                         </label>
@@ -701,19 +727,21 @@
 
                             <div class="row g-3 mb-4">
                                 <div class="col-6">
-                                    <button type="button" class="btn social-login-btn google-btn w-100" onclick="loginWithGoogle()">
+                                    <button type="button" class="btn social-login-btn google-btn w-100"
+                                        onclick="loginWithGoogle()">
                                         <i class="fab fa-google"></i> Google
                                     </button>
                                 </div>
                                 <div class="col-6">
-                                    <button type="button" class="btn social-login-btn facebook-btn w-100" onclick="loginWithFacebook()">
+                                    <button type="button" class="btn social-login-btn facebook-btn w-100"
+                                        onclick="loginWithFacebook()">
                                         <i class="fab fa-facebook-f"></i> Facebook
                                     </button>
                                 </div>
                             </div>
 
                             <div class="text-center">
-                                <p class="mb-0" style="color: var(--light-grey);">Don't have an account? 
+                                <p class="mb-0" style="color: var(--light-grey);">Don't have an account?
                                     <a href="register.html" class="fw-bold">Create Account</a>
                                 </p>
                             </div>
@@ -753,8 +781,8 @@
                     <form id="forgotPasswordForm">
                         <div class="mb-3">
                             <label for="resetEmail" class="form-label">Email Address</label>
-                            <input type="email" class="form-control" id="resetEmail" 
-                                   placeholder="Enter your email address" required>
+                            <input type="email" class="form-control" id="resetEmail"
+                                placeholder="Enter your email address" required>
                         </div>
                         <p class="text-muted small">
                             We'll send you a link to reset your password.
@@ -778,7 +806,7 @@
         function togglePassword() {
             const passwordInput = document.getElementById('password');
             const toggleIcon = document.getElementById('toggleIcon');
-            
+
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
                 toggleIcon.classList.remove('fa-eye');
@@ -823,24 +851,24 @@
         function showAlert(message, type) {
             const alertDiv = type === 'danger' ? document.getElementById('loginError') : document.getElementById('loginSuccess');
             const otherDiv = type === 'danger' ? document.getElementById('loginSuccess') : document.getElementById('loginError');
-            
+
             alertDiv.textContent = message;
             alertDiv.classList.remove('d-none');
             otherDiv.classList.add('d-none');
-            
+
             setTimeout(() => {
                 alertDiv.classList.add('d-none');
             }, 3000);
         }
 
         // Handle login form submission
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+        document.getElementById('loginForm').addEventListener('submit', async function (e) {
             e.preventDefault();
-            
+
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const rememberMe = document.getElementById('rememberMe').checked;
-            
+
             if (!email || !password) {
                 showAlert('Please fill in all fields', 'danger');
                 return;
@@ -853,7 +881,7 @@
             submitBtn.disabled = true;
 
             try {
-                const response = await fetch('http://campaign-management-system-zquy.onrender.com/api/auth/login', {
+                const response = await fetch('https://campaign-management-system-zquy.onrender.com/api/auth/login', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -867,7 +895,7 @@
                     // Store token and user data
                     localStorage.setItem('token', data.token);
                     localStorage.setItem('user', JSON.stringify(data.user));
-                    
+
                     if (rememberMe) {
                         localStorage.setItem('rememberMe', 'true');
                         localStorage.setItem('savedEmail', email);
@@ -877,7 +905,7 @@
 
                     // Redirect based on user role
                     setTimeout(() => {
-                        switch(data.user.role) {
+                        switch (data.user.role) {
                             case 'admin':
                                 window.location.href = 'admin-dashboard.html';
                                 break;
@@ -902,10 +930,10 @@
         });
 
         // Auto-fill remembered email on page load
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const rememberMe = localStorage.getItem('rememberMe');
             const savedEmail = localStorage.getItem('savedEmail');
-            
+
             if (rememberMe === 'true' && savedEmail) {
                 document.getElementById('email').value = savedEmail;
                 document.getElementById('rememberMe').checked = true;
@@ -914,7 +942,7 @@
             // Check for demo parameter
             const urlParams = new URLSearchParams(window.location.search);
             const demo = urlParams.get('demo');
-            
+
             if (demo === 'admin') {
                 document.getElementById('email').value = 'admin@changewave.com';
                 document.getElementById('password').value = 'admin123';
@@ -925,4 +953,5 @@
         });
     </script>
 </body>
+
 </html>

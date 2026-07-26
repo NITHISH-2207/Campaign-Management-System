@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +9,8 @@
     <link rel="stylesheet" href="../css/navbar.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         /* Reset and Base Styles */
@@ -64,7 +66,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: 
+            background:
                 radial-gradient(circle at 20% 50%, rgba(139, 107, 74, 0.08) 0%, transparent 50%),
                 radial-gradient(circle at 80% 80%, rgba(107, 68, 35, 0.05) 0%, transparent 50%);
             pointer-events: none;
@@ -815,21 +817,21 @@
                 grid-template-columns: 1fr;
                 gap: 30px;
             }
-            
+
             .level-card {
                 margin: 0 auto 20px;
             }
-            
+
             .quick-stats {
                 grid-template-columns: repeat(3, 1fr);
                 gap: 20px;
             }
-            
+
             .stat-card {
                 width: 150px;
                 height: 150px;
             }
-            
+
             .stat-number {
                 font-size: 36px;
             }
@@ -867,25 +869,25 @@
                 grid-template-columns: repeat(3, 1fr);
                 gap: 15px;
             }
-            
+
             .stat-card {
                 width: 100px;
                 height: 100px;
             }
-            
+
             .stat-card h3 {
                 font-size: 10px;
             }
-            
+
             .stat-number {
                 font-size: 24px;
             }
-            
+
             .level-card {
                 width: 180px;
                 height: 180px;
             }
-            
+
             .level-display {
                 font-size: 2.5rem;
             }
@@ -907,12 +909,12 @@
                 bottom: 20px;
                 right: 20px;
             }
-            
+
             .feature-button {
                 width: 50px;
                 height: 50px;
             }
-            
+
             .feature-button i {
                 font-size: 20px;
             }
@@ -924,6 +926,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -935,6 +938,7 @@
                 opacity: 0;
                 transform: translateY(20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -952,6 +956,7 @@
                 opacity: 0;
                 transform: translateX(50px);
             }
+
             to {
                 opacity: 1;
                 transform: translateX(0);
@@ -963,9 +968,11 @@
                 transform: scale(0);
                 opacity: 0;
             }
+
             50% {
                 transform: scale(1.1);
             }
+
             100% {
                 transform: scale(1);
                 opacity: 1;
@@ -977,36 +984,120 @@
         }
 
         /* Helper Classes */
-        .d-flex { display: flex !important; }
-        .d-grid { display: grid !important; }
-        .gap-2 { gap: 0.5rem !important; }
-        .justify-content-between { justify-content: space-between !important; }
-        .justify-content-center { justify-content: center !important; }
-        .align-items-center { align-items: center !important; }
-        .text-center { text-align: center !important; }
-        .text-end { text-align: end !important; }
-        .me-3 { margin-right: 1rem !important; }
-        .mb-0 { margin-bottom: 0 !important; }
-        .mb-1 { margin-bottom: 0.25rem !important; }
-        .mb-3 { margin-bottom: 1rem !important; }
-        .mt-3 { margin-top: 1rem !important; }
-        .py-4 { padding-top: 1.5rem !important; padding-bottom: 1.5rem !important; }
-        .flex-grow-1 { flex-grow: 1 !important; }
-        .fw-bold { font-weight: 700 !important; }
-        .small { font-size: 0.875em !important; }
-        .btn-sm { padding: 0.25rem 0.5rem !important; font-size: 0.875rem !important; }
+        .d-flex {
+            display: flex !important;
+        }
+
+        .d-grid {
+            display: grid !important;
+        }
+
+        .gap-2 {
+            gap: 0.5rem !important;
+        }
+
+        .justify-content-between {
+            justify-content: space-between !important;
+        }
+
+        .justify-content-center {
+            justify-content: center !important;
+        }
+
+        .align-items-center {
+            align-items: center !important;
+        }
+
+        .text-center {
+            text-align: center !important;
+        }
+
+        .text-end {
+            text-align: end !important;
+        }
+
+        .me-3 {
+            margin-right: 1rem !important;
+        }
+
+        .mb-0 {
+            margin-bottom: 0 !important;
+        }
+
+        .mb-1 {
+            margin-bottom: 0.25rem !important;
+        }
+
+        .mb-3 {
+            margin-bottom: 1rem !important;
+        }
+
+        .mt-3 {
+            margin-top: 1rem !important;
+        }
+
+        .py-4 {
+            padding-top: 1.5rem !important;
+            padding-bottom: 1.5rem !important;
+        }
+
+        .flex-grow-1 {
+            flex-grow: 1 !important;
+        }
+
+        .fw-bold {
+            font-weight: 700 !important;
+        }
+
+        .small {
+            font-size: 0.875em !important;
+        }
+
+        .btn-sm {
+            padding: 0.25rem 0.5rem !important;
+            font-size: 0.875rem !important;
+        }
 
         /* Text Colors */
-        .text-muted { color: var(--light-grey) !important; }
-        .text-success { color: #38ef7d !important; }
-        .text-warning { color: var(--orange-light) !important; }
-        .text-primary { color: var(--light-brown) !important; }
-        .text-info { color: #6dd5ed !important; }
-        .text-danger { color: #f45c43 !important; }
-        .text-purple { color: var(--purple-light) !important; }
-        .text-brown { color: var(--brown) !important; }
-        .text-secondary { color: var(--light-grey) !important; }
-        .text-dark { color: var(--dark-grey) !important; }
+        .text-muted {
+            color: var(--light-grey) !important;
+        }
+
+        .text-success {
+            color: #38ef7d !important;
+        }
+
+        .text-warning {
+            color: var(--orange-light) !important;
+        }
+
+        .text-primary {
+            color: var(--light-brown) !important;
+        }
+
+        .text-info {
+            color: #6dd5ed !important;
+        }
+
+        .text-danger {
+            color: #f45c43 !important;
+        }
+
+        .text-purple {
+            color: var(--purple-light) !important;
+        }
+
+        .text-brown {
+            color: var(--brown) !important;
+        }
+
+        .text-secondary {
+            color: var(--light-grey) !important;
+        }
+
+        .text-dark {
+            color: var(--dark-grey) !important;
+        }
 
         /* Buttons */
         .btn {
@@ -1088,6 +1179,7 @@
                 opacity: 0;
                 transform: translateY(20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -1189,36 +1281,37 @@
             font-size: 14px;
             border-top: 1px solid rgba(139, 107, 74, 0.2);
         }
-/* Username Link Styling */
-.username-link {
-    color: inherit;
-    text-decoration: none;
-    background: linear-gradient(135deg, var(--white) 0%, var(--light-brown) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    position: relative;
-    transition: all 0.3s ease;
-    cursor: pointer;
-}
 
-.username-link::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: var(--light-brown);
-    transition: width 0.3s ease;
-}
+        /* Username Link Styling */
+        .username-link {
+            color: inherit;
+            text-decoration: none;
+            background: linear-gradient(135deg, var(--white) 0%, var(--light-brown) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
 
-.username-link:hover::after {
-    width: 100%;
-}
+        .username-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--light-brown);
+            transition: width 0.3s ease;
+        }
 
-.username-link:hover {
-    transform: translateY(-1px);
-}
+        .username-link:hover::after {
+            width: 100%;
+        }
+
+        .username-link:hover {
+            transform: translateY(-1px);
+        }
 
         #chatbot-messages::-webkit-scrollbar {
             width: 6px;
@@ -1234,6 +1327,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Navigation will be inserted by navigation.js -->
     <nav class="navbar"></nav>
@@ -1242,11 +1336,11 @@
         <!-- Top Section: Welcome + Quick Actions -->
         <div class="top-section fade-in-up">
             <section class="welcome-section">
-    <h1 id="welcomeMessage">Welcome back, <a href="profile.html" class="username-link">ard</a>!</h1>
-    <p>Ready to make a difference today?</p>
-</section>
+                <h1 id="welcomeMessage">Welcome back, <a href="profile.html" class="username-link">ard</a>!</h1>
+                <p>Ready to make a difference today?</p>
+            </section>
 
-            
+
             <div class="quick-actions-top">
                 <h3>Quick Actions</h3>
                 <div class="quick-actions-grid">
@@ -1283,7 +1377,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <section class="quick-stats">
                 <div class="stat-card">
                     <h3>My Posts</h3>
@@ -1329,7 +1423,8 @@
 
         <!-- Floating Feature Buttons -->
         <div class="floating-features">
-            <div class="feature-button gamification-btn" onclick="window.location.href='gamification.html'" title="Gamification & Rewards">
+            <div class="feature-button gamification-btn" onclick="window.location.href='gamification.html'"
+                title="Gamification & Rewards">
                 <i class="fas fa-trophy"></i>
             </div>
             <div class="feature-button chatbot-btn" onclick="toggleChatbot()" title="AI Assistant">
@@ -1428,28 +1523,28 @@
     <script src="../js/common/navigation.js"></script>
     <script>
         // Define API base URL
-        const API_BASE_URL = 'http://campaign-management-system-zquy.onrender.com';
+        const API_BASE_URL = 'https://campaign-management-system-zquy.onrender.com';
 
         document.addEventListener('DOMContentLoaded', () => {
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    const userName = user.name || 'Change Maker';
-    
-    // Update user info with clickable name
-    document.getElementById('welcomeMessage').innerHTML = `Welcome back, <a href="profile.html" class="username-link">${userName}</a>!`;
-    
-    // Rest of your existing code...
-    loadDashboardData();
-    loadActiveCampaigns();
-    loadAvailableSurveys();
-    
-    // Add fade-in animation to elements
-    const elements = document.querySelectorAll('.fade-in-up');
-    elements.forEach((el, index) => {
-        setTimeout(() => {
-            el.style.opacity = '1';
-        }, index * 100);
-    });
-});
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            const userName = user.name || 'Change Maker';
+
+            // Update user info with clickable name
+            document.getElementById('welcomeMessage').innerHTML = `Welcome back, <a href="profile.html" class="username-link">${userName}</a>!`;
+
+            // Rest of your existing code...
+            loadDashboardData();
+            loadActiveCampaigns();
+            loadAvailableSurveys();
+
+            // Add fade-in animation to elements
+            const elements = document.querySelectorAll('.fade-in-up');
+            elements.forEach((el, index) => {
+                setTimeout(() => {
+                    el.style.opacity = '1';
+                }, index * 100);
+            });
+        });
 
         async function loadDashboardData() {
             try {
@@ -1461,16 +1556,16 @@
 
                 if (response.ok) {
                     const data = await response.json();
-                    
+
                     if (data.success) {
                         // Update stats
                         animateCounter('myPostsCount', data.stats.postsCount || 0);
                         animateCounter('myImpactCount', data.stats.totalImpact || 0);
                         animateCounter('campaignsJoined', data.stats.campaignsJoined || 0);
-                        
+
                         // Update level
                         updateLevelProgress(data.stats.level || 1, data.stats.points || 0);
-                        
+
                         // Update other sections
                         displayRecentActivity(data.recentActivity || []);
                         displayRecentBadges(data.badges || []);
@@ -1487,7 +1582,7 @@
 
         async function loadActiveCampaigns() {
             const container = document.getElementById('activeCampaigns');
-            
+
             try {
                 const response = await fetch(`${API_BASE_URL}/api/campaigns/my-joined`, {
                     headers: {
@@ -1497,7 +1592,7 @@
 
                 if (response.ok) {
                     const data = await response.json();
-                    
+
                     if (data.success && data.campaigns && data.campaigns.length > 0) {
                         displayActiveCampaigns(data.campaigns);
                     } else {
@@ -1526,7 +1621,7 @@
 
         function displayActiveCampaigns(campaigns) {
             const container = document.getElementById('activeCampaigns');
-            
+
             const iconMap = {
                 'Environment': { icon: 'fa-leaf', color: 'text-success' },
                 'Education': { icon: 'fa-graduation-cap', color: 'text-primary' },
@@ -1539,12 +1634,12 @@
                 'Disaster Relief': { icon: 'fa-life-ring', color: 'text-danger' },
                 'Youth': { icon: 'fa-child', color: 'text-success' }
             };
-            
+
             const campaignsHTML = campaigns.slice(0, 5).map(campaign => {
                 const daysLeft = Math.ceil((new Date(campaign.endDate) - new Date()) / (1000 * 60 * 60 * 24));
                 const urgencyClass = daysLeft <= 7 ? 'text-warning' : 'text-success';
                 const iconInfo = iconMap[campaign.category] || { icon: 'fa-flag', color: 'text-secondary' };
-                
+
                 return `
                     <div class="campaign-item d-flex align-items-center">
                         <div class="me-3">
@@ -1563,13 +1658,13 @@
                     </div>
                 `;
             }).join('');
-            
+
             container.innerHTML = campaignsHTML;
         }
 
         function displayRecentActivity(activities) {
             const container = document.getElementById('recentActivity');
-            
+
             if (!activities || activities.length === 0) {
                 container.innerHTML = `
                     <div class="text-center text-muted py-4">
@@ -1579,7 +1674,7 @@
                 `;
                 return;
             }
-            
+
             const activitiesHTML = activities.map(activity => {
                 const timeAgo = getTimeAgo(new Date(activity.date));
                 const colorMap = {
@@ -1588,7 +1683,7 @@
                     'survey': 'text-primary',
                     'badge': 'text-warning'
                 };
-                
+
                 return `
                     <div class="activity-item d-flex align-items-center">
                         <div class="me-3">
@@ -1604,13 +1699,13 @@
                     </div>
                 `;
             }).join('');
-            
+
             container.innerHTML = activitiesHTML;
         }
 
         function displayRecentBadges(badges) {
             const container = document.getElementById('recentBadges');
-            
+
             if (!badges || badges.length === 0) {
                 container.innerHTML = `
                     <div class="text-center text-muted py-4">
@@ -1620,7 +1715,7 @@
                 `;
                 return;
             }
-            
+
             const badgesHTML = badges.map(badge => `
                 <div class="d-flex align-items-center justify-content-center mb-3">
                     <div class="badge-icon text-${badge.color} me-3">
@@ -1632,7 +1727,7 @@
                     </div>
                 </div>
             `).join('');
-            
+
             container.innerHTML = badgesHTML;
         }
 
@@ -1669,7 +1764,7 @@
 
         function displayAvailableSurveys(surveys) {
             const container = document.getElementById('available-surveys');
-            
+
             if (!surveys || surveys.length === 0) {
                 displayNoSurveysMessage('No surveys available at the moment.');
                 return;
@@ -1683,10 +1778,10 @@
                         <span class="survey-type ${survey.type}">${survey.type === 'before' ? 'Pre' : 'Post'}-Campaign Survey</span>
                         <span class="questions-count">${survey.questions ? survey.questions.length : 0} questions</span>
                     </div>
-                    ${survey.completed ? 
-                        '<button class="completed-btn" disabled><i class="fas fa-check"></i> Completed</button>' :
-                        `<button onclick="takeSurvey('${survey._id}')" class="take-survey-btn">Take Survey</button>`
-                    }
+                    ${survey.completed ?
+                    '<button class="completed-btn" disabled><i class="fas fa-check"></i> Completed</button>' :
+                    `<button onclick="takeSurvey('${survey._id}')" class="take-survey-btn">Take Survey</button>`
+                }
                 </div>
             `).join('');
 
@@ -1710,7 +1805,7 @@
         function animateCounter(id, finalValue, suffix = '') {
             const element = document.getElementById(id);
             if (!element) return;
-            
+
             const duration = 1500;
             const steps = 60;
             const stepValue = finalValue / steps;
@@ -1731,10 +1826,10 @@
         function updateLevelProgress(level, points) {
             const progressInLevel = points % 100;
             const pointsToNext = 100 - progressInLevel;
-            
+
             document.getElementById('userLevel').textContent = level;
             document.getElementById('pointsToNext').textContent = pointsToNext;
-            
+
             // Update circular progress
             setTimeout(() => {
                 const progressCircle = document.getElementById('levelProgressCircle');
@@ -1748,7 +1843,7 @@
 
         function getTimeAgo(date) {
             const seconds = Math.floor((new Date() - date) / 1000);
-            
+
             const intervals = [
                 { label: 'year', seconds: 31536000 },
                 { label: 'month', seconds: 2592000 },
@@ -1756,14 +1851,14 @@
                 { label: 'hour', seconds: 3600 },
                 { label: 'minute', seconds: 60 }
             ];
-            
+
             for (const interval of intervals) {
                 const count = Math.floor(seconds / interval.seconds);
                 if (count >= 1) {
                     return count === 1 ? `1 ${interval.label} ago` : `${count} ${interval.label}s ago`;
                 }
             }
-            
+
             return 'Just now';
         }
 
@@ -1786,7 +1881,7 @@
         function toggleChatbot() {
             const bot = document.getElementById('chatbot-container');
             bot.classList.toggle('open');
-            
+
             // Focus on input when opened
             if (bot.classList.contains('open')) {
                 setTimeout(() => {
@@ -1848,4 +1943,5 @@
         }
     </script>
 </body>
+
 </html>

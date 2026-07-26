@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Test Email Notifications</title>
@@ -10,21 +11,30 @@
             margin: 50px auto;
             padding: 20px;
         }
+
         .test-section {
             background: white;
             padding: 20px;
             margin: 20px 0;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
+
         .status-item {
             display: flex;
             justify-content: space-between;
             padding: 10px 0;
             border-bottom: 1px solid #eee;
         }
-        .status-good { color: green; }
-        .status-bad { color: red; }
+
+        .status-good {
+            color: green;
+        }
+
+        .status-bad {
+            color: red;
+        }
+
         .log-container {
             background: #f5f5f5;
             padding: 15px;
@@ -33,6 +43,7 @@
             max-height: 300px;
             overflow-y: auto;
         }
+
         button {
             background: #007bff;
             color: white;
@@ -42,15 +53,17 @@
             cursor: pointer;
             margin: 10px 5px;
         }
+
         button:hover {
             background: #0056b3;
         }
     </style>
 </head>
+
 <body>
     <div class="test-container">
         <h1>Email Notification Testing</h1>
-        
+
         <div class="test-section">
             <h2>System Status</h2>
             <div id="statusContainer">
@@ -68,7 +81,8 @@
 
         <div class="test-section">
             <h2>Create Test Campaign (Starting Tomorrow)</h2>
-            <input type="text" id="campaignTitle" placeholder="Test Campaign Title" style="width: 100%; padding: 10px; margin: 10px 0;">
+            <input type="text" id="campaignTitle" placeholder="Test Campaign Title"
+                style="width: 100%; padding: 10px; margin: 10px 0;">
             <button onclick="createTestCampaign()">Create Campaign for Tomorrow</button>
             <div id="campaignResult"></div>
         </div>
@@ -82,7 +96,7 @@
     </div>
 
     <script>
-        const API_URL = 'http://campaign-management-system-zquy.onrender.com/api';
+        const API_URL = 'https://campaign-management-system-zquy.onrender.com/api';
         const token = localStorage.getItem('token');
 
         async function checkStatus() {
@@ -93,7 +107,7 @@
                     }
                 });
                 const data = await response.json();
-                
+
                 document.getElementById('statusContainer').innerHTML = `
                     <div class="status-item">
                         <span>Email Service:</span>
@@ -112,16 +126,16 @@
                         <span>${data.campaignsStartingTomorrow}</span>
                     </div>
                 `;
-                
+
                 if (data.campaigns && data.campaigns.length > 0) {
-                    const campaignList = data.campaigns.map(c => 
+                    const campaignList = data.campaigns.map(c =>
                         `<li>${c.title} - ${new Date(c.startDate).toLocaleDateString()}</li>`
                     ).join('');
-                    document.getElementById('statusContainer').innerHTML += 
+                    document.getElementById('statusContainer').innerHTML +=
                         `<div style="margin-top: 10px;"><strong>Tomorrow's Campaigns:</strong><ul>${campaignList}</ul></div>`;
                 }
             } catch (error) {
-                document.getElementById('statusContainer').innerHTML = 
+                document.getElementById('statusContainer').innerHTML =
                     `<p class="status-bad">Error: ${error.message}</p>`;
             }
         }
@@ -135,17 +149,17 @@
                     }
                 });
                 const data = await response.json();
-                
+
                 document.getElementById('testResult').innerHTML = `
                     <div style="margin-top: 10px; padding: 10px; background: ${data.success ? '#d4edda' : '#f8d7da'}; color: ${data.success ? '#155724' : '#721c24'}; border-radius: 4px;">
                         <strong>${data.success ? 'Success!' : 'Failed!'}</strong> ${data.message}
                         ${data.details ? `<br>Details: ${JSON.stringify(data.details, null, 2)}` : ''}
                     </div>
                 `;
-                
+
                 logEmail(data);
             } catch (error) {
-                document.getElementById('testResult').innerHTML = 
+                document.getElementById('testResult').innerHTML =
                     `<div style="margin-top: 10px; padding: 10px; background: #f8d7da; color: #721c24; border-radius: 4px;">
                         Error: ${error.message}
                     </div>`;
@@ -156,7 +170,7 @@
             const title = document.getElementById('campaignTitle').value || 'Test Campaign ' + Date.now();
             const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate() + 1);
-            
+
             const campaignData = {
                 title: title,
                 description: 'Test campaign to verify email notifications',
@@ -172,7 +186,7 @@
                 contactEmail: 'test@example.com',
                 contactPhone: '1234567890'
             };
-            
+
             try {
                 const response = await fetch(`${API_URL}/campaigns/create`, {
                     method: 'POST',
@@ -183,17 +197,17 @@
                     body: JSON.stringify(campaignData)
                 });
                 const data = await response.json();
-                
+
                 document.getElementById('campaignResult').innerHTML = `
                     <div style="margin-top: 10px; padding: 10px; background: ${data.success ? '#d4edda' : '#f8d7da'}; color: ${data.success ? '#155724' : '#721c24'}; border-radius: 4px;">
-                        ${data.success ? 
-                            `Campaign created! It will trigger notifications tomorrow morning at 9 AM.<br>Campaign ID: ${data.campaign._id}` : 
-                            `Failed to create campaign: ${data.message}`
-                        }
+                        ${data.success ?
+                        `Campaign created! It will trigger notifications tomorrow morning at 9 AM.<br>Campaign ID: ${data.campaign._id}` :
+                        `Failed to create campaign: ${data.message}`
+                    }
                     </div>
                 `;
             } catch (error) {
-                document.getElementById('campaignResult').innerHTML = 
+                document.getElementById('campaignResult').innerHTML =
                     `<div style="margin-top: 10px; padding: 10px; background: #f8d7da; color: #721c24; border-radius: 4px;">
                         Error: ${error.message}
                     </div>`;
@@ -210,7 +224,7 @@
                     ${emailData.details ? `Details: ${JSON.stringify(emailData.details)}` : ''}
                 </div>
             `;
-            
+
             if (logs.innerHTML.includes('No logs yet')) {
                 logs.innerHTML = logEntry;
             } else {
@@ -222,4 +236,5 @@
         checkStatus();
     </script>
 </body>
+
 </html>

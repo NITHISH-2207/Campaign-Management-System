@@ -28,7 +28,7 @@ class SurveyTaker {
 
     async loadSurvey() {
         try {
-            const response = await fetch(`http://campaign-management-system-zquy.onrender.com/api/surveys/${this.surveyId}`, {
+            const response = await fetch(`https://campaign-management-system-zquy.onrender.com/api/surveys/${this.surveyId}`, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
@@ -261,7 +261,7 @@ class SurveyTaker {
         }
 
         try {
-            const response = await fetch(`http://campaign-management-system-zquy.onrender.com/api/surveys/${this.surveyId}/response`, {
+            const response = await fetch(`https://campaign-management-system-zquy.onrender.com/api/surveys/${this.surveyId}/response`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

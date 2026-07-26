@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +9,8 @@
     <link rel="stylesheet" href="../css/navbar.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         /* Reset and Base Styles */
@@ -64,7 +66,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: 
+            background:
                 radial-gradient(circle at 20% 50%, rgba(139, 107, 74, 0.08) 0%, transparent 50%),
                 radial-gradient(circle at 80% 80%, rgba(107, 68, 35, 0.05) 0%, transparent 50%);
             pointer-events: none;
@@ -492,7 +494,7 @@
             transition: all 0.3s ease;
         }
 
-        .rating-scale input[type="radio"]:checked + span {
+        .rating-scale input[type="radio"]:checked+span {
             background: var(--gradient-primary);
             color: white;
             border-color: var(--brown);
@@ -688,6 +690,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -695,8 +698,13 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         /* Responsive Design */
@@ -755,6 +763,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Navigation will be inserted by navigation.js -->
     <nav class="navbar"></nav>
@@ -762,7 +771,8 @@
     <main class="survey-container">
         <div class="survey-header">
             <h1>Impact Measurement Surveys</h1>
-            <button class="btn-create-survey" id="createSurveyBtn" style="display: none;" onclick="window.location.href='create-survey.html'">
+            <button class="btn-create-survey" id="createSurveyBtn" style="display: none;"
+                onclick="window.location.href='create-survey.html'">
                 <i class="fas fa-plus-circle"></i> Create Survey
             </button>
         </div>
@@ -785,7 +795,7 @@
                     <option value="draft">Draft</option>
                 </select>
             </div>
-            
+
             <div id="surveys-list" class="surveys-grid">
                 <div class="loading-surveys">
                     <div class="spinner"></div>
@@ -807,9 +817,11 @@
                         <!-- Questions will be loaded dynamically -->
                     </div>
                     <div class="survey-navigation">
-                        <button type="button" class="btn-prev" id="prevBtn" onclick="previousQuestion()" disabled>Previous</button>
+                        <button type="button" class="btn-prev" id="prevBtn" onclick="previousQuestion()"
+                            disabled>Previous</button>
                         <button type="button" class="btn-next" id="nextBtn" onclick="nextQuestion()">Next</button>
-                        <button type="submit" class="btn-submit-survey" id="submitBtn" style="display: none;">Submit Survey</button>
+                        <button type="submit" class="btn-submit-survey" id="submitBtn" style="display: none;">Submit
+                            Survey</button>
                     </div>
                 </form>
             </div>
@@ -830,7 +842,7 @@
         document.addEventListener('DOMContentLoaded', async () => {
             const user = JSON.parse(localStorage.getItem('user') || '{}');
             userRole = user.role;
-            
+
             // Fix navigation based on role
             const dashboardLink = document.querySelector('a[href="user-dashboard.html"]');
             if (dashboardLink) {
@@ -840,12 +852,12 @@
                     dashboardLink.href = 'manager-dashboard.html';
                 }
             }
-            
+
             // Show appropriate view based on role
             if (userRole === 'campaign_manager' || userRole === 'admin') {
                 document.getElementById('createSurveyBtn').style.display = 'flex';
             }
-            
+
             // Load data
             await loadCampaigns();
             await loadSurveys();
@@ -853,7 +865,7 @@
 
         async function loadCampaigns() {
             try {
-                const response = await fetch('http://campaign-management-system-zquy.onrender.com/api/campaigns', {
+                const response = await fetch('https://campaign-management-system-zquy.onrender.com/api/campaigns', {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
                     }
@@ -872,7 +884,7 @@
         function populateCampaignFilter() {
             const filter = document.getElementById('campaign-filter');
             filter.innerHTML = '<option value="">All Campaigns</option>';
-            
+
             campaigns.forEach(campaign => {
                 const option = document.createElement('option');
                 option.value = campaign._id;
@@ -883,7 +895,7 @@
 
         async function loadSurveys() {
             try {
-                const response = await fetch('http://campaign-management-system-zquy.onrender.com/api/surveys', {
+                const response = await fetch('https://campaign-management-system-zquy.onrender.com/api/surveys', {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
                     }
@@ -906,14 +918,14 @@
         function displaySurveys() {
             const container = document.getElementById('surveys-list');
             const filteredSurveys = getFilteredSurveys();
-            
+
             if (!filteredSurveys || filteredSurveys.length === 0) {
                 container.innerHTML = `
                     <div class="no-surveys-found">
                         <i class="fas fa-clipboard-list"></i>
                         <p>No surveys found</p>
-                        ${userRole === 'campaign_manager' || userRole === 'admin' ? 
-                            '<p><a href="create-survey.html">Create your first survey</a></p>' : ''}
+                        ${userRole === 'campaign_manager' || userRole === 'admin' ?
+                        '<p><a href="create-survey.html">Create your first survey</a></p>' : ''}
                     </div>
                 `;
                 return;
@@ -922,12 +934,12 @@
             container.innerHTML = filteredSurveys.map(survey => {
                 const campaignId = survey.campaign?._id || survey.campaign || survey.campaignId;
                 const campaignName = survey.campaign?.title || getCampaignName(campaignId) || 'Unknown Campaign';
-                
-                const isCreator = survey.createdBy === getCurrentUserId() || 
-                                 survey.createdBy?._id === getCurrentUserId();
-                
+
+                const isCreator = survey.createdBy === getCurrentUserId() ||
+                    survey.createdBy?._id === getCurrentUserId();
+
                 let actionButton = '';
-                
+
                 if (userRole === 'campaign_manager' || userRole === 'admin') {
                     if (isCreator) {
                         actionButton = `
@@ -941,16 +953,16 @@
                             </div>
                         `;
                     } else {
-                        actionButton = survey.completed ? 
+                        actionButton = survey.completed ?
                             '<button class="btn-completed" disabled><i class="fas fa-check"></i> Completed</button>' :
                             `<button class="btn-take-survey" onclick="takeSurvey('${survey._id}')">Take Survey</button>`;
                     }
                 } else {
-                    actionButton = survey.completed ? 
+                    actionButton = survey.completed ?
                         '<button class="btn-completed" disabled><i class="fas fa-check"></i> Completed</button>' :
                         `<button class="btn-take-survey" onclick="takeSurvey('${survey._id}')">Take Survey</button>`;
                 }
-                
+
                 return `
                     <div class="survey-card">
                         <div class="survey-type ${survey.type}">${survey.type === 'before' ? 'Pre' : 'Post'}-Campaign</div>
@@ -960,8 +972,8 @@
                             <span><i class="fas fa-clipboard-list"></i> ${survey.questions?.length || 0} questions</span>
                             <span><i class="fas fa-flag"></i> ${campaignName}</span>
                             <span><i class="fas fa-users"></i> ${survey.responsesCount || 0} responses</span>
-                            ${isCreator && (userRole === 'campaign_manager' || userRole === 'admin') ? 
-                                '<span class="creator-badge"><i class="fas fa-user"></i> Your Survey</span>' : ''}
+                            ${isCreator && (userRole === 'campaign_manager' || userRole === 'admin') ?
+                        '<span class="creator-badge"><i class="fas fa-user"></i> Your Survey</span>' : ''}
                         </div>
                         ${actionButton}
                     </div>
@@ -976,7 +988,7 @@
 
         async function viewSurveyResults(surveyId) {
             try {
-                const response = await fetch(`http://campaign-management-system-zquy.onrender.com/api/surveys/${surveyId}/results`, {
+                const response = await fetch(`https://campaign-management-system-zquy.onrender.com/api/surveys/${surveyId}/results`, {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
                     }
@@ -1037,7 +1049,7 @@
                 result.responses.forEach(r => {
                     answerCounts[r.answer] = (answerCounts[r.answer] || 0) + 1;
                 });
-                
+
                 return `
                     <div class="answer-breakdown">
                         ${Object.entries(answerCounts).map(([answer, count]) => `
@@ -1057,14 +1069,14 @@
         }
 
         function exportResults(surveyId) {
-            window.open(`http://campaign-management-system-zquy.onrender.com/api/surveys/${surveyId}/export?token=${localStorage.getItem('token')}`, '_blank');
+            window.open(`https://campaign-management-system-zquy.onrender.com/api/surveys/${surveyId}/export?token=${localStorage.getItem('token')}`, '_blank');
         }
 
         function getFilteredSurveys() {
             const campaignFilter = document.getElementById('campaign-filter').value;
             const typeFilter = document.getElementById('type-filter').value;
             const statusFilter = document.getElementById('status-filter').value;
-            
+
             return allSurveys.filter(survey => {
                 const campaignId = survey.campaign?._id || survey.campaign;
                 if (campaignFilter && campaignId !== campaignFilter) return false;
@@ -1090,7 +1102,7 @@
                 if (survey) {
                     openSurveyModal(survey);
                 } else {
-                    const response = await fetch(`http://campaign-management-system-zquy.onrender.com/api/surveys/${surveyId}`, {
+                    const response = await fetch(`https://campaign-management-system-zquy.onrender.com/api/surveys/${surveyId}`, {
                         headers: {
                             'Authorization': `Bearer ${localStorage.getItem('token')}`
                         }
@@ -1114,25 +1126,26 @@
             const modal = document.getElementById('surveyModal');
             document.getElementById('surveyTitle').textContent = survey.title;
             currentQuestionIndex = 0;
-            surveyResponses = {};}
-            
-                   function loadSurveyQuestions() {
+            surveyResponses = {};
+        }
+
+        function loadSurveyQuestions() {
             if (!currentSurvey || !currentSurvey.questions) {
                 console.error('No survey or questions available');
                 return;
             }
-            
+
             const questionsContainer = document.getElementById('surveyQuestions');
             questionsContainer.innerHTML = '';
-            
+
             currentSurvey.questions.forEach((question, index) => {
                 const questionDiv = document.createElement('div');
                 questionDiv.className = 'question';
                 questionDiv.style.display = index === currentQuestionIndex ? 'block' : 'none';
                 questionDiv.setAttribute('data-question-index', index);
-                
+
                 let questionHTML = `<label>${index + 1}. ${question.text}</label>`;
-                
+
                 switch (question.type) {
                     case 'rating':
                     case 'scale':
@@ -1157,7 +1170,7 @@
                             `;
                         }
                         break;
-                        
+
                     case 'yes-no':
                         questionHTML += `
                             <div class="rating-scale">
@@ -1172,7 +1185,7 @@
                             </div>
                         `;
                         break;
-                        
+
                     case 'multiple-choice':
                         questionHTML += '<div class="rating-scale">';
                         question.options.forEach((option, optIndex) => {
@@ -1191,7 +1204,7 @@
                         });
                         questionHTML += '</div>';
                         break;
-                        
+
                     case 'text':
                         questionHTML += `
                             <textarea class="text-response" name="question_${question.questionId}" 
@@ -1199,11 +1212,11 @@
                         `;
                         break;
                 }
-                
+
                 questionDiv.innerHTML = questionHTML;
                 questionsContainer.appendChild(questionDiv);
             });
-            
+
             updateProgressBar();
             updateNavigationButtons();
             modal.style.display = 'flex';
@@ -1214,7 +1227,7 @@
                 alert('Please answer the current question before proceeding.');
                 return;
             }
-            
+
             if (currentQuestionIndex < currentSurvey.questions.length - 1) {
                 currentQuestionIndex++;
                 showCurrentQuestion();
@@ -1243,16 +1256,16 @@
 
         function updateNavigationButtons() {
             document.getElementById('prevBtn').disabled = currentQuestionIndex === 0;
-            document.getElementById('nextBtn').style.display = 
+            document.getElementById('nextBtn').style.display =
                 currentQuestionIndex === currentSurvey.questions.length - 1 ? 'none' : 'block';
-            document.getElementById('submitBtn').style.display = 
+            document.getElementById('submitBtn').style.display =
                 currentQuestionIndex === currentSurvey.questions.length - 1 ? 'block' : 'none';
         }
 
         function saveCurrentAnswer() {
             const currentQuestion = currentSurvey.questions[currentQuestionIndex];
             const questionId = currentQuestion.questionId;
-            
+
             if (currentQuestion.type === 'text') {
                 const textarea = document.querySelector(`textarea[name="question_${questionId}"]`);
                 if (textarea && textarea.value.trim()) {
@@ -1266,7 +1279,7 @@
                     return true;
                 }
             }
-            
+
             return currentQuestion.required !== false ? false : true;
         }
 
@@ -1279,19 +1292,19 @@
 
         document.getElementById('surveyForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             if (!saveCurrentAnswer()) {
                 alert('Please answer all required questions.');
                 return;
             }
-            
+
             const responses = currentSurvey.questions.map(q => ({
                 questionId: q.questionId,
                 answer: surveyResponses[q.questionId] || ''
             }));
-            
+
             try {
-                const response = await fetch(`http://campaign-management-system-zquy.onrender.com/api/surveys/${currentSurvey._id}/response`, {
+                const response = await fetch(`https://campaign-management-system-zquy.onrender.com/api/surveys/${currentSurvey._id}/response`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1325,4 +1338,5 @@
         }
     </script>
 </body>
+
 </html>

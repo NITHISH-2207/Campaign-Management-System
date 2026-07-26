@@ -1,5 +1,5 @@
 // frontend/js/campaign/campaigns-list.js
-const API_BASE_URL = 'http://campaign-management-system-zquy.onrender.com';
+const API_BASE_URL = 'https://campaign-management-system-zquy.onrender.com';
 let currentPage = 1;
 let isLoading = false;
 let filters = {

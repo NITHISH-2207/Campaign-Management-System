@@ -13,7 +13,7 @@ module.exports = {
             const allowedOrigins = [
                 'http://localhost:5500',
                 'http://127.0.0.1:5500',
-                'http://campaign-management-system-zquy.onrender.com',
+                'https://campaign-management-system-zquy.onrender.com',
                 'http://localhost:3001',
                 'http://127.0.0.1:3000'
             ];

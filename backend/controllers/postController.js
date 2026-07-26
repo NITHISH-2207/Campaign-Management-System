@@ -158,7 +158,7 @@ const postController = {
                     ...post,
                     isAuthor: post.authorId._id.toString() === userId.toString(),
                     isLiked: post.likedBy && post.likedBy.some(id => id.toString() === userId.toString()),
-                    imageUrl: post.imageUrl ? `http://campaign-management-system-zquy.onrender.com${post.imageUrl}` : null,
+                    imageUrl: post.imageUrl ? `https://campaign-management-system-zquy.onrender.com${post.imageUrl}` : null,
                     totalEngagement
                 };
             });
@@ -235,7 +235,7 @@ const postController = {
                     ...post,
                     isAuthor,
                     isLiked,
-                    imageUrl: post.imageUrl ? `http://campaign-management-system-zquy.onrender.com${post.imageUrl}` : null,
+                    imageUrl: post.imageUrl ? `https://campaign-management-system-zquy.onrender.com${post.imageUrl}` : null,
                     totalEngagement
                 },
                 comments: isAuthor ? comments : comments.map(c => ({
@@ -398,7 +398,7 @@ const postController = {
                 ...post,
                 isAuthor: post.authorId._id.toString() === userId.toString(),
                 isLiked: post.likedBy && post.likedBy.some(id => id.toString() === userId.toString()),
-                imageUrl: post.imageUrl ? `http://campaign-management-system-zquy.onrender.com${post.imageUrl}` : null
+                imageUrl: post.imageUrl ? `https://campaign-management-system-zquy.onrender.com${post.imageUrl}` : null
             }));
 
             res.json({

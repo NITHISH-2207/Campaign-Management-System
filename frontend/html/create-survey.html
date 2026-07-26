@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +9,8 @@
     <link rel="stylesheet" href="../css/navbar.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         /* Reset and Base Styles */
@@ -56,7 +58,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: 
+            background:
                 radial-gradient(circle at 20% 50%, rgba(33, 147, 176, 0.08) 0%, transparent 50%),
                 radial-gradient(circle at 80% 80%, rgba(139, 107, 74, 0.05) 0%, transparent 50%);
             pointer-events: none;
@@ -96,8 +98,13 @@
             animation: fadeInUp 0.8s ease-out both;
         }
 
-        .form-section:nth-child(2) { animation-delay: 0.2s; }
-        .form-section:nth-child(3) { animation-delay: 0.4s; }
+        .form-section:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .form-section:nth-child(3) {
+            animation-delay: 0.4s;
+        }
 
         .form-section::before {
             content: '';
@@ -431,8 +438,13 @@
         }
 
         @keyframes spin {
-            0% { transform: translate(-50%, -50%) rotate(0deg); }
-            100% { transform: translate(-50%, -50%) rotate(360deg); }
+            0% {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+
+            100% {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
         }
 
         /* Animations */
@@ -441,6 +453,7 @@
                 opacity: 0;
                 transform: translateY(-30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -452,6 +465,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -459,8 +473,13 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
 
         @keyframes slideInLeft {
@@ -468,6 +487,7 @@
                 opacity: 0;
                 transform: translateX(-20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateX(0);
@@ -545,23 +565,26 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Navigation will be inserted by navigation.js -->
     <nav class="navbar"></nav>
-    
+
     <main class="survey-builder">
         <h1>Create Impact Survey</h1>
-        
+
         <form id="createSurveyForm">
             <div class="form-section">
                 <h2>Survey Details</h2>
                 <div class="form-group">
                     <label for="surveyTitle">Survey Title *</label>
-                    <input type="text" id="surveyTitle" placeholder="Enter a descriptive title for your survey" required>
+                    <input type="text" id="surveyTitle" placeholder="Enter a descriptive title for your survey"
+                        required>
                 </div>
                 <div class="form-group">
                     <label for="surveyDescription">Survey Description</label>
-                    <textarea id="surveyDescription" rows="3" placeholder="Briefly describe the purpose of this survey"></textarea>
+                    <textarea id="surveyDescription" rows="3"
+                        placeholder="Briefly describe the purpose of this survey"></textarea>
                 </div>
                 <div class="form-group">
                     <label for="campaignSelect">Select Campaign *</label>
@@ -618,7 +641,7 @@
 
                 // Load campaigns
                 await this.loadCampaigns();
-                
+
                 // Set up form submission
                 document.getElementById('createSurveyForm').addEventListener('submit', (e) => {
                     e.preventDefault();
@@ -631,7 +654,7 @@
 
             async loadCampaigns() {
                 try {
-                    const response = await fetch('http://campaign-management-system-zquy.onrender.com/api/campaigns/my-campaigns', {
+                    const response = await fetch('https://campaign-management-system-zquy.onrender.com/api/campaigns/my-campaigns', {
                         headers: {
                             'Authorization': `Bearer ${localStorage.getItem('token')}`
                         }
@@ -649,7 +672,7 @@
             populateCampaignDropdown() {
                 const select = document.getElementById('campaignSelect');
                 select.innerHTML = '<option value="">Select a campaign</option>';
-                
+
                 this.campaigns.forEach(campaign => {
                     const option = document.createElement('option');
                     option.value = campaign._id;
@@ -661,7 +684,7 @@
             addQuestion() {
                 const questionId = `q_${Date.now()}_${this.questionIdCounter++}`;
                 const questionNumber = this.questions.length + 1;
-                
+
                 const questionHtml = `
                     <div class="question-item" data-question-id="${questionId}">
                         <div class="question-header">
@@ -705,7 +728,7 @@
                         </div>
                     </div>
                 `;
-                
+
                 document.getElementById('questionsContainer').insertAdjacentHTML('beforeend', questionHtml);
                 this.questions.push({ id: questionId });
                 this.updateQuestionNumbers();
@@ -716,7 +739,7 @@
                     alert('Survey must have at least one question');
                     return;
                 }
-                
+
                 const element = document.querySelector(`[data-question-id="${questionId}"]`);
                 if (element) {
                     element.style.animation = 'slideInLeft 0.3s ease-out reverse';
@@ -742,9 +765,9 @@
                 const questionItem = document.querySelector(`[data-question-id="${questionId}"]`);
                 const type = questionItem.querySelector('.question-type').value;
                 const optionsContainer = document.getElementById(`options-${questionId}`);
-                
+
                 let optionsHtml = '';
-                
+
                 switch (type) {
                     case 'scale':
                         optionsHtml = `
@@ -756,7 +779,7 @@
                             </div>
                         `;
                         break;
-                        
+
                     case 'multiple-choice':
                         optionsHtml = `
                             <div class="options-container">
@@ -778,28 +801,28 @@
                         `;
                         break;
                 }
-                
+
                 optionsContainer.innerHTML = optionsHtml;
             }
 
             addOption(questionId) {
                 const optionsList = document.getElementById(`options-list-${questionId}`);
                 const optionCount = optionsList.children.length + 1;
-                
+
                 const optionHtml = `
                     <div class="option-input">
                         <input type="text" placeholder="Option ${optionCount}" class="mc-option">
                         <button type="button" onclick="surveyBuilder.removeOption(this)">×</button>
                     </div>
                 `;
-                
+
                 optionsList.insertAdjacentHTML('beforeend', optionHtml);
             }
 
             removeOption(button) {
                 const optionInput = button.closest('.option-input');
                 const optionsList = optionInput.closest('.options-list');
-                
+
                 if (optionsList.children.length > 2) {
                     optionInput.style.animation = 'fadeIn 0.3s ease-out reverse';
                     setTimeout(() => optionInput.remove(), 300);
@@ -811,7 +834,7 @@
             collectQuestions() {
                 const questions = [];
                 const questionItems = document.querySelectorAll('.question-item');
-                
+
                 questionItems.forEach((item, index) => {
                     const questionId = item.dataset.questionId;
                     const question = {
@@ -821,7 +844,7 @@
                         category: item.querySelector('.question-category').value,
                         required: true
                     };
-                    
+
                     // Handle type-specific options
                     if (question.type === 'scale') {
                         const scaleMin = item.querySelector('.scale-min');
@@ -836,10 +859,10 @@
                             .filter(value => value.trim() !== '');
                         question.options = options;
                     }
-                    
+
                     questions.push(question);
                 });
-                
+
                 return questions;
             }
 
@@ -851,34 +874,34 @@
                     type: document.getElementById('surveyType').value,
                     questions: this.collectQuestions()
                 };
-                
+
                 // Validate
                 if (!surveyData.title || !surveyData.campaignId || !surveyData.type) {
                     alert('Please fill in all required fields');
                     return;
                 }
-                
+
                 if (surveyData.questions.length === 0) {
                     alert('Please add at least one question');
                     return;
                 }
-                
+
                 // Check if all questions are valid
-                const invalidQuestions = surveyData.questions.filter(q => 
-                    !q.text || !q.category || 
+                const invalidQuestions = surveyData.questions.filter(q =>
+                    !q.text || !q.category ||
                     (q.type === 'multiple-choice' && (!q.options || q.options.length < 2))
                 );
-                
+
                 if (invalidQuestions.length > 0) {
                     alert('Please complete all questions before submitting');
                     return;
                 }
-                
+
                 // Add loading state
                 document.getElementById('createSurveyForm').classList.add('loading');
-                
+
                 try {
-                    const response = await fetch('http://campaign-management-system-zquy.onrender.com/api/surveys/create', {
+                    const response = await fetch('https://campaign-management-system-zquy.onrender.com/api/surveys/create', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -886,7 +909,7 @@
                         },
                         body: JSON.stringify(surveyData)
                     });
-                    
+
                     if (response.ok) {
                         alert('Survey created successfully!');
                         window.location.href = 'survey-management.html';
@@ -912,7 +935,7 @@
                     questions: this.collectQuestions(),
                     status: 'draft'
                 };
-                
+
                 localStorage.setItem('surveyDraft', JSON.stringify(surveyData));
                 alert('Survey saved as draft');
             }
@@ -922,4 +945,5 @@
         const surveyBuilder = new SurveyBuilder();
     </script>
 </body>
+
 </html>
