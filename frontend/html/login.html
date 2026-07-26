@@ -799,7 +799,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../js/common/auth.js"></script>
+    <script src="js/common/auth.js"></script>
     <script>
         // Toggle password visibility
         function togglePassword() {
@@ -895,6 +895,12 @@
                     localStorage.setItem('token', data.token);
                     localStorage.setItem('user', JSON.stringify(data.user));
 
+                    // Clear any stale redirectUrl pointing to login/register
+                    const redirectUrl = localStorage.getItem('redirectUrl');
+                    if (redirectUrl && (redirectUrl.includes('login.html') || redirectUrl.includes('register.html') || redirectUrl.includes('index.html'))) {
+                        localStorage.removeItem('redirectUrl');
+                    }
+
                     if (rememberMe) {
                         localStorage.setItem('rememberMe', 'true');
                         localStorage.setItem('savedEmail', email);
@@ -902,17 +908,23 @@
 
                     showAlert('Login successful! Redirecting...', 'success');
 
-                    // Redirect based on user role
+                    // Redirect based on user role or valid redirectUrl
                     setTimeout(() => {
-                        switch (data.user.role) {
-                            case 'admin':
-                                window.location.href = 'admin-dashboard.html';
-                                break;
-                            case 'campaign_manager':
-                                window.location.href = 'campaign-manager-dashboard.html';
-                                break;
-                            default:
-                                window.location.href = 'user-dashboard.html';
+                        const validRedirectUrl = localStorage.getItem('redirectUrl');
+                        if (validRedirectUrl && !validRedirectUrl.includes('login.html') && !validRedirectUrl.includes('register.html')) {
+                            localStorage.removeItem('redirectUrl');
+                            window.location.href = validRedirectUrl;
+                        } else {
+                            switch (data.user.role) {
+                                case 'admin':
+                                    window.location.href = 'admin-dashboard.html';
+                                    break;
+                                case 'campaign_manager':
+                                    window.location.href = 'campaign-manager-dashboard.html';
+                                    break;
+                                default:
+                                    window.location.href = 'user-dashboard.html';
+                            }
                         }
                     }, 1500);
                 } else {

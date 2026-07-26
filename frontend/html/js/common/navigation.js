@@ -2,8 +2,9 @@
 function setupNavigation() {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const currentPage = window.location.pathname.split('/').pop();
+    const userId = user.id || user._id;
     
-    if (!user.id && !['login.html', 'register.html', 'index.html'].includes(currentPage)) {
+    if (!userId && !['login.html', 'register.html', 'index.html'].includes(currentPage)) {
         window.location.href = 'login.html';
         return;
     }
@@ -133,7 +134,7 @@ function goToDashboard() {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     if (['campaign_manager', 'admin'].includes(user.role)) {
         window.location.href = 'campaign-manager-dashboard.html';
-    } else if (user.id) {
+    } else if (user.id || user._id) {
         window.location.href = 'user-dashboard.html';
     } else {
         window.location.href = 'index.html';

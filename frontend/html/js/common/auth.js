@@ -176,9 +176,10 @@ function checkAuth() {
             const userData = JSON.parse(user);
 
             // Verify token is not expired (basic check)
-            if (userData && userData.id) {
-                // Redirect logged-in users away from login page
-                if (window.location.pathname.includes('login.html')) {
+            if (userData && (userData.id || userData._id)) {
+                // Redirect logged-in users away from auth pages (login & register)
+                const currentPage = window.location.pathname.split('/').pop();
+                if (['login.html', 'register.html'].includes(currentPage)) {
                     window.location.href = getDashboardByRole(userData.role);
                 }
                 return true;
@@ -199,8 +200,11 @@ function requireAuth() {
     const user = localStorage.getItem('user');
 
     if (!token || !user) {
-        // Save intended destination
-        localStorage.setItem('redirectUrl', window.location.href);
+        // Save intended destination (only if it is a protected route, not public or auth pages)
+        const currentPage = window.location.pathname.split('/').pop();
+        if (!['login.html', 'register.html', 'index.html', 'about.html', ''].includes(currentPage)) {
+            localStorage.setItem('redirectUrl', window.location.href);
+        }
         window.location.href = 'login.html';
         return false;
     }
@@ -287,23 +291,24 @@ async function apiRequest(endpoint, options = {}) {
 
 // Check auth on page load
 document.addEventListener('DOMContentLoaded', () => {
-    // Only check auth if not on login page
-    if (!window.location.pathname.includes('login.html')) {
-        const publicPages = ['index.html', 'register.html', 'about.html'];
-        const currentPage = window.location.pathname.split('/').pop();
+    const currentPage = window.location.pathname.split('/').pop();
+    const publicPages = ['index.html', 'register.html', 'about.html', 'login.html'];
 
-        if (!publicPages.includes(currentPage)) {
-            requireAuth();
-        }
-    } else {
+    if (['login.html', 'register.html'].includes(currentPage)) {
         checkAuth();
+    } else if (!publicPages.includes(currentPage)) {
+        requireAuth();
     }
 
     // Check for redirect URL after login
     const redirectUrl = localStorage.getItem('redirectUrl');
-    if (redirectUrl && checkAuth()) {
-        localStorage.removeItem('redirectUrl');
-        window.location.href = redirectUrl;
+    if (redirectUrl) {
+        if (redirectUrl.includes('login.html') || redirectUrl.includes('register.html') || redirectUrl.includes('index.html')) {
+            localStorage.removeItem('redirectUrl');
+        } else if (checkAuth()) {
+            localStorage.removeItem('redirectUrl');
+            window.location.href = redirectUrl;
+        }
     }
 });
 
