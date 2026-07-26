@@ -97,10 +97,21 @@ document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
 document.getElementById('registerForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
     
-    const name = document.getElementById('registerName').value;
-    const email = document.getElementById('registerEmail').value;
-    const password = document.getElementById('registerPassword').value;
-    const role = document.getElementById('registerRole').value;
+    const nameEl = document.getElementById('registerName');
+    const emailEl = document.getElementById('registerEmail');
+    const passwordEl = document.getElementById('registerPassword');
+    const roleEl = document.getElementById('registerRole');
+    
+    // Skip if required elements don't exist (page uses different form IDs)
+    if (!nameEl || !emailEl || !passwordEl) {
+        console.warn('auth.js: Register form elements not found, skipping auth.js register handler.');
+        return;
+    }
+    
+    const name = nameEl.value;
+    const email = emailEl.value;
+    const password = passwordEl.value;
+    const role = roleEl ? roleEl.value : 'user';
     const errorEl = document.getElementById('registerError');
     const successEl = document.getElementById('registerSuccess');
     const submitBtn = e.target.querySelector('button[type="submit"]');
