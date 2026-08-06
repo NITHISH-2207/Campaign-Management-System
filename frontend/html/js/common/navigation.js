@@ -4,9 +4,17 @@ function setupNavigation() {
     const currentPage = window.location.pathname.split('/').pop();
     const userId = user.id || user._id;
     
-    if (!userId && !['login.html', 'register.html', 'index.html'].includes(currentPage)) {
-        window.location.href = 'login.html';
+    if (!userId && !['login.html', 'register.html', 'index.html', 'admin-login.html'].includes(currentPage)) {
+        window.location.replace('login.html');
         return;
+    }
+
+    // Enforce Admin Session Isolation
+    if (user.role === 'admin') {
+        if (!['admin-dashboard.html', 'admin-login.html'].includes(currentPage)) {
+            window.location.replace('admin-dashboard.html');
+            return;
+        }
     }
 
     let navHTML = `
@@ -19,7 +27,12 @@ function setupNavigation() {
     `;
 
     // Role-specific navigation
-    if (['campaign_manager', 'admin'].includes(user.role)) {
+    if (user.role === 'admin') {
+        // Admin Navigation (Admin Approval Center ONLY)
+        navHTML += `
+            <li><a href="admin-dashboard.html" class="${currentPage === 'admin-dashboard.html' ? 'active' : ''}">Approval Center</a></li>
+        `;
+    } else if (user.role === 'campaign_manager') {
         // Campaign Manager Navigation
         navHTML += `
             <li><a href="campaign-manager-dashboard.html" class="${currentPage === 'campaign-manager-dashboard.html' ? 'active' : ''}">Dashboard</a></li>
@@ -38,10 +51,7 @@ function setupNavigation() {
             <li><a href="analytics-dashboard.html" class="${currentPage === 'analytics-dashboard.html' ? 'active' : ''}">Analytics</a></li>
             <li><a href="education-library.html" class="${currentPage === 'education-library.html' ? 'active' : ''}">Education</a></li>
             <li><a href="survey-management.html" class="${currentPage === 'survey-management.html' ? 'active' : ''}">Surveys</a></li>
-            
-<li><a href="campaigns-list.html" class="${currentPage === 'campaigns-list.html' ? 'active' : ''}">Campaigns</a></li>
-
-
+            <li><a href="campaigns-list.html" class="${currentPage === 'campaigns-list.html' ? 'active' : ''}">Campaigns</a></li>
         `;
     } else if (user.id) {
         // Regular User Navigation
@@ -132,7 +142,9 @@ function toggleMobileMenu() {
 
 function goToDashboard() {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
-    if (['campaign_manager', 'admin'].includes(user.role)) {
+    if (user.role === 'admin') {
+        window.location.replace('admin-dashboard.html');
+    } else if (user.role === 'campaign_manager') {
         window.location.href = 'campaign-manager-dashboard.html';
     } else if (user.id || user._id) {
         window.location.href = 'user-dashboard.html';
@@ -143,9 +155,18 @@ function goToDashboard() {
 
 function logout() {
     if (confirm('Are you sure you want to logout?')) {
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        const isAdmin = user.role === 'admin';
+
+        window.onpopstate = null;
         localStorage.removeItem('token');
         localStorage.removeItem('user');
-        window.location.href = 'login.html';
+
+        if (isAdmin) {
+            window.location.replace('admin-login.html');
+        } else {
+            window.location.href = 'login.html';
+        }
     }
 }
 

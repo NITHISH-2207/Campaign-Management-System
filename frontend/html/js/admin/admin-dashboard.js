@@ -22,6 +22,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('userMenu').textContent = `Hi, ${user.name}`;
     }
 
+    // Trap browser back button inside admin session until explicit logout
+    history.pushState(null, null, location.href);
+    window.onpopstate = function () {
+        history.pushState(null, null, location.href);
+    };
+
     // Load Overview Metrics & Pending Campaigns
     await loadAdminOverview();
     await loadAdminCampaigns('pending');
@@ -226,9 +232,10 @@ async function handleApproveReject(campaignId, isApprove) {
 
 function adminLogout() {
     if (confirm('Log out from Admin Dashboard?')) {
+        window.onpopstate = null;
         localStorage.removeItem('token');
         localStorage.removeItem('user');
-        window.location.href = 'admin-login.html';
+        window.location.replace('admin-login.html');
     }
 }
 
