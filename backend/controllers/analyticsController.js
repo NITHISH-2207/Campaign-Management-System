@@ -15,7 +15,11 @@ exports.getDashboardData = async (req, res) => {
         startDate.setDate(startDate.getDate() - dateRange);
 
         // Get campaigns managed by user
-        const userCampaigns = await Campaign.find({ managerId: userId });
+        const campaignQuery = { managerId: userId };
+        if (campaignId && campaignId !== 'all') {
+            campaignQuery._id = campaignId;
+        }
+        const userCampaigns = await Campaign.find(campaignQuery);
         const campaignIds = userCampaigns.map(c => c._id);
 
         // Get posts for user's campaigns
@@ -35,11 +39,13 @@ exports.getDashboardData = async (req, res) => {
             return acc;
         }, { views: 0, likes: 0, shares: 0, comments: 0, total: 0 });
 
-        // Get unique users who engaged
+        // Get unique active users from the participants array of manager's campaigns
         const uniqueUsers = new Set();
-        for (const post of posts) {
-            if (post.likedBy) {
-                post.likedBy.forEach(userId => uniqueUsers.add(userId.toString()));
+        for (const campaign of userCampaigns) {
+            if (Array.isArray(campaign.participants)) {
+                campaign.participants.forEach(pId => {
+                    if (pId) uniqueUsers.add(pId.toString());
+                });
             }
         }
 
