@@ -701,20 +701,6 @@
             // Add preview functionality
             alert('Preview functionality will open in a modal window');
         }
-
-        // Form submission
-        document.getElementById('createModuleForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            this.classList.add('loading');
-            
-            // Simulate API call
-            setTimeout(() => {
-                this.classList.remove('loading');
-                alert('Education module created successfully!');
-                // Redirect to education library
-                // window.location.href = 'education-library.html';
-            }, 2000);
-        });
     </script>
 </body>
 </html>

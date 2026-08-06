@@ -114,14 +114,8 @@ function updateSentimentDisplay(sentiment) {
 }
 
 function startRealtimeUpdates() {
-    // Load realtime activity immediately
+    // Load realtime activity once on page load without periodic auto-refreshing
     loadRealtimeActivity();
-
-    // Then refresh every 5 seconds
-    setInterval(loadRealtimeActivity, 5000);
-
-    // Refresh main dashboard every 30 seconds
-    setInterval(loadDashboardData, 30000);
 }
 
 async function loadRealtimeActivity() {

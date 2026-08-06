@@ -180,20 +180,4 @@ async function handleSubmit(event) {
 // Temporary function to auto-approve campaigns for testing
 async function autoApproveCampaign(campaignId) {
     console.log('Auto-approving campaign for testing...');
-
-    // Since we don't have admin functionality yet, 
-    // we'll need to manually update the campaign status in the database
-    // or create a temporary endpoint for testing
-
-    // For now, the campaign will be created with 'pending' status
-    // You can manually update it in MongoDB or create test campaigns
 }
-
-// Auto-save draft every 30 seconds
-setInterval(() => {
-    const form = document.getElementById('campaignForm');
-    if (form && document.getElementById('title').value) {
-        saveDraft();
-        console.log('Draft auto-saved');
-    }
-}, 30000);

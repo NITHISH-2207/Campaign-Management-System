@@ -676,26 +676,6 @@
             document.getElementById('startDate').min = today;
             document.getElementById('endDate').min = today;
         });
-
-        // Form submission
-        document.getElementById('campaignForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            // Add loading state
-            this.classList.add('loading');
-            // Handle form submission here
-            setTimeout(() => {
-                this.classList.remove('loading');
-                alert('Campaign submitted for review!');
-            }, 2000);
-        });
-
-        function saveDraft() {
-            document.getElementById('campaignForm').classList.add('loading');
-            setTimeout(() => {
-                document.getElementById('campaignForm').classList.remove('loading');
-                alert('Campaign saved as draft!');
-            }, 1500);
-        }
     </script>
 </body>
 </html>
