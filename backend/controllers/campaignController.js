@@ -1,5 +1,10 @@
 // backend/controllers/campaignController.js
 const Campaign = require('../models/Campaign');
+const Post = require('../models/Post');
+const Survey = require('../models/Survey');
+const SurveyResponse = require('../models/SurveyResponse');
+const Education = require('../models/Education');
+const UserProgress = require('../models/UserProgress');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
@@ -406,6 +411,199 @@ joinCampaign: async (req, res) => {
             res.status(500).json({
                 success: false,
                 message: 'Failed to fetch campaign statistics',
+                error: error.message
+            });
+        }
+    },
+
+    // Get full campaign manager dashboard data (only real MongoDB data for logged in manager)
+    getManagerDashboard: async (req, res) => {
+        try {
+            const managerId = req.user.id || req.user._id;
+
+            // 1. Fetch campaigns created by this particular manager
+            const managerCampaigns = await Campaign.find({ managerId })
+                .sort({ createdAt: -1 })
+                .lean();
+
+            const managerCampaignIds = managerCampaigns.map(c => c._id);
+
+            // 2. Fetch stats per campaign and compute aggregate metrics
+            let totalPostsCount = 0;
+            let totalEngagementCount = 0;
+            const uniqueParticipantsSet = new Set();
+
+            // Collect manager campaigns with per-campaign stats
+            const campaignsWithStats = await Promise.all(managerCampaigns.map(async (campaign) => {
+                const campaignId = campaign._id;
+
+                // Count posts belonging to this campaign
+                const postCount = await Post.countDocuments({ campaignId });
+                totalPostsCount += postCount;
+
+                // Aggregate post engagement for this campaign
+                const campaignPosts = await Post.find({ campaignId }).lean();
+                let campaignEngagement = 0;
+                campaignPosts.forEach(p => {
+                    const likes = p.engagement?.likes || 0;
+                    const comments = p.engagement?.comments || 0;
+                    const shares = p.engagement?.shares || 0;
+                    const views = p.engagement?.views || 0;
+                    campaignEngagement += (likes + comments + shares + views);
+                });
+                totalEngagementCount += campaignEngagement;
+
+                // Collect participants
+                if (Array.isArray(campaign.participants)) {
+                    campaign.participants.forEach(pId => uniqueParticipantsSet.add(pId.toString()));
+                }
+
+                // Count surveys belonging to this campaign
+                const surveyCount = await Survey.countDocuments({ campaign: campaignId });
+
+                // Count modules created by manager matching campaign category (or all created by manager if category matches)
+                const moduleCount = await Education.countDocuments({
+                    createdBy: managerId,
+                    category: campaign.category
+                });
+
+                return {
+                    _id: campaign._id,
+                    title: campaign.title,
+                    category: campaign.category,
+                    description: campaign.description,
+                    status: campaign.status,
+                    stats: {
+                        posts: postCount,
+                        engagement: campaignEngagement,
+                        surveys: surveyCount,
+                        modules: moduleCount
+                    }
+                };
+            }));
+
+            // 3. Aggregate manager performance stats
+            // Also include posts directly authored by manager if any personal/general posts
+            const managerDirectPosts = await Post.find({ authorId: managerId, campaignId: { $exists: false } }).lean();
+            managerDirectPosts.forEach(p => {
+                const likes = p.engagement?.likes || 0;
+                const comments = p.engagement?.comments || 0;
+                const shares = p.engagement?.shares || 0;
+                const views = p.engagement?.views || 0;
+                totalEngagementCount += (likes + comments + shares + views);
+            });
+
+            // Total Surveys created by manager or in manager's campaigns
+            const managerSurveys = await Survey.find({
+                $or: [
+                    { createdBy: managerId },
+                    { campaign: { $in: managerCampaignIds } }
+                ]
+            }).select('_id title').lean();
+
+            const managerSurveyIds = managerSurveys.map(s => s._id);
+
+            // Total Survey Responses for manager's surveys
+            const surveyResponsesCount = await SurveyResponse.countDocuments({
+                $or: [
+                    { survey: { $in: managerSurveyIds } },
+                    { campaign: { $in: managerCampaignIds } }
+                ]
+            });
+
+            // Total Education Modules created by manager
+            const managerModules = await Education.find({ createdBy: managerId }).select('_id title').lean();
+            const managerModuleIds = managerModules.map(m => m._id);
+
+            // Total Module Completions for manager's modules
+            const moduleCompletionsCount = await UserProgress.countDocuments({
+                moduleId: { $in: managerModuleIds },
+                status: 'completed'
+            });
+
+            // 4. Fetch Recent Activity
+            // Recent Posts (top 5 for manager's campaigns or authored by manager)
+            const recentPostsRaw = await Post.find({
+                $or: [
+                    { campaignId: { $in: managerCampaignIds } },
+                    { authorId: managerId }
+                ]
+            })
+            .sort({ createdAt: -1 })
+            .limit(5)
+            .lean();
+
+            const recentPosts = recentPostsRaw.map(post => ({
+                _id: post._id,
+                title: post.title,
+                engagement: {
+                    likes: post.engagement?.likes || 0,
+                    comments: post.engagement?.comments || 0
+                },
+                createdAt: post.createdAt
+            }));
+
+            // Recent Survey Responses summary per manager survey
+            const recentSurveys = await Promise.all(managerSurveys.map(async (survey) => {
+                const responseCount = await SurveyResponse.countDocuments({ survey: survey._id });
+                const lastResponseDoc = await SurveyResponse.findOne({ survey: survey._id })
+                    .sort({ completedAt: -1 })
+                    .select('completedAt')
+                    .lean();
+
+                return {
+                    surveyTitle: survey.title,
+                    responseCount: responseCount,
+                    lastResponse: lastResponseDoc ? lastResponseDoc.completedAt : null
+                };
+            }));
+
+            // Recent Module Completions summary per manager module
+            const moduleCompletions = await Promise.all(managerModules.map(async (module) => {
+                const completionCount = await UserProgress.countDocuments({
+                    moduleId: module._id,
+                    status: 'completed'
+                });
+
+                // Calculate average quiz score if any
+                const completionsWithQuiz = await UserProgress.find({
+                    moduleId: module._id,
+                    quizScore: { $exists: true, $ne: null }
+                }).select('quizScore').lean();
+
+                let averageScore = 0;
+                if (completionsWithQuiz.length > 0) {
+                    const totalScore = completionsWithQuiz.reduce((sum, c) => sum + (c.quizScore || 0), 0);
+                    averageScore = Math.round(totalScore / completionsWithQuiz.length);
+                }
+
+                return {
+                    moduleTitle: module.title,
+                    completionCount: completionCount,
+                    averageScore: averageScore
+                };
+            }));
+
+            res.json({
+                success: true,
+                stats: {
+                    totalEngagement: totalEngagementCount,
+                    activeUsers: uniqueParticipantsSet.size,
+                    surveyResponses: surveyResponsesCount,
+                    moduleCompletions: moduleCompletionsCount
+                },
+                campaigns: campaignsWithStats,
+                recentActivity: {
+                    recentPosts,
+                    recentSurveys: recentSurveys.filter(s => s.responseCount > 0 || s.lastResponse !== null),
+                    moduleCompletions
+                }
+            });
+        } catch (error) {
+            console.error('Error loading manager dashboard:', error);
+            res.status(500).json({
+                success: false,
+                message: 'Failed to load manager dashboard data',
                 error: error.message
             });
         }

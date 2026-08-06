@@ -10,6 +10,9 @@ const roleCheck = require('../middleware/roleCheck');
 // Get campaign statistics
 router.get('/stats', authMiddleware, campaignController.getCampaignStats);
 
+// Get full manager dashboard statistics & data
+router.get('/manager/dashboard', authMiddleware, campaignController.getManagerDashboard);
+
 // Get user's joined campaigns
 router.get('/my-joined', authMiddleware, campaignController.getUserJoinedCampaigns);
 
