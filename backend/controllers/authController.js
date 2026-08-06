@@ -25,6 +25,14 @@ exports.register = async (req, res) => {
             emailUpdates
         } = req.body;
 
+        // Prevent public creation of Admin accounts
+        if (role === 'admin') {
+            return res.status(403).json({
+                success: false,
+                message: 'Admin accounts cannot be created publicly.'
+            });
+        }
+
         // Check if user already exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {

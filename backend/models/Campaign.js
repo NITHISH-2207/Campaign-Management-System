@@ -73,11 +73,11 @@ const campaignSchema = new Schema({
     },
     hashtags: [String],
     resources: [String],
-   status: {
-    type: String,
-    enum: ['pending', 'active', 'inactive', 'completed', 'rejected'],
-    default: 'active'  // Changed to 'active'
-},
+    status: {
+        type: String,
+        enum: ['pending', 'approved', 'active', 'inactive', 'completed', 'rejected'],
+        default: 'pending'
+    },
     approvalFeedback: String,
     approvedAt: Date,
     metrics: {

@@ -10,6 +10,10 @@ const roleCheck = require('../middleware/roleCheck');
 // Get campaign statistics
 router.get('/stats', authMiddleware, campaignController.getCampaignStats);
 
+// Admin routes
+router.get('/admin/overview', authMiddleware, roleCheck(['admin']), campaignController.getAdminOverview);
+router.get('/admin/list', authMiddleware, roleCheck(['admin']), campaignController.getAdminCampaigns);
+
 // Get full manager dashboard statistics & data
 router.get('/manager/dashboard', authMiddleware, campaignController.getManagerDashboard);
 

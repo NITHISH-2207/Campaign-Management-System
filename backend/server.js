@@ -67,6 +67,9 @@ const connectDB = async () => {
         console.log('✅ MongoDB connected successfully');
         console.log(`📊 Database: ${mongoose.connection.name}`);
         
+        // Ensure predefined Admin user exists
+        await seedAdminUser();
+
         // Start notification scheduler after successful DB connection
         if (config.notifications && config.notifications.enabled) {
             notificationScheduler.startScheduler();
@@ -172,6 +175,29 @@ function gracefulShutdown(signal) {
         console.error('❌ Could not close connections in time, forcefully shutting down');
         process.exit(1);
     }, 10000);
+}
+
+// Seed predefined admin user if none exists
+async function seedAdminUser() {
+    try {
+        const User = require('./models/User');
+        const adminExists = await User.findOne({ role: 'admin' });
+        if (!adminExists) {
+            const adminUser = new User({
+                name: 'System Admin',
+                email: 'admin@changewave.com',
+                password: 'Admin@12345',
+                role: 'admin',
+                organization: 'ChangeWave Platform'
+            });
+            await adminUser.save();
+            console.log('🔑 Predefined Admin account created: admin@changewave.com / Admin@12345');
+        } else {
+            console.log('🔑 Predefined Admin account verified');
+        }
+    } catch (err) {
+        console.error('❌ Error seeding predefined admin user:', err.message);
+    }
 }
 
 module.exports = app;

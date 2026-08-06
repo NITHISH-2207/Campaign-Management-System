@@ -5,6 +5,8 @@ const Survey = require('../models/Survey');
 const SurveyResponse = require('../models/SurveyResponse');
 const Education = require('../models/Education');
 const UserProgress = require('../models/UserProgress');
+const User = require('../models/User');
+
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
@@ -75,8 +77,8 @@ createCampaign: async (req, res) => {
             },
             hashtags: req.body.hashtags ? req.body.hashtags.split(' ').filter(tag => tag.startsWith('#')) : [],
             resources: req.body.resources ? req.body.resources.split(',').map(r => r.trim()) : [],
-            status: 'active', // Explicitly set to active
-            approvedAt: new Date(),
+            status: 'pending', // Save as pending for admin approval
+            approvedAt: null,
             metrics: {
                 totalPosts: 0,
                 totalEngagement: 0,
@@ -97,7 +99,7 @@ createCampaign: async (req, res) => {
 
         res.status(201).json({
             success: true,
-            message: 'Campaign created successfully and is now active!',
+            message: 'Campaign created successfully! Your campaign is pending admin approval.',
             campaign: newCampaign
         });
     } catch (error) {
@@ -174,8 +176,8 @@ createCampaign: async (req, res) => {
                 });
             }
 
-            campaign.status = approved ? 'active' : 'rejected';
-            campaign.approvalFeedback = feedback;
+            campaign.status = approved ? 'approved' : 'rejected';
+            campaign.approvalFeedback = feedback || '';
             campaign.approvedAt = approved ? new Date() : null;
             
             await campaign.save();
@@ -206,7 +208,7 @@ createCampaign: async (req, res) => {
                 search 
             } = req.query;
             
-            let query = { status: 'active' };
+            let query = { status: { $in: ['approved', 'active'] } };
             
             // Apply filters
             if (category) query.category = category;
@@ -604,6 +606,76 @@ joinCampaign: async (req, res) => {
             res.status(500).json({
                 success: false,
                 message: 'Failed to load manager dashboard data',
+                error: error.message
+            });
+        }
+    },
+
+    // Admin Dashboard Overview metrics
+    getAdminOverview: async (req, res) => {
+        try {
+            const totalCampaigns = await Campaign.countDocuments({});
+            const pendingCampaigns = await Campaign.countDocuments({ status: 'pending' });
+            const approvedCampaigns = await Campaign.countDocuments({ status: { $in: ['approved', 'active'] } });
+            const rejectedCampaigns = await Campaign.countDocuments({ status: 'rejected' });
+            const totalParticipants = await User.countDocuments({ role: { $in: ['participant', 'user'] } });
+            const totalManagers = await User.countDocuments({ role: 'campaign_manager' });
+
+            res.json({
+                success: true,
+                stats: {
+                    totalCampaigns,
+                    pendingCampaigns,
+                    approvedCampaigns,
+                    rejectedCampaigns,
+                    totalParticipants,
+                    totalManagers
+                }
+            });
+        } catch (error) {
+            console.error('Error fetching admin overview:', error);
+            res.status(500).json({
+                success: false,
+                message: 'Failed to fetch admin overview',
+                error: error.message
+            });
+        }
+    },
+
+    // Get campaigns for Admin (by status)
+    getAdminCampaigns: async (req, res) => {
+        try {
+            const { status = 'all', page = 1, limit = 50 } = req.query;
+            let query = {};
+
+            if (status && status !== 'all') {
+                if (status === 'approved') {
+                    query.status = { $in: ['approved', 'active'] };
+                } else {
+                    query.status = status;
+                }
+            }
+
+            const campaigns = await Campaign.find(query)
+                .populate('managerId', 'name email organization phone')
+                .sort({ createdAt: -1 })
+                .limit(limit * 1)
+                .skip((page - 1) * limit);
+
+            const total = await Campaign.countDocuments(query);
+
+            res.json({
+                success: true,
+                campaigns,
+                total,
+                totalPages: Math.ceil(total / limit),
+                currentPage: parseInt(page)
+            });
+        } catch (error) {
+            console.error('Error fetching admin campaigns:', error);
+            res.status(500).json({
+                success: false,
+                message: 'Failed to fetch admin campaigns',
                 error: error.message
             });
         }
