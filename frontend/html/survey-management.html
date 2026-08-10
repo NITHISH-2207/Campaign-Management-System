@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Survey Management - ChangeWave</title>
-    <link rel="stylesheet" href="../css/common.css">
-    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/navbar.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
@@ -865,7 +865,7 @@
 
         async function loadCampaigns() {
             try {
-                const response = await fetch('https://campaign-management-system-zquy.onrender.com/api/campaigns', {
+                const response = await fetch('http://localhost:3000/api/campaigns', {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
                     }
@@ -895,7 +895,7 @@
 
         async function loadSurveys() {
             try {
-                const response = await fetch('https://campaign-management-system-zquy.onrender.com/api/surveys', {
+                const response = await fetch('http://localhost:3000/api/surveys', {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
                     }
@@ -988,7 +988,7 @@
 
         async function viewSurveyResults(surveyId) {
             try {
-                const response = await fetch(`https://campaign-management-system-zquy.onrender.com/api/surveys/${surveyId}/results`, {
+                const response = await fetch(`http://localhost:3000/api/surveys/${surveyId}/results`, {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
                     }
@@ -1069,7 +1069,7 @@
         }
 
         function exportResults(surveyId) {
-            window.open(`https://campaign-management-system-zquy.onrender.com/api/surveys/${surveyId}/export?token=${localStorage.getItem('token')}`, '_blank');
+            window.open(`http://localhost:3000/api/surveys/${surveyId}/export?token=${localStorage.getItem('token')}`, '_blank');
         }
 
         function getFilteredSurveys() {
@@ -1102,7 +1102,7 @@
                 if (survey) {
                     openSurveyModal(survey);
                 } else {
-                    const response = await fetch(`https://campaign-management-system-zquy.onrender.com/api/surveys/${surveyId}`, {
+                    const response = await fetch(`http://localhost:3000/api/surveys/${surveyId}`, {
                         headers: {
                             'Authorization': `Bearer ${localStorage.getItem('token')}`
                         }
@@ -1304,7 +1304,7 @@
             }));
 
             try {
-                const response = await fetch(`https://campaign-management-system-zquy.onrender.com/api/surveys/${currentSurvey._id}/response`, {
+                const response = await fetch(`http://localhost:3000/api/surveys/${currentSurvey._id}/response`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

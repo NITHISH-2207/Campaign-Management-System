@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Test Email Notifications</title>
-    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="css/common.css">
     <style>
         .test-container {
             max-width: 800px;
@@ -96,7 +96,7 @@
     </div>
 
     <script>
-        const API_URL = 'https://campaign-management-system-zquy.onrender.com/api';
+        const API_URL = 'http://localhost:3000/api';
         const token = localStorage.getItem('token');
 
         async function checkStatus() {

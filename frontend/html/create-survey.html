@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Survey - ChangeWave</title>
-    <link rel="stylesheet" href="../css/common.css">
-    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/navbar.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
@@ -654,7 +654,7 @@
 
             async loadCampaigns() {
                 try {
-                    const response = await fetch('https://campaign-management-system-zquy.onrender.com/api/campaigns/my-campaigns', {
+                    const response = await fetch('http://localhost:3000/api/campaigns/my-campaigns', {
                         headers: {
                             'Authorization': `Bearer ${localStorage.getItem('token')}`
                         }
@@ -901,7 +901,7 @@
                 document.getElementById('createSurveyForm').classList.add('loading');
 
                 try {
-                    const response = await fetch('https://campaign-management-system-zquy.onrender.com/api/surveys/create', {
+                    const response = await fetch('http://localhost:3000/api/surveys/create', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

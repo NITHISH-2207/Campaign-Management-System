@@ -1,7 +1,7 @@
 // Use IIFE to avoid global scope conflicts
 (function () {
     // Module-specific configuration
-    const MODULE_API_URL = window.API_URL || 'https://campaign-management-system-zquy.onrender.com/api';
+    const MODULE_API_URL = window.API_URL || 'http://localhost:3000/api';
     let currentContentType = 'article';
     let resources = [];
     let quizQuestions = [];

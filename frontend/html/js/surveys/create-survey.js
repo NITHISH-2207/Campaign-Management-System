@@ -24,7 +24,7 @@ class SurveyBuilder {
 
     async loadCampaigns() {
         try {
-            const response = await fetch('https://campaign-management-system-zquy.onrender.com/api/campaigns/my-campaigns', {
+            const response = await fetch('http://localhost:3000/api/campaigns/my-campaigns', {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
@@ -366,7 +366,7 @@ class SurveyBuilder {
         submitBtn.textContent = 'Creating survey...';
 
         try {
-            const response = await fetch('https://campaign-management-system-zquy.onrender.com/api/surveys/create', {
+            const response = await fetch('http://localhost:3000/api/surveys/create', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

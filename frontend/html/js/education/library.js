@@ -1,7 +1,7 @@
 // Wrap in IIFE to avoid global conflicts
 (function () {
     // Use a different variable name to avoid conflicts
-    const EDU_API_URL = window.APP_CONFIG?.API_URL || 'https://campaign-management-system-zquy.onrender.com/api';
+    const EDU_API_URL = window.APP_CONFIG?.API_URL || 'http://localhost:3000/api';
     let currentUser = null;
     let allModules = [];
 

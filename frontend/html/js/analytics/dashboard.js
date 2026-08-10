@@ -38,7 +38,7 @@ async function loadDashboardData() {
         const dateRange = document.getElementById('dateRange').value;
         const campaignId = new URLSearchParams(window.location.search).get('campaign');
 
-        let url = `https://campaign-management-system-zquy.onrender.com/api/analytics/dashboard?dateRange=${dateRange}`;
+        let url = `http://localhost:3000/api/analytics/dashboard?dateRange=${dateRange}`;
         if (campaignId) {
             url += `&campaignId=${campaignId}`;
         }
@@ -120,7 +120,7 @@ function startRealtimeUpdates() {
 
 async function loadRealtimeActivity() {
     try {
-        const response = await fetch('https://campaign-management-system-zquy.onrender.com/api/analytics/realtime', {
+        const response = await fetch('http://localhost:3000/api/analytics/realtime', {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
@@ -323,7 +323,7 @@ function updateTopPostsTable(posts) {
 
 async function loadSurveyImpact(campaignId) {
     try {
-        const response = await fetch(`https://campaign-management-system-zquy.onrender.com/api/analytics/survey-impact/${campaignId}`, {
+        const response = await fetch(`http://localhost:3000/api/analytics/survey-impact/${campaignId}`, {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
@@ -350,7 +350,7 @@ function formatNumber(num) {
 }
 async function loadSurveyImpact(campaignId) {
     try {
-        const response = await fetch(`https://campaign-management-system-zquy.onrender.com/api/analytics/survey-impact/${campaignId}`, {
+        const response = await fetch(`http://localhost:3000/api/analytics/survey-impact/${campaignId}`, {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             }

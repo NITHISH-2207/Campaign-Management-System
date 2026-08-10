@@ -9,8 +9,9 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="../css/common.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href="css/common.css" rel="stylesheet">
     <style>
         :root {
             --black: #0a0a0a;
@@ -147,16 +148,20 @@
             <div class="mb-3">
                 <label for="adminEmail" class="form-label text-light small fw-bold">Admin Email</label>
                 <div class="input-group">
-                    <span class="input-group-text bg-dark border-secondary text-secondary"><i class="fas fa-envelope"></i></span>
-                    <input type="email" id="adminEmail" class="form-control" placeholder="admin@changewave.com" required value="admin@changewave.com">
+                    <span class="input-group-text bg-dark border-secondary text-secondary"><i
+                            class="fas fa-envelope"></i></span>
+                    <input type="email" id="adminEmail" class="form-control" placeholder="admin@changewave.com" required
+                        value="admin@changewave.com">
                 </div>
             </div>
 
             <div class="mb-4">
                 <label for="adminPassword" class="form-label text-light small fw-bold">Admin Password</label>
                 <div class="input-group">
-                    <span class="input-group-text bg-dark border-secondary text-secondary"><i class="fas fa-lock"></i></span>
-                    <input type="password" id="adminPassword" class="form-control" placeholder="••••••••" required value="Admin@12345">
+                    <span class="input-group-text bg-dark border-secondary text-secondary"><i
+                            class="fas fa-lock"></i></span>
+                    <input type="password" id="adminPassword" class="form-control" placeholder="••••••••" required
+                        value="Admin@12345">
                 </div>
             </div>
 
@@ -174,7 +179,7 @@
     <script>
         const API_BASE_URL = (window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1'))
             ? 'http://localhost:3000/api'
-            : 'https://campaign-management-system-zquy.onrender.com/api';
+            : 'http://localhost:3000/api';
 
         document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -233,4 +238,5 @@
         });
     </script>
 </body>
+
 </html>

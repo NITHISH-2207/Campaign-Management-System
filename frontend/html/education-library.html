@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Education Library - ChangeWave</title>
-    <link rel="stylesheet" href="../css/common.css">
-    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/navbar.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         /* Reset and Base Styles */
@@ -69,7 +71,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: 
+            background:
                 radial-gradient(circle at 20% 50%, rgba(139, 107, 74, 0.08) 0%, transparent 50%),
                 radial-gradient(circle at 80% 80%, rgba(107, 68, 35, 0.05) 0%, transparent 50%);
             pointer-events: none;
@@ -310,6 +312,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -320,6 +323,7 @@
             from {
                 opacity: 0;
             }
+
             to {
                 opacity: 1;
             }
@@ -330,235 +334,237 @@
                 transform: translateY(50px);
                 opacity: 0;
             }
+
             to {
                 transform: translateY(0);
                 opacity: 1;
             }
         }
-/* Module Card Styles */
-.module-card {
-    background: var(--dark-grey);
-    border: 1px solid rgba(139, 107, 74, 0.2);
-    border-radius: 25px;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    position: relative;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-    padding: 25px;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
 
-.module-card:hover {
-    transform: translateY(-10px);
-    border-color: var(--brown);
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
-}
+        /* Module Card Styles */
+        .module-card {
+            background: var(--dark-grey);
+            border: 1px solid rgba(139, 107, 74, 0.2);
+            border-radius: 25px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
 
-.module-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 5px;
-    background: var(--gradient-primary);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.4s ease;
-}
+        .module-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--brown);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+        }
 
-.module-card:hover::before {
-    transform: scaleX(1);
-}
+        .module-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: var(--gradient-primary);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
 
-/* Module Card Header */
-.module-card h3 {
-    font-size: 22px;
-    color: var(--white);
-    margin-bottom: 15px;
-    font-weight: 600;
-}
+        .module-card:hover::before {
+            transform: scaleX(1);
+        }
 
-.module-card p {
-    color: var(--lighter-grey);
-    font-size: 15px;
-    line-height: 1.6;
-    margin-bottom: 20px;
-    flex-grow: 1;
-}
+        /* Module Card Header */
+        .module-card h3 {
+            font-size: 22px;
+            color: var(--white);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
 
-/* Module Card Footer */
-.module-card-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 20px;
-    border-top: 1px solid rgba(139, 107, 74, 0.2);
-    margin-top: auto;
-}
+        .module-card p {
+            color: var(--lighter-grey);
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
 
-.module-meta {
-    display: flex;
-    gap: 15px;
-    align-items: center;
-}
+        /* Module Card Footer */
+        .module-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(139, 107, 74, 0.2);
+            margin-top: auto;
+        }
 
-.module-meta span {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    color: var(--lighter-grey);
-    font-size: 13px;
-}
+        .module-meta {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
 
-.module-meta i {
-    color: var(--brown);
-    font-size: 14px;
-}
+        .module-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--lighter-grey);
+            font-size: 13px;
+        }
 
-/* Module Tags */
-.module-tag {
-    padding: 5px 15px;
-    background: rgba(139, 107, 74, 0.2);
-    border-radius: 15px;
-    font-size: 12px;
-    color: var(--light-brown);
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
+        .module-meta i {
+            color: var(--brown);
+            font-size: 14px;
+        }
 
-/* Module Progress Badge */
-.module-status {
-    padding: 6px 16px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
+        /* Module Tags */
+        .module-tag {
+            padding: 5px 15px;
+            background: rgba(139, 107, 74, 0.2);
+            border-radius: 15px;
+            font-size: 12px;
+            color: var(--light-brown);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
 
-.module-status.new {
-    background: var(--gradient-info);
-    color: white;
-}
+        /* Module Progress Badge */
+        .module-status {
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
 
-.module-status.in-progress {
-    background: var(--gradient-warning);
-    color: white;
-}
+        .module-status.new {
+            background: var(--gradient-info);
+            color: white;
+        }
 
-.module-status.completed {
-    background: var(--gradient-success);
-    color: white;
-}
+        .module-status.in-progress {
+            background: var(--gradient-warning);
+            color: white;
+        }
 
-/* Module Button */
-.module-btn {
-    background: var(--gradient-primary);
-    color: white;
-    padding: 10px 25px;
-    border: none;
-    border-radius: 20px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin-top: 15px;
-    width: 100%;
-    text-align: center;
-}
+        .module-status.completed {
+            background: var(--gradient-success);
+            color: white;
+        }
 
-.module-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(139, 107, 74, 0.3);
-}
+        /* Module Button */
+        .module-btn {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 10px 25px;
+            border: none;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+            width: 100%;
+            text-align: center;
+        }
 
-.module-btn.completed {
-    background: var(--medium-grey);
-    color: var(--lighter-grey);
-    cursor: not-allowed;
-}
+        .module-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 107, 74, 0.3);
+        }
 
-/* Module Icon/Image Area */
-.module-image {
-    width: 100%;
-    height: 150px;
-    background: linear-gradient(135deg, rgba(139, 107, 74, 0.2) 0%, rgba(167, 124, 82, 0.1) 100%);
-    border-radius: 15px;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 48px;
-    color: var(--brown);
-    position: relative;
-    overflow: hidden;
-}
+        .module-btn.completed {
+            background: var(--medium-grey);
+            color: var(--lighter-grey);
+            cursor: not-allowed;
+        }
 
-.module-image::after {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
+        /* Module Icon/Image Area */
+        .module-image {
+            width: 100%;
+            height: 150px;
+            background: linear-gradient(135deg, rgba(139, 107, 74, 0.2) 0%, rgba(167, 124, 82, 0.1) 100%);
+            border-radius: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: var(--brown);
+            position: relative;
+            overflow: hidden;
+        }
 
-.module-card:hover .module-image::after {
-    opacity: 1;
-}
+        .module-image::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
 
-/* Module Progress Bar */
-.module-progress {
-    width: 100%;
-    height: 6px;
-    background: rgba(139, 107, 74, 0.2);
-    border-radius: 3px;
-    overflow: hidden;
-    margin-top: 15px;
-}
+        .module-card:hover .module-image::after {
+            opacity: 1;
+        }
 
-.module-progress-bar {
-    height: 100%;
-    background: var(--gradient-primary);
-    border-radius: 3px;
-    transition: width 0.3s ease;
-}
+        /* Module Progress Bar */
+        .module-progress {
+            width: 100%;
+            height: 6px;
+            background: rgba(139, 107, 74, 0.2);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 15px;
+        }
 
-/* Module Difficulty Badge */
-.module-difficulty {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(10px);
-    color: white;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
+        .module-progress-bar {
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
 
-.module-difficulty.beginner {
-    color: #4ADE80;
-}
+        /* Module Difficulty Badge */
+        .module-difficulty {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
 
-.module-difficulty.intermediate {
-    color: var(--orange-light);
-}
+        .module-difficulty.beginner {
+            color: #4ADE80;
+        }
 
-.module-difficulty.advanced {
-    color: #EF4444;
-}
+        .module-difficulty.intermediate {
+            color: var(--orange-light);
+        }
+
+        .module-difficulty.advanced {
+            color: #EF4444;
+        }
 
         /* Responsive Design */
         @media (max-width: 1200px) {
@@ -613,6 +619,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Navigation will be inserted by navigation.js -->
     <nav class="navbar"></nav>
@@ -643,7 +650,7 @@
         </div>
 
         <!-- Progress Overview -->
-        
+
         <!-- Loading indicator -->
         <div id="loadingIndicator" style="text-align: center; padding: 40px; display: none;">
             <p>Loading modules...</p>
@@ -678,4 +685,5 @@
     <script src="js/common/navigation.js"></script>
     <script src="js/education/library.js"></script>
 </body>
+
 </html>
