@@ -202,21 +202,26 @@ async function editCampaign(campaignId) {
         errorBanner.textContent = '';
     }
 
-    let campaign = currentManagerCampaigns.find(c => c._id === campaignId);
+    let campaign = null;
 
-    // If not found in loaded memory, fetch from API
-    if (!campaign) {
-        try {
-            const response = await fetch(`${API_BASE_URL}/campaigns/${campaignId}`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (response.ok) {
-                const data = await response.json();
-                if (data.success) campaign = data.campaign;
+    // 1. ALWAYS fetch full, fresh campaign document from backend API first
+    try {
+        const response = await fetch(`${API_BASE_URL}/campaigns/${campaignId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success && data.campaign) {
+                campaign = data.campaign;
             }
-        } catch (e) {
-            console.error('Error fetching campaign details for edit:', e);
         }
+    } catch (e) {
+        console.error('Error fetching campaign details for edit:', e);
+    }
+
+    // 2. Fallback to loaded dashboard array if network request fails
+    if (!campaign) {
+        campaign = currentManagerCampaigns.find(c => c._id === campaignId);
     }
 
     if (!campaign) {
@@ -224,28 +229,55 @@ async function editCampaign(campaignId) {
         return;
     }
 
-    // Pre-fill form fields
+    console.log('Populating edit form with campaign data:', campaign);
+
+    // Helper to format Date objects / ISO strings to YYYY-MM-DD for HTML <input type="date">
+    const formatDateForInput = (dateVal) => {
+        if (!dateVal) return '';
+        try {
+            const d = new Date(dateVal);
+            if (isNaN(d.getTime())) return '';
+            return d.toISOString().split('T')[0];
+        } catch (e) {
+            return '';
+        }
+    };
+
+    // 3. Pre-fill ALL form fields with exact field mapping
     document.getElementById('editCampaignId').value = campaign._id || '';
     document.getElementById('editTitle').value = campaign.title || '';
     document.getElementById('editCategory').value = campaign.category || '';
     document.getElementById('editType').value = campaign.type || '';
     document.getElementById('editDescription').value = campaign.description || '';
 
-    // Format dates as YYYY-MM-DD for date inputs
-    document.getElementById('editStartDate').value = campaign.startDate ? new Date(campaign.startDate).toISOString().split('T')[0] : '';
-    document.getElementById('editEndDate').value = campaign.endDate ? new Date(campaign.endDate).toISOString().split('T')[0] : '';
+    // Date inputs (ISO -> YYYY-MM-DD)
+    document.getElementById('editStartDate').value = formatDateForInput(campaign.startDate);
+    document.getElementById('editEndDate').value = formatDateForInput(campaign.endDate);
 
+    // Inputs & Selects
     document.getElementById('editLocation').value = campaign.location || '';
     document.getElementById('editTargetAudience').value = campaign.targetAudience || '';
+
+    // Textareas
     document.getElementById('editGoals').value = campaign.goals || '';
     document.getElementById('editActionPlan').value = campaign.actionPlan || '';
     document.getElementById('editExpectedImpact').value = campaign.expectedImpact || '';
 
-    document.getElementById('editContactEmail').value = campaign.contactInfo?.email || '';
-    document.getElementById('editContactPhone').value = campaign.contactInfo?.phone || '';
-    document.getElementById('editVideoUrl').value = campaign.media?.videoUrl || '';
-    document.getElementById('editHashtags').value = (campaign.hashtags || []).join(' ');
+    // Nested contact & media info
+    const contactInfo = campaign.contactInfo || {};
+    document.getElementById('editContactEmail').value = contactInfo.email || '';
+    document.getElementById('editContactPhone').value = contactInfo.phone || '';
 
+    const media = campaign.media || {};
+    document.getElementById('editVideoUrl').value = media.videoUrl || '';
+
+    // Hashtags array to string
+    const hashtags = Array.isArray(campaign.hashtags)
+        ? campaign.hashtags.join(' ')
+        : (campaign.hashtags || '');
+    document.getElementById('editHashtags').value = hashtags;
+
+    // Reset file input
     const imageInput = document.getElementById('editCampaignImage');
     if (imageInput) imageInput.value = '';
 

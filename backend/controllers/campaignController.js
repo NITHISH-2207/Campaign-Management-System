@@ -581,11 +581,7 @@ joinCampaign: async (req, res) => {
                 });
 
                 return {
-                    _id: campaign._id,
-                    title: campaign.title,
-                    category: campaign.category,
-                    description: campaign.description,
-                    status: campaign.status,
+                    ...campaign,
                     stats: {
                         posts: postCount,
                         engagement: campaignEngagement,
