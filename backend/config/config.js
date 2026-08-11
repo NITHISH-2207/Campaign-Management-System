@@ -9,18 +9,31 @@ module.exports = {
     corsOptions: {
         origin: function (origin, callback) {
             // Allow requests with no origin (file://, mobile apps, curl, etc.)
-            // and common local dev origins
+            if (!origin) return callback(null, true);
+
+            const envOrigins = process.env.ALLOWED_ORIGINS 
+                ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim()) 
+                : [];
+            
+            if (process.env.CLIENT_URL) {
+                envOrigins.push(process.env.CLIENT_URL.trim());
+            }
+
             const allowedOrigins = [
                 'http://localhost:5500',
                 'http://127.0.0.1:5500',
-                'https://campaign-management-system-zquy.onrender.com',
+                'http://localhost:3000',
+                'http://127.0.0.1:3000',
                 'http://localhost:3001',
-                'http://127.0.0.1:3000'
+                'https://campaign-management-system-zquy.onrender.com',
+                ...envOrigins
             ];
-            if (!origin || allowedOrigins.includes(origin)) {
+
+            if (allowedOrigins.includes(origin) || allowedOrigins.some(o => o && origin.startsWith(o))) {
                 callback(null, true);
             } else {
-                callback(null, true); // Allow all origins in development
+                // Allow all origins in production/development if not explicitly restricted
+                callback(null, true);
             }
         },
         credentials: true

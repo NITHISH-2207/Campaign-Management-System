@@ -307,3 +307,67 @@ button[type="submit"]:hover {
         margin-top: 10px;
     }
 }
+
+/* Dropdown options contrast & visibility fix */
+select {
+    background-color: #2d2d2d;
+    color: #ffffff;
+    border: 1px solid rgba(139, 107, 74, 0.3);
+}
+
+select option {
+    background-color: #2d2d2d !important;
+    color: #ffffff !important;
+    padding: 10px;
+}
+
+select option:hover,
+select option:focus,
+select option:checked {
+    background-color: #8B6B4A !important;
+    color: #ffffff !important;
+}
+
+/* In-page form notification styles */
+.form-notification {
+    padding: 14px 20px;
+    margin: 15px 0;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: notificationFadeIn 0.3s ease-in-out;
+    width: 100%;
+}
+
+@keyframes notificationFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.form-notification.success {
+    background: rgba(76, 175, 80, 0.15);
+    border: 1px solid #4CAF50;
+    color: #4CAF50;
+}
+
+.form-notification.error {
+    background: rgba(244, 67, 54, 0.15);
+    border: 1px solid #f44336;
+    color: #ff6b6b;
+}
+
+.form-notification.warning {
+    background: rgba(255, 152, 0, 0.15);
+    border: 1px solid #FF9800;
+    color: #FF9800;
+}
+

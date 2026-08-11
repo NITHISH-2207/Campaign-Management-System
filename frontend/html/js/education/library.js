@@ -1,7 +1,8 @@
 // Wrap in IIFE to avoid global conflicts
 (function () {
-    // Use a different variable name to avoid conflicts
-    const EDU_API_URL = window.APP_CONFIG?.API_URL || 'http://localhost:3000/api';
+    // Module-specific configuration
+    const isLocalEnv = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const MODULE_API_URL = window.API_URL || (isLocalEnv ? 'http://localhost:3000/api' : 'https://campaign-management-system-zquy.onrender.com/api');
     let currentUser = null;
     let allModules = [];
 

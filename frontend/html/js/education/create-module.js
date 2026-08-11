@@ -1,7 +1,8 @@
 // Use IIFE to avoid global scope conflicts
 (function () {
     // Module-specific configuration
-    const MODULE_API_URL = window.API_URL || 'http://localhost:3000/api';
+    const isLocalEnv = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const MODULE_API_URL = window.API_URL || (isLocalEnv ? 'http://localhost:3000/api' : 'https://campaign-management-system-zquy.onrender.com/api');
     let currentContentType = 'article';
     let resources = [];
     let quizQuestions = [];
@@ -9,15 +10,20 @@
     // Check if user is campaign manager
     document.addEventListener('DOMContentLoaded', () => {
         const user = JSON.parse(localStorage.getItem('user') || '{}');
+        const formEl = document.getElementById('createModuleForm') || document.body;
 
         if (!user.id) {
-            alert('Please login to continue');
+            if (window.showFormNotification) {
+                window.showFormNotification(formEl, 'Please login to continue', 'error');
+            }
             window.location.href = 'login.html';
             return;
         }
 
         if (!['campaign_manager', 'admin'].includes(user.role)) {
-            alert('You do not have permission to create modules');
+            if (window.showFormNotification) {
+                window.showFormNotification(formEl, 'You do not have permission to create modules', 'error');
+            }
             window.location.href = 'education-library.html';
             return;
         }
@@ -204,6 +210,7 @@
 
     // Validate form before submission
     function validateForm() {
+        const formEl = document.getElementById('createModuleForm');
         // Check main required fields
         const requiredFields = [
             { id: 'moduleTitle', message: 'Please enter a module title' },
@@ -216,7 +223,9 @@
         for (const field of requiredFields) {
             const element = document.getElementById(field.id);
             if (!element || !element.value.trim()) {
-                alert(field.message);
+                if (window.showFormNotification) {
+                    window.showFormNotification(formEl, field.message, 'error');
+                }
                 if (element) element.focus();
                 return false;
             }
@@ -225,7 +234,9 @@
         // Check content
         const contentEditor = document.getElementById('contentEditor');
         if (!contentEditor.innerHTML.trim() || contentEditor.innerHTML === '<p>Start typing your module content here...</p>') {
-            alert('Please add some content to your module');
+            if (window.showFormNotification) {
+                window.showFormNotification(formEl, 'Please add some content to your module', 'error');
+            }
             contentEditor.focus();
             return false;
         }
@@ -234,7 +245,9 @@
         if ((currentContentType === 'video' || currentContentType === 'mixed')) {
             const videoUrl = document.getElementById('videoUrl');
             if (videoUrl && !videoUrl.value.trim()) {
-                alert('Please enter a video URL for video content');
+                if (window.showFormNotification) {
+                    window.showFormNotification(formEl, 'Please enter a video URL for video content', 'error');
+                }
                 videoUrl.focus();
                 return false;
             }
@@ -248,7 +261,9 @@
             });
 
             if (!hasValidQuestions) {
-                alert('Please add at least one quiz question');
+                if (window.showFormNotification) {
+                    window.showFormNotification(formEl, 'Please add at least one quiz question', 'error');
+                }
                 return false;
             }
         }
@@ -344,12 +359,18 @@
                         }
                     }
 
-                    alert('Module created successfully!');
-                    window.location.href = 'education-library.html';
+                    if (window.showFormNotification) {
+                        window.showFormNotification(form, 'Module created successfully!', 'success');
+                    }
+                    setTimeout(() => {
+                        window.location.href = 'education-library.html';
+                    }, 1500);
 
                 } catch (error) {
                     console.error('Error creating module:', error);
-                    alert('Failed to create module: ' + error.message);
+                    if (window.showFormNotification) {
+                        window.showFormNotification(form, 'Failed to create module: ' + error.message, 'error');
+                    }
 
                     // Re-enable submit button
                     submitBtn.disabled = false;

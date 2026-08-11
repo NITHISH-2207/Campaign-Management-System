@@ -753,3 +753,17 @@ body {
         width: 100%;
     }
 }
+
+/* Dropdown option visibility fix for Manager Panel */
+select option {
+    background-color: #2d2d2d !important;
+    color: #ffffff !important;
+}
+
+select option:hover,
+select option:focus,
+select option:checked {
+    background-color: #8B6B4A !important;
+    color: #ffffff !important;
+}
+

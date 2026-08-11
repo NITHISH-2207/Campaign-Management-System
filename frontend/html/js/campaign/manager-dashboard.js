@@ -1,8 +1,9 @@
 // frontend/js/campaign/manager-dashboard.js
 
-const API_BASE_URL = (window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1'))
+const isLocalEnv = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const API_BASE_URL = window.API_URL || (isLocalEnv
     ? 'http://localhost:3000/api'
-    : 'http://localhost:3000/api';
+    : 'https://campaign-management-system-zquy.onrender.com/api');
 
 document.addEventListener('DOMContentLoaded', async () => {
     const token = localStorage.getItem('token');

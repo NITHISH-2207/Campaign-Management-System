@@ -548,7 +548,8 @@
                     return;
                 }
 
-                const response = await fetch('http://localhost:3000/api/surveys', {
+                const apiBase = window.API_URL || ((window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:3000/api' : 'https://campaign-management-system-zquy.onrender.com/api');
+                const response = await fetch(`${apiBase}/surveys`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }

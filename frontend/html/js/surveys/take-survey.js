@@ -13,6 +13,8 @@ class SurveyTaker {
     }
 
     async init() {
+        const isLocalEnv = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        this.apiBaseUrl = window.API_URL || (isLocalEnv ? 'http://localhost:3000/api' : 'https://campaign-management-system-zquy.onrender.com/api');
         if (!this.surveyId) {
             alert('No survey ID provided');
             window.location.href = 'user-dashboard.html';
@@ -28,7 +30,7 @@ class SurveyTaker {
 
     async loadSurvey() {
         try {
-            const response = await fetch(`http://localhost:3000/api/surveys/${this.surveyId}`, {
+            const response = await fetch(`${this.apiBaseUrl}/surveys/${this.surveyId}`, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
@@ -261,7 +263,7 @@ class SurveyTaker {
         }
 
         try {
-            const response = await fetch(`http://localhost:3000/api/surveys/${this.surveyId}/response`, {
+            const response = await fetch(`${this.apiBaseUrl}/surveys/${this.surveyId}/response`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

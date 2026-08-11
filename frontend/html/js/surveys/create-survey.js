@@ -7,10 +7,13 @@ class SurveyBuilder {
     }
 
     async init() {
+        const isLocalEnv = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        this.apiBaseUrl = window.API_URL || (isLocalEnv ? 'http://localhost:3000/api' : 'https://campaign-management-system-zquy.onrender.com/api');
+
         // Check authentication first
         const user = JSON.parse(localStorage.getItem('user') || '{}');
         if (!['campaign_manager', 'admin'].includes(user.role)) {
-            alert('You do not have permission to create surveys');
+            this.showError('You do not have permission to create surveys');
             window.location.href = 'survey-management.html';
             return;
         }
@@ -24,7 +27,7 @@ class SurveyBuilder {
 
     async loadCampaigns() {
         try {
-            const response = await fetch('http://localhost:3000/api/campaigns/my-campaigns', {
+            const response = await fetch(`${this.apiBaseUrl}/campaigns/my-campaigns`, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
@@ -227,14 +230,14 @@ class SurveyBuilder {
                 input.placeholder = `Option ${index + 1}`;
             });
         } else {
-            alert('Multiple choice questions must have at least 2 options');
+            this.showError('Multiple choice questions must have at least 2 options');
         }
     }
 
     removeQuestion(questionId) {
         // Ensure at least one question remains
         if (this.questions.length <= 1) {
-            alert('Survey must have at least one question');
+            this.showError('Survey must have at least one question');
             return;
         }
 
@@ -343,6 +346,7 @@ class SurveyBuilder {
 
     async createSurvey() {
         const questions = this.collectQuestions();
+        const formEl = document.getElementById('survey-form') || document.body;
 
         const surveyData = {
             title: document.getElementById('survey-title')?.value.trim(),
@@ -355,18 +359,20 @@ class SurveyBuilder {
         // Validate
         const errors = this.validateSurvey(surveyData);
         if (errors.length > 0) {
-            alert('Please fix the following errors:\n\n' + errors.join('\n'));
+            this.showError('Please fix the following errors: ' + errors.join('; '));
             return;
         }
 
         // Show loading state
         const submitBtn = document.querySelector('button[type="submit"]');
-        const originalText = submitBtn.textContent;
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Creating survey...';
+        const originalText = submitBtn ? submitBtn.textContent : '';
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Creating survey...';
+        }
 
         try {
-            const response = await fetch('http://localhost:3000/api/surveys/create', {
+            const response = await fetch(`${this.apiBaseUrl || 'https://campaign-management-system-zquy.onrender.com/api'}/surveys/create`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -378,25 +384,34 @@ class SurveyBuilder {
             const result = await response.json();
 
             if (response.ok) {
-                alert('Survey created successfully!');
-                window.location.href = 'survey-management.html';
+                if (window.showFormNotification) {
+                    window.showFormNotification(formEl, 'Survey created successfully!', 'success');
+                }
+                setTimeout(() => {
+                    window.location.href = 'survey-management.html';
+                }, 1500);
             } else {
                 throw new Error(result.error || 'Failed to create survey');
             }
         } catch (error) {
             console.error('Error creating survey:', error);
-            alert(`Failed to create survey: ${error.message}`);
+            this.showError(`Failed to create survey: ${error.message}`);
         } finally {
-            submitBtn.disabled = false;
-            submitBtn.textContent = originalText;
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
         }
     }
 
     showError(message) {
-        // You can implement a toast notification here
         console.error(message);
-        alert(message);
+        const container = document.getElementById('survey-form') || document.querySelector('.container') || document.body;
+        if (window.showFormNotification) {
+            window.showFormNotification(container, message, 'error');
+        }
     }
+}
 }
 
 // Initialize survey builder

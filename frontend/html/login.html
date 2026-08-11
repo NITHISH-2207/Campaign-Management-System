@@ -880,7 +880,8 @@
             submitBtn.disabled = true;
 
             try {
-                const response = await fetch('http://localhost:3000/api/auth/login', {
+                const apiBase = window.API_URL || ((window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:3000/api' : 'https://campaign-management-system-zquy.onrender.com/api');
+                const response = await fetch(`${apiBase}/auth/login`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

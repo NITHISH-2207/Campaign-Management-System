@@ -654,7 +654,8 @@
 
             async loadCampaigns() {
                 try {
-                    const response = await fetch('http://localhost:3000/api/campaigns/my-campaigns', {
+                    const apiBase = window.API_URL || ((window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:3000/api' : 'https://campaign-management-system-zquy.onrender.com/api');
+                    const response = await fetch(`${apiBase}/campaigns/my-campaigns`, {
                         headers: {
                             'Authorization': `Bearer ${localStorage.getItem('token')}`
                         }
@@ -827,7 +828,9 @@
                     optionInput.style.animation = 'fadeIn 0.3s ease-out reverse';
                     setTimeout(() => optionInput.remove(), 300);
                 } else {
-                    alert('Multiple choice questions must have at least 2 options');
+                    if (window.showFormNotification) {
+                        window.showFormNotification(document.getElementById('createSurveyForm'), 'Multiple choice questions must have at least 2 options', 'error');
+                    }
                 }
             }
 
@@ -867,6 +870,7 @@
             }
 
             async createSurvey() {
+                const formEl = document.getElementById('createSurveyForm');
                 const surveyData = {
                     title: document.getElementById('surveyTitle').value,
                     description: document.getElementById('surveyDescription').value,
@@ -877,12 +881,16 @@
 
                 // Validate
                 if (!surveyData.title || !surveyData.campaignId || !surveyData.type) {
-                    alert('Please fill in all required fields');
+                    if (window.showFormNotification) {
+                        window.showFormNotification(formEl, 'Please fill in all required fields', 'error');
+                    }
                     return;
                 }
 
                 if (surveyData.questions.length === 0) {
-                    alert('Please add at least one question');
+                    if (window.showFormNotification) {
+                        window.showFormNotification(formEl, 'Please add at least one question', 'error');
+                    }
                     return;
                 }
 
@@ -893,7 +901,9 @@
                 );
 
                 if (invalidQuestions.length > 0) {
-                    alert('Please complete all questions before submitting');
+                    if (window.showFormNotification) {
+                        window.showFormNotification(formEl, 'Please complete all questions before submitting', 'error');
+                    }
                     return;
                 }
 
@@ -901,7 +911,8 @@
                 document.getElementById('createSurveyForm').classList.add('loading');
 
                 try {
-                    const response = await fetch('http://localhost:3000/api/surveys/create', {
+                    const apiBase = window.API_URL || ((window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:3000/api' : 'https://campaign-management-system-zquy.onrender.com/api');
+                    const response = await fetch(`${apiBase}/surveys/create`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -911,21 +922,30 @@
                     });
 
                     if (response.ok) {
-                        alert('Survey created successfully!');
-                        window.location.href = 'survey-management.html';
+                        if (window.showFormNotification) {
+                            window.showFormNotification(formEl, 'Survey created successfully!', 'success');
+                        }
+                        setTimeout(() => {
+                            window.location.href = 'survey-management.html';
+                        }, 1500);
                     } else {
                         const error = await response.json();
-                        alert(`Error creating survey: ${error.error || error.message}`);
+                        if (window.showFormNotification) {
+                            window.showFormNotification(formEl, `Error creating survey: ${error.error || error.message}`, 'error');
+                        }
                     }
                 } catch (error) {
                     console.error('Error creating survey:', error);
-                    alert('Failed to create survey. Please try again.');
+                    if (window.showFormNotification) {
+                        window.showFormNotification(formEl, 'Failed to create survey. Please try again.', 'error');
+                    }
                 } finally {
                     document.getElementById('createSurveyForm').classList.remove('loading');
                 }
             }
 
             saveDraft() {
+                const formEl = document.getElementById('createSurveyForm');
                 // This could save to localStorage or send to backend as draft
                 const surveyData = {
                     title: document.getElementById('surveyTitle').value,
@@ -937,7 +957,9 @@
                 };
 
                 localStorage.setItem('surveyDraft', JSON.stringify(surveyData));
-                alert('Survey saved as draft');
+                if (window.showFormNotification) {
+                    window.showFormNotification(formEl, 'Survey saved as draft', 'success');
+                }
             }
         }
 

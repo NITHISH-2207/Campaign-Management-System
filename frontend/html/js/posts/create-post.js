@@ -1,5 +1,7 @@
 // frontend/js/posts/create-post.js
-const API_BASE_URL = 'https://campaign-management-system-zquy.onrender.com';
+const isLocalEnv = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const API_BASE_URL = window.API_BASE_URL || (isLocalEnv ? 'http://localhost:3000' : 'https://campaign-management-system-zquy.onrender.com');
+
 
 class PostCreator {
     constructor() {
@@ -97,7 +99,9 @@ class PostCreator {
         const file = event.target.files[0];
         if (file) {
             if (file.size > 5 * 1024 * 1024) {
-                alert('Image size must be less than 5MB');
+                if (window.showFormNotification) {
+                    window.showFormNotification(this.form, 'Image size must be less than 5MB', 'error');
+                }
                 event.target.value = '';
                 return;
             }
@@ -121,7 +125,9 @@ class PostCreator {
 
         const token = localStorage.getItem('token');
         if (!token) {
-            alert('Please log in first');
+            if (window.showFormNotification) {
+                window.showFormNotification(this.form, 'Please log in first', 'error');
+            }
             window.location.href = 'login.html';
             return;
         }
@@ -157,18 +163,26 @@ class PostCreator {
             const responseData = await response.json();
 
             if (response.ok && responseData.success) {
-                alert('Post created successfully!');
-                if (responseData.post && responseData.post._id) {
-                    window.location.href = `post-feed.html?highlight=${responseData.post._id}`;
-                } else {
-                    window.location.href = 'post-feed.html';
+                if (window.showFormNotification) {
+                    window.showFormNotification(this.form, 'Post created successfully!', 'success');
                 }
+                setTimeout(() => {
+                    if (responseData.post && responseData.post._id) {
+                        window.location.href = `post-feed.html?highlight=${responseData.post._id}`;
+                    } else {
+                        window.location.href = 'post-feed.html';
+                    }
+                }, 1200);
             } else {
-                alert(`Error: ${responseData.message || responseData.error || 'Unknown error'}`);
+                if (window.showFormNotification) {
+                    window.showFormNotification(this.form, `Error: ${responseData.message || responseData.error || 'Unknown error'}`, 'error');
+                }
             }
         } catch (error) {
             console.error('Failed to create post:', error);
-            alert('Failed to create post. Please check console for details.');
+            if (window.showFormNotification) {
+                window.showFormNotification(this.form, 'Failed to create post. Please check network/server status.', 'error');
+            }
         }
     }
 }
@@ -177,7 +191,9 @@ class PostCreator {
 document.addEventListener('DOMContentLoaded', () => {
     const token = localStorage.getItem('token');
     if (!token) {
-        alert('Please log in first');
+        if (window.showFormNotification) {
+            window.showFormNotification(document.getElementById('create-post-form') || document.body, 'Please log in first', 'error');
+        }
         window.location.href = 'login.html';
         return;
     }
@@ -195,14 +211,19 @@ function saveDraft() {
     };
 
     localStorage.setItem('postDraft', JSON.stringify(draftData));
-    alert('Draft saved!');
+    if (window.showFormNotification) {
+        window.showFormNotification(document.getElementById('create-post-form'), 'Draft saved!', 'success');
+    }
 }
 
 // Add this function to create-post.js or inline script
 async function createQuickCampaign() {
     const title = document.getElementById('campaign-title').value;
+    const section = document.getElementById('create-campaign-section') || document.getElementById('create-post-form');
     if (!title) {
-        alert('Please enter a campaign title');
+        if (window.showFormNotification) {
+            window.showFormNotification(section, 'Please enter a campaign title', 'error');
+        }
         return;
     }
 
@@ -222,13 +243,19 @@ async function createQuickCampaign() {
 
         const data = await response.json();
         if (data.success) {
-            alert('Campaign created successfully!');
-            location.reload(); // Reload to show the new campaign
+            if (window.showFormNotification) {
+                window.showFormNotification(section, 'Campaign created successfully!', 'success');
+            }
+            setTimeout(() => location.reload(), 1200);
         } else {
-            alert('Failed to create campaign: ' + data.error);
+            if (window.showFormNotification) {
+                window.showFormNotification(section, 'Failed to create campaign: ' + (data.error || data.message), 'error');
+            }
         }
     } catch (error) {
-        alert('Error creating campaign');
+        if (window.showFormNotification) {
+            window.showFormNotification(section, 'Error creating campaign', 'error');
+        }
         console.error(error);
     }
 }

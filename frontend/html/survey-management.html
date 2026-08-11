@@ -863,9 +863,11 @@
             await loadSurveys();
         });
 
+        const getApiUrl = () => window.API_URL || ((window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:3000/api' : 'https://campaign-management-system-zquy.onrender.com/api');
+
         async function loadCampaigns() {
             try {
-                const response = await fetch('http://localhost:3000/api/campaigns', {
+                const response = await fetch(`${getApiUrl()}/campaigns`, {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
                     }
@@ -895,7 +897,7 @@
 
         async function loadSurveys() {
             try {
-                const response = await fetch('http://localhost:3000/api/surveys', {
+                const response = await fetch(`${getApiUrl()}/surveys`, {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
                     }
@@ -988,7 +990,7 @@
 
         async function viewSurveyResults(surveyId) {
             try {
-                const response = await fetch(`http://localhost:3000/api/surveys/${surveyId}/results`, {
+                const response = await fetch(`${getApiUrl()}/surveys/${surveyId}/results`, {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
                     }
@@ -1069,7 +1071,7 @@
         }
 
         function exportResults(surveyId) {
-            window.open(`http://localhost:3000/api/surveys/${surveyId}/export?token=${localStorage.getItem('token')}`, '_blank');
+            window.open(`${getApiUrl()}/surveys/${surveyId}/export?token=${localStorage.getItem('token')}`, '_blank');
         }
 
         function getFilteredSurveys() {
@@ -1102,7 +1104,7 @@
                 if (survey) {
                     openSurveyModal(survey);
                 } else {
-                    const response = await fetch(`http://localhost:3000/api/surveys/${surveyId}`, {
+                    const response = await fetch(`${getApiUrl()}/surveys/${surveyId}`, {
                         headers: {
                             'Authorization': `Bearer ${localStorage.getItem('token')}`
                         }
@@ -1304,7 +1306,7 @@
             }));
 
             try {
-                const response = await fetch(`http://localhost:3000/api/surveys/${currentSurvey._id}/response`, {
+                const response = await fetch(`${getApiUrl()}/surveys/${currentSurvey._id}/response`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

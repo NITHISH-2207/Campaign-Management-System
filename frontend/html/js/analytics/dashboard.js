@@ -1,4 +1,6 @@
 // frontend/js/analytics/dashboard.js
+const isLocalEnv = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const API_BASE_URL = window.API_URL || (isLocalEnv ? 'http://localhost:3000/api' : 'https://campaign-management-system-zquy.onrender.com/api');
 
 document.addEventListener('DOMContentLoaded', async () => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -38,7 +40,7 @@ async function loadDashboardData() {
         const dateRange = document.getElementById('dateRange').value;
         const campaignId = new URLSearchParams(window.location.search).get('campaign');
 
-        let url = `http://localhost:3000/api/analytics/dashboard?dateRange=${dateRange}`;
+        let url = `${API_BASE_URL}/analytics/dashboard?dateRange=${dateRange}`;
         if (campaignId) {
             url += `&campaignId=${campaignId}`;
         }
@@ -120,7 +122,7 @@ function startRealtimeUpdates() {
 
 async function loadRealtimeActivity() {
     try {
-        const response = await fetch('http://localhost:3000/api/analytics/realtime', {
+        const response = await fetch(`${API_BASE_URL}/analytics/realtime`, {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
@@ -323,7 +325,7 @@ function updateTopPostsTable(posts) {
 
 async function loadSurveyImpact(campaignId) {
     try {
-        const response = await fetch(`http://localhost:3000/api/analytics/survey-impact/${campaignId}`, {
+        const response = await fetch(`${API_BASE_URL}/analytics/survey-impact/${campaignId}`, {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
@@ -350,7 +352,7 @@ function formatNumber(num) {
 }
 async function loadSurveyImpact(campaignId) {
     try {
-        const response = await fetch(`http://localhost:3000/api/analytics/survey-impact/${campaignId}`, {
+        const response = await fetch(`${API_BASE_URL}/analytics/survey-impact/${campaignId}`, {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             }

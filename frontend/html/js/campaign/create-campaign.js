@@ -1,11 +1,14 @@
 // frontend/js/campaign/create-campaign.js
-const API_BASE_URL = 'https://campaign-management-system-zquy.onrender.com';
+const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const API_BASE_URL = window.API_BASE_URL || (isLocal ? 'http://localhost:3000' : 'https://campaign-management-system-zquy.onrender.com');
 
 document.addEventListener('DOMContentLoaded', function () {
     // Check if user is logged in
     const token = localStorage.getItem('token');
     if (!token) {
-        alert('Please log in to create a campaign');
+        if (window.showFormNotification) {
+            window.showFormNotification(document.getElementById('campaignForm') || document.body, 'Please log in to create a campaign', 'error');
+        }
         window.location.href = 'login.html';
         return;
     }
@@ -13,6 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
     initializeForm();
     loadDraft();
 });
+
 
 function initializeForm() {
     // Set minimum dates
@@ -86,7 +90,9 @@ function saveDraft() {
     }
 
     localStorage.setItem('campaignDraft', JSON.stringify(draftData));
-    alert('Draft saved successfully!');
+    if (window.showFormNotification) {
+        window.showFormNotification(document.getElementById('campaignForm'), 'Draft saved successfully!', 'success');
+    }
 }
 
 function loadDraft() {
@@ -113,19 +119,24 @@ function loadDraft() {
 
 async function handleSubmit(event) {
     event.preventDefault();
+    const formEl = document.getElementById('campaignForm') || event.target;
 
     // Validate dates
     const startDate = new Date(document.getElementById('startDate').value);
     const endDate = new Date(document.getElementById('endDate').value);
 
     if (endDate <= startDate) {
-        alert('End date must be after start date');
+        if (window.showFormNotification) {
+            window.showFormNotification(formEl, 'End date must be after start date', 'error');
+        }
         return;
     }
 
     // Validate checkbox
     if (!document.getElementById('agreeTerms').checked) {
-        alert('Please agree to the terms and verify your information');
+        if (window.showFormNotification) {
+            window.showFormNotification(formEl, 'Please agree to the terms and verify your information', 'error');
+        }
         return;
     }
 
@@ -155,22 +166,24 @@ async function handleSubmit(event) {
             localStorage.removeItem('campaignDraft');
 
             // Updated success message
-            alert('Campaign created successfully! Your campaign is now live and active.');
+            if (window.showFormNotification) {
+                window.showFormNotification(formEl, 'Campaign created successfully! Your campaign is now live and active.', 'success');
+            }
 
-            // Remove or comment out the auto-approve function since it's not needed
-            // await autoApproveCampaign(data.campaign._id);
-
-            // Redirect to dashboard or campaigns list
+            // Redirect to campaigns list
             setTimeout(() => {
-                // Redirect to campaigns list to see the new campaign
                 window.location.href = 'campaigns-list.html';
             }, 1500);
         } else {
-            alert(`Error: ${data.message || 'Failed to create campaign'}`);
+            if (window.showFormNotification) {
+                window.showFormNotification(formEl, `Error: ${data.message || 'Failed to create campaign'}`, 'error');
+            }
         }
     } catch (error) {
         console.error('Error submitting campaign:', error);
-        alert('Failed to submit campaign. Please try again.');
+        if (window.showFormNotification) {
+            window.showFormNotification(formEl, 'Failed to submit campaign. Please try again.', 'error');
+        }
     } finally {
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;

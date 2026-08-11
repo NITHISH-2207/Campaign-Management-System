@@ -1,5 +1,8 @@
 // frontend/js/common/auth.js
-const API_URL = 'http://localhost:3000/api';
+const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const API_URL = window.API_URL || (isLocal ? 'http://localhost:3000/api' : 'https://campaign-management-system-zquy.onrender.com/api');
+const API_BASE_URL = window.API_BASE_URL || (isLocal ? 'http://localhost:3000' : 'https://campaign-management-system-zquy.onrender.com');
+
 
 // Tab switching
 function switchTab(tab) {
