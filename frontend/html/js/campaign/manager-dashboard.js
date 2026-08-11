@@ -108,10 +108,23 @@ function displayCampaigns(campaigns) {
             </div>
             <div class="campaign-actions">
                 <button class="btn-view" onclick="viewCampaign('${campaign._id}')">View Details</button>
-                <button class="btn-edit" onclick="editCampaign('${campaign._id}')">Edit</button>
+                <button class="btn-edit" data-id="${campaign._id}" onclick="editCampaign('${campaign._id}')">Edit</button>
             </div>
         </div>
     `).join('');
+
+    if (!container.dataset.listenerAdded) {
+        container.dataset.listenerAdded = 'true';
+        container.addEventListener('click', (e) => {
+            const btnEdit = e.target.closest('.btn-edit');
+            if (btnEdit) {
+                const id = btnEdit.getAttribute('data-id');
+                if (id) {
+                    editCampaign(id);
+                }
+            }
+        });
+    }
 }
 
 // Display real recent posts belonging to manager
@@ -361,3 +374,8 @@ window.onclick = function (event) {
         closeEditModal();
     }
 };
+
+// Explicit global window bindings
+window.editCampaign = editCampaign;
+window.closeEditModal = closeEditModal;
+window.viewCampaign = viewCampaign;
