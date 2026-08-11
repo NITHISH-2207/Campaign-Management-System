@@ -29,7 +29,7 @@ body {
 .nav-container {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 0 40px;
+    padding: 0 25px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -41,12 +41,14 @@ body {
     background: linear-gradient(135deg, #8B6B4A 0%, #A67C52 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .nav-links {
     display: flex;
     list-style: none;
-    gap: 30px;
+    gap: 15px;
     align-items: center;
 }
 
@@ -55,8 +57,9 @@ body {
     text-decoration: none;
     font-weight: 500;
     transition: all 0.3s ease;
-    padding: 8px 16px;
+    padding: 8px 14px;
     border-radius: 8px;
+    white-space: nowrap;
 }
 
 .nav-links a:hover {
@@ -74,6 +77,8 @@ body {
     color: white !important;
     padding: 8px 20px !important;
     border-radius: 25px !important;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .logout-btn:hover {
@@ -444,6 +449,19 @@ body {
 }
 
 /* Responsive design */
+@media (max-width: 1200px) {
+    .nav-container {
+        padding: 0 15px;
+    }
+    .nav-links {
+        gap: 8px;
+    }
+    .nav-links a {
+        padding: 6px 10px;
+        font-size: 14px;
+    }
+}
+
 @media (max-width: 768px) {
     .dashboard-container {
         padding: 80px 20px 40px;
