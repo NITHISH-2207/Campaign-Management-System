@@ -158,9 +158,9 @@ async function handleSubmit(event) {
             // Custom notification matching website theme
             showNotification('Your campaign has been submitted for admin review.', 'success');
 
-            // Redirect to campaigns list after notification display
+            // Redirect to Manager Dashboard after notification display
             setTimeout(() => {
-                window.location.href = 'campaigns-list.html';
+                window.location.href = 'campaign-manager-dashboard.html';
             }, 2500);
         } else {
             showNotification(data.message || 'Failed to create campaign', 'error');
