@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +9,8 @@
     <link rel="stylesheet" href="css/navbar.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         /* Reset and Base Styles */
@@ -56,7 +58,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: 
+            background:
                 radial-gradient(circle at 20% 50%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
                 radial-gradient(circle at 80% 80%, rgba(107, 68, 35, 0.05) 0%, transparent 50%);
             pointer-events: none;
@@ -84,7 +86,9 @@
         }
 
         /* Form Sections */
-        .form-section, .content-editor, .quiz-section {
+        .form-section,
+        .content-editor,
+        .quiz-section {
             background: var(--dark-grey);
             padding: 40px;
             margin-bottom: 30px;
@@ -97,10 +101,21 @@
             animation: fadeInUp 0.8s ease-out both;
         }
 
-        .form-section:nth-child(2) { animation-delay: 0.2s; }
-        .content-editor { animation-delay: 0.4s; }
-        .form-section:nth-child(4) { animation-delay: 0.6s; }
-        .quiz-section { animation-delay: 0.8s; }
+        .form-section:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .content-editor {
+            animation-delay: 0.4s;
+        }
+
+        .form-section:nth-child(4) {
+            animation-delay: 0.6s;
+        }
+
+        .quiz-section {
+            animation-delay: 0.8s;
+        }
 
         .form-section::before,
         .content-editor::before,
@@ -377,6 +392,7 @@
                 opacity: 0;
                 transform: translateY(-30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -388,6 +404,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -395,8 +412,13 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
 
         @keyframes slideInLeft {
@@ -404,6 +426,7 @@
                 opacity: 0;
                 transform: translateX(-20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateX(0);
@@ -498,13 +521,14 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Navigation will be inserted by navigation.js -->
     <nav class="navbar"></nav>
 
     <main class="module-builder">
         <h1>Create Education Module</h1>
-        
+
         <form id="createModuleForm">
             <div class="form-section">
                 <h2>Module Information</h2>
@@ -514,7 +538,8 @@
                 </div>
                 <div class="form-group">
                     <label for="moduleDescription">Description</label>
-                    <textarea id="moduleDescription" rows="3" placeholder="Describe what learners will gain from this module" required></textarea>
+                    <textarea id="moduleDescription" rows="3"
+                        placeholder="Describe what learners will gain from this module" required></textarea>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
@@ -558,11 +583,13 @@
                         <i class="fas fa-photo-video"></i> Mixed Media
                     </button>
                 </div>
-                
+
                 <div id="textContent" class="content-type">
-                    <div id="contentEditor" contenteditable="true" placeholder="Enter your module content here. You can format text, add paragraphs, and create engaging educational content..."></div>
+                    <div id="contentEditor" contenteditable="true"
+                        placeholder="Enter your module content here. You can format text, add paragraphs, and create engaging educational content...">
+                    </div>
                 </div>
-                
+
                 <div id="videoContent" class="content-type" style="display: none;">
                     <div class="form-group">
                         <label for="videoUrl">Video URL</label>
@@ -570,14 +597,16 @@
                     </div>
                     <div class="form-group">
                         <label for="videoDescription">Video Description</label>
-                        <textarea id="videoDescription" rows="3" placeholder="Provide context or summary for the video"></textarea>
+                        <textarea id="videoDescription" rows="3"
+                            placeholder="Provide context or summary for the video"></textarea>
                     </div>
                 </div>
-                
+
                 <div id="mixedContent" class="content-type" style="display: none;">
                     <div class="form-group">
                         <label>Mixed Media Content</label>
-                        <p style="color: var(--light-grey); font-size: 14px;">Combine text, images, and videos for an engaging learning experience</p>
+                        <p style="color: var(--light-grey); font-size: 14px;">Combine text, images, and videos for an
+                            engaging learning experience</p>
                     </div>
                 </div>
             </div>
@@ -606,10 +635,10 @@
 
             <div class="form-actions">
                 <button type="button" class="btn-secondary" onclick="previewModule()">
-                     Preview
+                    Preview
                 </button>
                 <button type="submit" class="btn-primary">
-                     Create Module
+                    Create Module
                 </button>
             </div>
         </form>
@@ -625,10 +654,10 @@
         function switchContentType(type) {
             // Hide all content types
             document.querySelectorAll('.content-type').forEach(el => el.style.display = 'none');
-            
+
             // Remove active class from all buttons
             document.querySelectorAll('.editor-btn').forEach(btn => btn.classList.remove('active'));
-            
+
             // Show selected content type and activate button
             if (type === 'text') {
                 document.getElementById('textContent').style.display = 'block';
@@ -637,7 +666,7 @@
             } else if (type === 'mixed') {
                 document.getElementById('mixedContent').style.display = 'block';
             }
-            
+
             // Activate the clicked button
             event.target.closest('.editor-btn').classList.add('active');
         }
@@ -703,4 +732,5 @@
         }
     </script>
 </body>
+
 </html>
