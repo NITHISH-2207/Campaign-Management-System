@@ -4,6 +4,8 @@ var API_BASE_URL = window.API_BASE_URL || ((window.location.origin.includes('loc
     ? 'http://localhost:3000/api'
     : 'https://campaign-management-system-zquy.onrender.com/api');
 
+let currentManagerCampaigns = [];
+
 document.addEventListener('DOMContentLoaded', async () => {
     const token = localStorage.getItem('token');
     const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -18,6 +20,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (user.name) {
         document.getElementById('userMenu').textContent = `Hi, ${user.name}`;
     }
+
+    setupEditFormListener();
 
     // Load dynamic dashboard data exclusively from database via backend API
     await loadManagerDashboardData(token);
@@ -66,6 +70,7 @@ function updateDashboardStats(stats) {
 
 // Display manager's campaigns
 function displayCampaigns(campaigns) {
+    currentManagerCampaigns = campaigns || [];
     const container = document.getElementById('campaignsGrid');
 
     if (!campaigns || campaigns.length === 0) {
@@ -174,8 +179,166 @@ function viewCampaign(campaignId) {
     window.location.href = `analytics-dashboard.html?campaignId=${campaignId}`;
 }
 
-function editCampaign(campaignId) {
-    alert('Edit campaign feature coming soon!');
+// Open edit campaign modal and pre-fill data
+async function editCampaign(campaignId) {
+    const token = localStorage.getItem('token');
+    const modal = document.getElementById('editCampaignModal');
+    const errorBanner = document.getElementById('editFormError');
+    if (errorBanner) {
+        errorBanner.style.display = 'none';
+        errorBanner.textContent = '';
+    }
+
+    let campaign = currentManagerCampaigns.find(c => c._id === campaignId);
+
+    // If not found in loaded memory, fetch from API
+    if (!campaign) {
+        try {
+            const response = await fetch(`${API_BASE_URL}/campaigns/${campaignId}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success) campaign = data.campaign;
+            }
+        } catch (e) {
+            console.error('Error fetching campaign details for edit:', e);
+        }
+    }
+
+    if (!campaign) {
+        showNotification('Unable to load campaign details.', 'error');
+        return;
+    }
+
+    // Pre-fill form fields
+    document.getElementById('editCampaignId').value = campaign._id || '';
+    document.getElementById('editTitle').value = campaign.title || '';
+    document.getElementById('editCategory').value = campaign.category || '';
+    document.getElementById('editType').value = campaign.type || '';
+    document.getElementById('editDescription').value = campaign.description || '';
+
+    // Format dates as YYYY-MM-DD for date inputs
+    document.getElementById('editStartDate').value = campaign.startDate ? new Date(campaign.startDate).toISOString().split('T')[0] : '';
+    document.getElementById('editEndDate').value = campaign.endDate ? new Date(campaign.endDate).toISOString().split('T')[0] : '';
+
+    document.getElementById('editLocation').value = campaign.location || '';
+    document.getElementById('editTargetAudience').value = campaign.targetAudience || '';
+    document.getElementById('editGoals').value = campaign.goals || '';
+    document.getElementById('editActionPlan').value = campaign.actionPlan || '';
+    document.getElementById('editExpectedImpact').value = campaign.expectedImpact || '';
+
+    document.getElementById('editContactEmail').value = campaign.contactInfo?.email || '';
+    document.getElementById('editContactPhone').value = campaign.contactInfo?.phone || '';
+    document.getElementById('editVideoUrl').value = campaign.media?.videoUrl || '';
+    document.getElementById('editHashtags').value = (campaign.hashtags || []).join(' ');
+
+    const imageInput = document.getElementById('editCampaignImage');
+    if (imageInput) imageInput.value = '';
+
+    // Open modal
+    if (modal) {
+        modal.style.display = 'flex';
+    }
+}
+
+function closeEditModal() {
+    const modal = document.getElementById('editCampaignModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+    const errorBanner = document.getElementById('editFormError');
+    if (errorBanner) {
+        errorBanner.style.display = 'none';
+        errorBanner.textContent = '';
+    }
+}
+
+function setupEditFormListener() {
+    const editForm = document.getElementById('editCampaignForm');
+    if (!editForm) return;
+
+    editForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const campaignId = document.getElementById('editCampaignId').value;
+        const token = localStorage.getItem('token');
+        const errorBanner = document.getElementById('editFormError');
+
+        if (!campaignId) {
+            if (errorBanner) {
+                errorBanner.textContent = 'Invalid campaign ID';
+                errorBanner.style.display = 'block';
+            }
+            return;
+        }
+
+        const formData = new FormData(editForm);
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/campaigns/${campaignId}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                closeEditModal();
+                showNotification(data.message || 'Campaign updated successfully!', 'success');
+                await loadManagerDashboardData(token);
+            } else {
+                if (errorBanner) {
+                    errorBanner.textContent = data.message || data.error || 'Failed to update campaign';
+                    errorBanner.style.display = 'block';
+                } else {
+                    showNotification(data.message || 'Failed to update campaign', 'error');
+                }
+            }
+        } catch (error) {
+            console.error('Error updating campaign:', error);
+            if (errorBanner) {
+                errorBanner.textContent = 'Network or server error. Please try again.';
+                errorBanner.style.display = 'block';
+            } else {
+                showNotification('Network error while updating campaign', 'error');
+            }
+        }
+    });
+}
+
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+        <span>${message}</span>
+    `;
+
+    notification.style.cssText = `
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        padding: 15px 25px;
+        border-radius: 10px;
+        color: white;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        z-index: 3000;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+        background: ${type === 'success' ? 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)' : type === 'error' ? 'linear-gradient(135deg, #eb3b5a 0%, #fa8231 100%)' : '#2196F3'};
+    `;
+
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+        notification.remove();
+    }, 3500);
 }
 
 function getTimeAgo(date) {
@@ -189,8 +352,12 @@ function getTimeAgo(date) {
 
 // Close modal when clicking outside
 window.onclick = function (event) {
-    const modal = document.getElementById('createCampaignModal');
-    if (event.target === modal) {
-        modal.style.display = 'none';
+    const createModal = document.getElementById('createCampaignModal');
+    if (event.target === createModal) {
+        createModal.style.display = 'none';
+    }
+    const editModal = document.getElementById('editCampaignModal');
+    if (event.target === editModal) {
+        closeEditModal();
     }
 };

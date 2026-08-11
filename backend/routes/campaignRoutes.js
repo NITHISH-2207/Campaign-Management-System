@@ -36,6 +36,17 @@ router.post('/create',
     campaignController.createCampaign
 );
 
+// Get single campaign by ID
+router.get('/:campaignId', authMiddleware, campaignController.getCampaignById);
+
+// Update existing campaign
+router.put('/:campaignId',
+    authMiddleware,
+    roleCheck(['campaign_manager', 'admin']),
+    upload.single('campaignImage'),
+    campaignController.updateCampaign
+);
+
 // Join a campaign
 router.post('/:campaignId/join', authMiddleware, campaignController.joinCampaign);
 

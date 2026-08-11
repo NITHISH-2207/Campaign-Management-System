@@ -112,6 +112,117 @@ createCampaign: async (req, res) => {
     }
 },
 
+    // Get single campaign by ID
+    getCampaignById: async (req, res) => {
+        try {
+            const campaign = await Campaign.findById(req.params.campaignId)
+                .populate('managerId', 'name email');
+
+            if (!campaign) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Campaign not found'
+                });
+            }
+
+            res.json({
+                success: true,
+                campaign
+            });
+        } catch (error) {
+            console.error('Error fetching campaign details:', error);
+            res.status(500).json({
+                success: false,
+                message: 'Failed to fetch campaign details',
+                error: error.message
+            });
+        }
+    },
+
+    // Update existing campaign
+    updateCampaign: async (req, res) => {
+        try {
+            const { campaignId } = req.params;
+            const campaign = await Campaign.findById(campaignId);
+
+            if (!campaign) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Campaign not found'
+                });
+            }
+
+            // Verify manager authorization (only campaign owner manager or admin can update)
+            const userId = (req.user.id || req.user._id).toString();
+            const managerId = campaign.managerId.toString();
+
+            if (req.user.role !== 'admin' && managerId !== userId) {
+                return res.status(403).json({
+                    success: false,
+                    message: 'Access denied. You can only edit campaigns you created.'
+                });
+            }
+
+            // Update editable fields
+            if (req.body.title) campaign.title = req.body.title.trim();
+            if (req.body.description) campaign.description = req.body.description;
+            if (req.body.category) campaign.category = req.body.category;
+            if (req.body.type) campaign.type = req.body.type;
+            if (req.body.startDate) campaign.startDate = new Date(req.body.startDate);
+            if (req.body.endDate) campaign.endDate = new Date(req.body.endDate);
+            if (req.body.location) campaign.location = req.body.location;
+            if (req.body.targetAudience) campaign.targetAudience = req.body.targetAudience;
+            if (req.body.goals) campaign.goals = req.body.goals;
+            if (req.body.actionPlan) campaign.actionPlan = req.body.actionPlan;
+            if (req.body.expectedImpact) campaign.expectedImpact = req.body.expectedImpact;
+
+            if (req.body.contactEmail || req.body.contactPhone) {
+                campaign.contactInfo = {
+                    ...campaign.contactInfo,
+                    email: req.body.contactEmail || campaign.contactInfo?.email,
+                    phone: req.body.contactPhone || campaign.contactInfo?.phone
+                };
+            }
+
+            if (req.file) {
+                campaign.media = {
+                    ...campaign.media,
+                    imageUrl: `/uploads/campaigns/${req.file.filename}`
+                };
+            }
+            if (req.body.videoUrl !== undefined) {
+                campaign.media = {
+                    ...campaign.media,
+                    videoUrl: req.body.videoUrl
+                };
+            }
+
+            if (req.body.hashtags !== undefined) {
+                campaign.hashtags = req.body.hashtags
+                    ? req.body.hashtags.split(' ').filter(tag => tag.startsWith('#'))
+                    : [];
+            }
+
+            campaign.updatedAt = Date.now();
+
+            await campaign.save();
+            await campaign.populate('managerId', 'name email');
+
+            res.json({
+                success: true,
+                message: 'Campaign updated successfully!',
+                campaign
+            });
+        } catch (error) {
+            console.error('Error updating campaign:', error);
+            res.status(500).json({
+                success: false,
+                message: 'Failed to update campaign',
+                error: error.message
+            });
+        }
+    },
+
 
     // Get all campaigns
     getAllCampaigns: async (req, res) => {

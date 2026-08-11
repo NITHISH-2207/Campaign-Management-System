@@ -111,8 +111,139 @@
         </section>
     </main>
 
-    <!-- Create Campaign Modal -->
-    
+    <!-- Edit Campaign Modal -->
+    <div id="editCampaignModal" class="edit-modal">
+        <div class="edit-modal-content">
+            <div class="edit-modal-header">
+                <h2><i class="fas fa-edit"></i> Edit Campaign</h2>
+                <button type="button" class="edit-modal-close" onclick="closeEditModal()">&times;</button>
+            </div>
+
+            <div id="editFormError" class="edit-error-banner"></div>
+
+            <form id="editCampaignForm" enctype="multipart/form-data">
+                <input type="hidden" id="editCampaignId" name="campaignId">
+
+                <div class="edit-form-group">
+                    <label for="editTitle">Campaign Title *</label>
+                    <input type="text" id="editTitle" name="title" required maxlength="100" placeholder="Enter campaign title">
+                </div>
+
+                <div class="edit-form-row">
+                    <div class="edit-form-group">
+                        <label for="editCategory">Category *</label>
+                        <select id="editCategory" name="category" required>
+                            <option value="">Select Category</option>
+                            <option value="Environment">Environment</option>
+                            <option value="Health">Health & Wellness</option>
+                            <option value="Education">Education</option>
+                            <option value="Poverty">Poverty & Hunger</option>
+                            <option value="Human Rights">Human Rights</option>
+                            <option value="Animal Welfare">Animal Welfare</option>
+                            <option value="Community">Community Development</option>
+                            <option value="Technology">Technology for Good</option>
+                            <option value="Disaster Relief">Disaster Relief</option>
+                            <option value="Youth">Youth Empowerment</option>
+                        </select>
+                    </div>
+
+                    <div class="edit-form-group">
+                        <label for="editType">Campaign Type *</label>
+                        <select id="editType" name="type" required>
+                            <option value="">Select Type</option>
+                            <option value="Online">Online Campaign</option>
+                            <option value="Physical">Physical Event</option>
+                            <option value="Hybrid">Hybrid (Online + Physical)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="edit-form-group">
+                    <label for="editDescription">Campaign Description *</label>
+                    <textarea id="editDescription" name="description" rows="4" required maxlength="2000" placeholder="Describe your campaign..."></textarea>
+                </div>
+
+                <div class="edit-form-row">
+                    <div class="edit-form-group">
+                        <label for="editStartDate">Start Date *</label>
+                        <input type="date" id="editStartDate" name="startDate" required>
+                    </div>
+
+                    <div class="edit-form-group">
+                        <label for="editEndDate">End Date *</label>
+                        <input type="date" id="editEndDate" name="endDate" required>
+                    </div>
+                </div>
+
+                <div class="edit-form-row">
+                    <div class="edit-form-group">
+                        <label for="editLocation">Location *</label>
+                        <input type="text" id="editLocation" name="location" required placeholder="e.g., Mumbai, India or Global">
+                    </div>
+
+                    <div class="edit-form-group">
+                        <label for="editTargetAudience">Target Audience *</label>
+                        <select id="editTargetAudience" name="targetAudience" required>
+                            <option value="">Select Target Audience</option>
+                            <option value="General Public">General Public</option>
+                            <option value="Youth (13-25)">Youth (13-25)</option>
+                            <option value="Young Adults (18-35)">Young Adults (18-35)</option>
+                            <option value="Adults (25-55)">Adults (25-55)</option>
+                            <option value="Students">Students</option>
+                            <option value="Professionals">Professionals</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="edit-form-group">
+                    <label for="editGoals">Campaign Goals *</label>
+                    <textarea id="editGoals" name="goals" rows="3" required maxlength="500" placeholder="What specific outcomes do you want to achieve?"></textarea>
+                </div>
+
+                <div class="edit-form-group">
+                    <label for="editActionPlan">Action Plan *</label>
+                    <textarea id="editActionPlan" name="actionPlan" rows="3" required maxlength="1000" placeholder="What actions should participants take?"></textarea>
+                </div>
+
+                <div class="edit-form-group">
+                    <label for="editExpectedImpact">Expected Impact *</label>
+                    <textarea id="editExpectedImpact" name="expectedImpact" rows="3" required maxlength="500" placeholder="What real-world change do you expect?"></textarea>
+                </div>
+
+                <div class="edit-form-row">
+                    <div class="edit-form-group">
+                        <label for="editContactEmail">Contact Email *</label>
+                        <input type="email" id="editContactEmail" name="contactEmail" required placeholder="campaign@example.com">
+                    </div>
+
+                    <div class="edit-form-group">
+                        <label for="editContactPhone">Contact Phone</label>
+                        <input type="tel" id="editContactPhone" name="contactPhone" placeholder="+91-9876543210">
+                    </div>
+                </div>
+
+                <div class="edit-form-group">
+                    <label for="editCampaignImage">Update Campaign Image</label>
+                    <input type="file" id="editCampaignImage" name="campaignImage" accept="image/*">
+                </div>
+
+                <div class="edit-form-group">
+                    <label for="editVideoUrl">Campaign Video URL</label>
+                    <input type="url" id="editVideoUrl" name="videoUrl" placeholder="https://youtube.com/watch?v=...">
+                </div>
+
+                <div class="edit-form-group">
+                    <label for="editHashtags">Hashtags</label>
+                    <input type="text" id="editHashtags" name="hashtags" placeholder="#ChangeWave #SocialImpact">
+                </div>
+
+                <div class="edit-btn-group">
+                    <button type="button" class="btn-cancel" onclick="closeEditModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <script src="js/common/auth.js"></script>
     <script src="js/campaign/manager-dashboard.js"></script>
