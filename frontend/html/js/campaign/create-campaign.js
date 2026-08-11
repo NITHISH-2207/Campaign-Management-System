@@ -5,8 +5,10 @@ document.addEventListener('DOMContentLoaded', function () {
     // Check if user is logged in
     const token = localStorage.getItem('token');
     if (!token) {
-        alert('Please log in to create a campaign');
-        window.location.href = 'login.html';
+        showNotification('Please log in to create a campaign', 'error');
+        setTimeout(() => {
+            window.location.href = 'login.html';
+        }, 1500);
         return;
     }
 
@@ -86,7 +88,7 @@ function saveDraft() {
     }
 
     localStorage.setItem('campaignDraft', JSON.stringify(draftData));
-    alert('Draft saved successfully!');
+    showNotification('Draft saved successfully!', 'info');
 }
 
 function loadDraft() {
@@ -119,13 +121,13 @@ async function handleSubmit(event) {
     const endDate = new Date(document.getElementById('endDate').value);
 
     if (endDate <= startDate) {
-        alert('End date must be after start date');
+        showNotification('End date must be after start date', 'error');
         return;
     }
 
     // Validate checkbox
     if (!document.getElementById('agreeTerms').checked) {
-        alert('Please agree to the terms and verify your information');
+        showNotification('Please agree to the terms and verify your information', 'error');
         return;
     }
 
@@ -149,32 +151,86 @@ async function handleSubmit(event) {
 
         const data = await response.json();
 
-        // In the handleSubmit function, update the success case:
         if (response.ok && data.success) {
             // Clear draft
             localStorage.removeItem('campaignDraft');
 
-            // Updated success message
-            alert('Campaign created successfully! Your campaign is now live and active.');
+            // Custom notification matching website theme
+            showNotification('Your campaign has been submitted for admin review.', 'success');
 
-            // Remove or comment out the auto-approve function since it's not needed
-            // await autoApproveCampaign(data.campaign._id);
-
-            // Redirect to dashboard or campaigns list
+            // Redirect to campaigns list after notification display
             setTimeout(() => {
-                // Redirect to campaigns list to see the new campaign
                 window.location.href = 'campaigns-list.html';
-            }, 1500);
+            }, 2500);
         } else {
-            alert(`Error: ${data.message || 'Failed to create campaign'}`);
+            showNotification(data.message || 'Failed to create campaign', 'error');
         }
     } catch (error) {
         console.error('Error submitting campaign:', error);
-        alert('Failed to submit campaign. Please try again.');
+        showNotification('Failed to submit campaign. Please try again.', 'error');
     } finally {
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
     }
+}
+
+function showNotification(message, type = 'info') {
+    const existing = document.querySelectorAll('.custom-toast-notification');
+    existing.forEach(el => el.remove());
+
+    const notification = document.createElement('div');
+    notification.className = `custom-toast-notification toast-${type}`;
+
+    const iconClass = type === 'success'
+        ? 'fa-check-circle'
+        : type === 'error'
+            ? 'fa-exclamation-circle'
+            : 'fa-info-circle';
+
+    notification.innerHTML = `
+        <i class="fas ${iconClass}"></i>
+        <span>${message}</span>
+    `;
+
+    notification.style.cssText = `
+        position: fixed;
+        top: 90px;
+        right: 25px;
+        padding: 16px 24px;
+        border-radius: 14px;
+        color: #ffffff;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 15px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        z-index: 10000;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        background: ${type === 'success' ? 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)' : type === 'error' ? 'linear-gradient(135deg, #eb3b5a 0%, #fa8231 100%)' : 'linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%)'};
+        opacity: 0;
+        transform: translateY(-20px);
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    `;
+
+    document.body.appendChild(notification);
+
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            notification.style.opacity = '1';
+            notification.style.transform = 'translateY(0)';
+        });
+    });
+
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateY(-20px)';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 400);
+    }, 3000);
 }
 
 // Temporary function to auto-approve campaigns for testing
