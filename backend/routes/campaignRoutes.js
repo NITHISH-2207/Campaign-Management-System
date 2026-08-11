@@ -47,6 +47,13 @@ router.put('/:campaignId',
     campaignController.updateCampaign
 );
 
+// Delete existing campaign
+router.delete('/:campaignId',
+    authMiddleware,
+    roleCheck(['campaign_manager', 'admin']),
+    campaignController.deleteCampaign
+);
+
 // Join a campaign
 router.post('/:campaignId/join', authMiddleware, campaignController.joinCampaign);
 

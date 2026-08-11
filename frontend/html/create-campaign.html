@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Campaign - ChangeWave</title>
-    <link rel="stylesheet" href="../css/common.css">
-    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/navbar.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         /* Reset and Base Styles */
@@ -88,6 +90,7 @@
             .navbar .nav-links {
                 gap: 8px;
             }
+
             .navbar .nav-links a {
                 padding: 6px 8px;
                 font-size: 0.85rem;
@@ -102,7 +105,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: 
+            background:
                 radial-gradient(circle at 20% 50%, rgba(139, 107, 74, 0.08) 0%, transparent 50%),
                 radial-gradient(circle at 80% 80%, rgba(107, 68, 35, 0.05) 0%, transparent 50%);
             pointer-events: none;
@@ -203,10 +206,21 @@
             animation: fadeInUp 0.8s ease-out both;
         }
 
-        .form-section:nth-child(3) { animation-delay: 0.4s; }
-        .form-section:nth-child(4) { animation-delay: 0.6s; }
-        .form-section:nth-child(5) { animation-delay: 0.8s; }
-        .form-section:nth-child(6) { animation-delay: 1s; }
+        .form-section:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        .form-section:nth-child(4) {
+            animation-delay: 0.6s;
+        }
+
+        .form-section:nth-child(5) {
+            animation-delay: 0.8s;
+        }
+
+        .form-section:nth-child(6) {
+            animation-delay: 1s;
+        }
 
         .form-section::before {
             content: '';
@@ -413,6 +427,7 @@
                 opacity: 0;
                 transform: translateY(-30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -424,6 +439,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -485,17 +501,20 @@
         }
 
         @keyframes spin {
-            to { transform: translate(-50%, -50%) rotate(360deg); }
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
         }
     </style>
 </head>
+
 <body>
     <!-- Navigation will be inserted by navigation.js -->
     <nav class="navbar"></nav>
 
     <main class="campaign-form">
         <h1 class="page-title">Create Your Campaign</h1>
-        
+
         <div class="guidelines">
             <h4><i class="fas fa-lightbulb"></i> Campaign Guidelines</h4>
             <ul>
@@ -512,11 +531,11 @@
             <!-- Basic Information -->
             <div class="form-section">
                 <h3><i class="fas fa-info-circle"></i> Basic Information</h3>
-                
+
                 <div class="form-group">
                     <label for="title">Campaign Title *</label>
-                    <input type="text" id="title" name="title" required maxlength="100" 
-                           placeholder="Enter a compelling campaign title">
+                    <input type="text" id="title" name="title" required maxlength="100"
+                        placeholder="Enter a compelling campaign title">
                     <div class="char-count"><span id="titleCount">0</span>/100</div>
                 </div>
 
@@ -537,7 +556,7 @@
                             <option value="Youth">Youth Empowerment</option>
                         </select>
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="type">Campaign Type *</label>
                         <select id="type" name="type" required>
@@ -552,7 +571,7 @@
                 <div class="form-group">
                     <label for="description">Campaign Description *</label>
                     <textarea id="description" name="description" rows="5" required maxlength="2000"
-                              placeholder="Describe your campaign's mission, goals, and why people should join..."></textarea>
+                        placeholder="Describe your campaign's mission, goals, and why people should join..."></textarea>
                     <div class="char-count"><span id="descCount">0</span>/2000</div>
                 </div>
             </div>
@@ -560,13 +579,13 @@
             <!-- Campaign Details -->
             <div class="form-section">
                 <h3><i class="fas fa-calendar-alt"></i> Campaign Details</h3>
-                
+
                 <div class="form-row">
                     <div class="form-group">
                         <label for="startDate">Start Date *</label>
                         <input type="date" id="startDate" name="startDate" required>
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="endDate">End Date *</label>
                         <input type="date" id="endDate" name="endDate" required>
@@ -577,9 +596,9 @@
                     <div class="form-group">
                         <label for="location">Location *</label>
                         <input type="text" id="location" name="location" required
-                               placeholder="e.g., Mumbai, India or Global">
+                            placeholder="e.g., Mumbai, India or Global">
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="targetAudience">Target Audience *</label>
                         <select id="targetAudience" name="targetAudience" required>
@@ -597,7 +616,7 @@
                 <div class="form-group">
                     <label for="goals">Campaign Goals *</label>
                     <textarea id="goals" name="goals" rows="3" required maxlength="500"
-                              placeholder="What specific outcomes do you want to achieve?"></textarea>
+                        placeholder="What specific outcomes do you want to achieve?"></textarea>
                     <div class="char-count"><span id="goalsCount">0</span>/500</div>
                 </div>
             </div>
@@ -605,18 +624,18 @@
             <!-- Strategy -->
             <div class="form-section">
                 <h3><i class="fas fa-bullseye"></i> Campaign Strategy</h3>
-                
+
                 <div class="form-group">
                     <label for="actionPlan">Action Plan *</label>
                     <textarea id="actionPlan" name="actionPlan" rows="4" required maxlength="1000"
-                              placeholder="How will participants contribute? What actions do you want them to take?"></textarea>
+                        placeholder="How will participants contribute? What actions do you want them to take?"></textarea>
                     <div class="char-count"><span id="actionCount">0</span>/1000</div>
                 </div>
 
                 <div class="form-group">
                     <label for="expectedImpact">Expected Impact *</label>
                     <textarea id="expectedImpact" name="expectedImpact" rows="3" required maxlength="500"
-                              placeholder="What real-world change do you expect to achieve?"></textarea>
+                        placeholder="What real-world change do you expect to achieve?"></textarea>
                     <div class="char-count"><span id="impactCount">0</span>/500</div>
                 </div>
             </div>
@@ -624,7 +643,7 @@
             <!-- Media & Contact -->
             <div class="form-section">
                 <h3><i class="fas fa-photo-video"></i> Media & Contact</h3>
-                
+
                 <div class="form-group">
                     <label for="campaignImage">Campaign Image</label>
                     <input type="file" id="campaignImage" name="campaignImage" accept="image/*">
@@ -633,28 +652,26 @@
 
                 <div class="form-group">
                     <label for="videoUrl">Campaign Video URL (YouTube/Vimeo)</label>
-                    <input type="url" id="videoUrl" name="videoUrl" 
-                           placeholder="https://youtube.com/watch?v=...">
+                    <input type="url" id="videoUrl" name="videoUrl" placeholder="https://youtube.com/watch?v=...">
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label for="contactEmail">Contact Email *</label>
                         <input type="email" id="contactEmail" name="contactEmail" required
-                               placeholder="campaign@example.com">
+                            placeholder="campaign@example.com">
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="contactPhone">Contact Phone</label>
-                        <input type="tel" id="contactPhone" name="contactPhone"
-                               placeholder="+91-9876543210">
+                        <input type="tel" id="contactPhone" name="contactPhone" placeholder="+91-9876543210">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="hashtags">Campaign Hashtags</label>
                     <input type="text" id="hashtags" name="hashtags"
-                           placeholder="#ChangeWave #SocialImpact #YourCampaign">
+                        placeholder="#ChangeWave #SocialImpact #YourCampaign">
                 </div>
             </div>
 
@@ -681,7 +698,7 @@
     <script src="js/campaign/create-campaign.js"></script>
     <script>
         // Character count functionality
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Character counters
             const counters = [
                 { input: 'title', counter: 'titleCount', max: 100 },
@@ -694,11 +711,11 @@
             counters.forEach(({ input, counter, max }) => {
                 const inputEl = document.getElementById(input);
                 const counterEl = document.getElementById(counter);
-                
+
                 inputEl.addEventListener('input', () => {
                     const length = inputEl.value.length;
                     counterEl.textContent = length;
-                    
+
                     if (length > max * 0.9) {
                         counterEl.parentElement.style.color = 'var(--orange)';
                     } else {
@@ -710,12 +727,12 @@
             // Image preview
             const imageInput = document.getElementById('campaignImage');
             const imagePreview = document.getElementById('imagePreview');
-            
-            imageInput.addEventListener('change', function(e) {
+
+            imageInput.addEventListener('change', function (e) {
                 const file = e.target.files[0];
                 if (file && file.type.startsWith('image/')) {
                     const reader = new FileReader();
-                    reader.onload = function(e) {
+                    reader.onload = function (e) {
                         imagePreview.innerHTML = `<img src="${e.target.result}" alt="Campaign preview">`;
                         imagePreview.style.display = 'block';
                     };
@@ -730,4 +747,5 @@
         });
     </script>
 </body>
+
 </html>

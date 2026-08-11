@@ -109,6 +109,7 @@ function displayCampaigns(campaigns) {
             <div class="campaign-actions">
                 <button class="btn-view" onclick="viewCampaign('${campaign._id}')">View Details</button>
                 <button class="btn-edit" data-id="${campaign._id}" onclick="editCampaign('${campaign._id}')">Edit</button>
+                <button class="btn-delete" data-id="${campaign._id}" onclick="confirmDeleteCampaign('${campaign._id}')">Delete</button>
             </div>
         </div>
     `).join('');
@@ -121,6 +122,13 @@ function displayCampaigns(campaigns) {
                 const id = btnEdit.getAttribute('data-id');
                 if (id) {
                     editCampaign(id);
+                }
+            }
+            const btnDelete = e.target.closest('.btn-delete');
+            if (btnDelete) {
+                const id = btnDelete.getAttribute('data-id');
+                if (id) {
+                    confirmDeleteCampaign(id);
                 }
             }
         });
@@ -395,6 +403,62 @@ function getTimeAgo(date) {
     return `${Math.floor(seconds / 86400)} days ago`;
 }
 
+// Open Delete Campaign confirmation modal
+function confirmDeleteCampaign(campaignId) {
+    const modal = document.getElementById('deleteConfirmModal');
+    const deleteIdInput = document.getElementById('deleteCampaignId');
+    if (deleteIdInput) {
+        deleteIdInput.value = campaignId;
+    }
+    if (modal) {
+        modal.style.display = 'flex';
+    }
+}
+
+// Close Delete Campaign confirmation modal
+function closeDeleteModal() {
+    const modal = document.getElementById('deleteConfirmModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+// Execute DELETE request to backend to permanently remove campaign
+async function executeDeleteCampaign() {
+    const campaignId = document.getElementById('deleteCampaignId').value;
+    const token = localStorage.getItem('token');
+
+    if (!campaignId) {
+        showNotification('Invalid campaign ID', 'error');
+        closeDeleteModal();
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/campaigns/${campaignId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+            closeDeleteModal();
+            showNotification('Campaign deleted successfully.', 'success');
+            await loadManagerDashboardData(token);
+        } else {
+            closeDeleteModal();
+            showNotification(data.message || 'Failed to delete campaign', 'error');
+        }
+    } catch (error) {
+        console.error('Error deleting campaign:', error);
+        closeDeleteModal();
+        showNotification('Network error while deleting campaign', 'error');
+    }
+}
+
 // Close modal when clicking outside
 window.onclick = function (event) {
     const createModal = document.getElementById('createCampaignModal');
@@ -405,9 +469,16 @@ window.onclick = function (event) {
     if (event.target === editModal) {
         closeEditModal();
     }
+    const deleteModal = document.getElementById('deleteConfirmModal');
+    if (event.target === deleteModal) {
+        closeDeleteModal();
+    }
 };
 
 // Explicit global window bindings
 window.editCampaign = editCampaign;
 window.closeEditModal = closeEditModal;
 window.viewCampaign = viewCampaign;
+window.confirmDeleteCampaign = confirmDeleteCampaign;
+window.closeDeleteModal = closeDeleteModal;
+window.executeDeleteCampaign = executeDeleteCampaign;

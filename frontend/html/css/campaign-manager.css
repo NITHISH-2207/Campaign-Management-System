@@ -581,6 +581,31 @@ body {
     transform: translateY(-2px);
 }
 
+.btn-delete {
+    background: rgba(229, 57, 53, 0.15) !important;
+    color: #ff6b6b !important;
+    border: 1px solid rgba(229, 57, 53, 0.4) !important;
+    flex: 1;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.btn-delete:hover {
+    background: #e53935 !important;
+    color: #ffffff !important;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(229, 57, 53, 0.3);
+}
+
+.btn-delete-confirm:hover {
+    background: #c62828 !important;
+}
+
 /* Activity item styles */
 .activity-item {
     padding: 15px;

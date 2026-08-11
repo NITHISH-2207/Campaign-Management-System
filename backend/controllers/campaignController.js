@@ -223,6 +223,47 @@ createCampaign: async (req, res) => {
         }
     },
 
+    // Delete existing campaign (permanently removes campaign document from MongoDB)
+    deleteCampaign: async (req, res) => {
+        try {
+            const { campaignId } = req.params;
+            const campaign = await Campaign.findById(campaignId);
+
+            if (!campaign) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Campaign not found'
+                });
+            }
+
+            // Verify manager authorization (only campaign owner manager or admin can delete)
+            const userId = (req.user.id || req.user._id).toString();
+            const managerId = campaign.managerId.toString();
+
+            if (req.user.role !== 'admin' && managerId !== userId) {
+                return res.status(403).json({
+                    success: false,
+                    message: 'Access denied. You can only delete campaigns you created.'
+                });
+            }
+
+            // Permanently delete the campaign document from MongoDB
+            await Campaign.findByIdAndDelete(campaignId);
+
+            res.json({
+                success: true,
+                message: 'Campaign deleted successfully.'
+            });
+        } catch (error) {
+            console.error('Error deleting campaign:', error);
+            res.status(500).json({
+                success: false,
+                message: 'Failed to delete campaign',
+                error: error.message
+            });
+        }
+    },
+
 
     // Get all campaigns
     getAllCampaigns: async (req, res) => {
