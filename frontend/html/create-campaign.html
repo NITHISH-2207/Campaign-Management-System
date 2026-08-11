@@ -47,6 +47,53 @@
             overflow-x: hidden;
         }
 
+        /* Navbar Layout & Viewport Fit Overrides */
+        .navbar .nav-container {
+            padding: 0 20px;
+        }
+
+        .navbar .logo {
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .navbar .nav-links {
+            gap: 14px;
+        }
+
+        .navbar .nav-links a {
+            padding: 8px 10px;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        .navbar .nav-user {
+            margin-left: 10px;
+            padding: 0 10px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .navbar .user-name {
+            white-space: nowrap;
+        }
+
+        .navbar .logout-btn {
+            padding: 8px 18px !important;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 1200px) {
+            .navbar .nav-links {
+                gap: 8px;
+            }
+            .navbar .nav-links a {
+                padding: 6px 8px;
+                font-size: 0.85rem;
+            }
+        }
+
         /* Background Effect */
         body::before {
             content: '';
