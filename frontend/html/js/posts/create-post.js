@@ -1,5 +1,5 @@
 // frontend/js/posts/create-post.js
-const API_BASE_URL = 'https://campaign-management-system-zquy.onrender.com';
+var API_BASE_URL = window.API_BASE_URL || 'https://campaign-management-system-zquy.onrender.com';
 
 class PostCreator {
     constructor() {

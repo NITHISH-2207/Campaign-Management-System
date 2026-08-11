@@ -1,13 +1,13 @@
 // frontend/js/campaign/campaigns-list.js
-const API_BASE_URL = 'https://campaign-management-system-zquy.onrender.com';
-let currentPage = 1;
-let isLoading = false;
-let filters = {
+var API_BASE_URL = window.API_BASE_URL || 'https://campaign-management-system-zquy.onrender.com';
+var currentPage = 1;
+var isLoading = false;
+var filters = {
     category: '',
     type: '',
     sort: 'recent'
 };
-let joinedCampaigns = new Set();
+var joinedCampaigns = window.joinedCampaigns || new Set();
 
 // Hide modal on page load
 document.addEventListener('DOMContentLoaded', async () => {

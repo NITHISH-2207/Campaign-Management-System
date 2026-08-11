@@ -1,5 +1,5 @@
 // frontend/js/user-dashboard.js
-const API_BASE_URL = 'https://campaign-management-system-zquy.onrender.com';
+var API_BASE_URL = window.API_BASE_URL || 'https://campaign-management-system-zquy.onrender.com';
 
 document.addEventListener('DOMContentLoaded', async () => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
