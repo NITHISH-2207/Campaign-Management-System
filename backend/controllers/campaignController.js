@@ -51,20 +51,35 @@ createCampaign: async (req, res) => {
         console.log('Creating campaign with data:', req.body);
         console.log('User creating campaign:', req.user);
         
-        // Ensure participants is initialized
+        const managerId = req.user.id || req.user._id;
+        let campaign = null;
+
+        // If campaignId is provided (submitting an existing draft)
+        if (req.body.campaignId) {
+            campaign = await Campaign.findById(req.body.campaignId);
+            if (campaign) {
+                if (req.user.role !== 'admin' && campaign.managerId.toString() !== managerId.toString()) {
+                    return res.status(403).json({
+                        success: false,
+                        message: 'Access denied. You can only submit your own campaign.'
+                    });
+                }
+            }
+        }
+
         const campaignData = {
             title: req.body.title,
             description: req.body.description,
             category: req.body.category,
             type: req.body.type,
-            startDate: new Date(req.body.startDate),
-            endDate: new Date(req.body.endDate),
+            startDate: req.body.startDate ? new Date(req.body.startDate) : undefined,
+            endDate: req.body.endDate ? new Date(req.body.endDate) : undefined,
             location: req.body.location,
             targetAudience: req.body.targetAudience,
             goals: req.body.goals,
             actionPlan: req.body.actionPlan,
             expectedImpact: req.body.expectedImpact,
-            managerId: req.user.id || req.user._id,
+            managerId: managerId,
             contactInfo: {
                 email: req.body.contactEmail,
                 phone: req.body.contactPhone,
@@ -72,35 +87,41 @@ createCampaign: async (req, res) => {
                 socialMedia: req.body.socialMedia
             },
             media: {
-                imageUrl: req.file ? `/uploads/campaigns/${req.file.filename}` : null,
+                imageUrl: req.file ? `/uploads/campaigns/${req.file.filename}` : (campaign?.media?.imageUrl || null),
                 videoUrl: req.body.videoUrl
             },
             hashtags: req.body.hashtags ? req.body.hashtags.split(' ').filter(tag => tag.startsWith('#')) : [],
             resources: req.body.resources ? req.body.resources.split(',').map(r => r.trim()) : [],
-            status: 'pending', // Save as pending for admin approval
+            status: 'pending', // Save/update status as pending for admin approval
             approvedAt: null,
-            metrics: {
-                totalPosts: 0,
-                totalEngagement: 0,
-                totalParticipants: 0
-            },
-            participants: [] // Initialize empty participants array
+            updatedAt: Date.now()
         };
 
-        console.log('Campaign data before save:', campaignData);
+        if (campaign) {
+            // Update existing draft document to pending status
+            Object.assign(campaign, campaignData);
+            await campaign.save();
+        } else {
+            // Create new campaign document
+            campaign = new Campaign({
+                ...campaignData,
+                metrics: {
+                    totalPosts: 0,
+                    totalEngagement: 0,
+                    totalParticipants: 0
+                },
+                participants: []
+            });
+            await campaign.save();
+        }
 
-        const newCampaign = new Campaign(campaignData);
-        await newCampaign.save();
-        
-        // Verify the saved status
-        console.log('Saved campaign status:', newCampaign.status);
-
-        await newCampaign.populate('managerId', 'name email');
+        console.log('Saved campaign status:', campaign.status);
+        await campaign.populate('managerId', 'name email');
 
         res.status(201).json({
             success: true,
             message: 'Campaign created successfully! Your campaign is pending admin approval.',
-            campaign: newCampaign
+            campaign: campaign
         });
     } catch (error) {
         console.error('Error creating campaign:', error);
@@ -111,6 +132,114 @@ createCampaign: async (req, res) => {
         });
     }
 },
+
+    // Save campaign as draft (create new draft or update existing draft)
+    saveDraft: async (req, res) => {
+        try {
+            console.log('Saving campaign draft with data:', req.body);
+            const managerId = req.user.id || req.user._id;
+            const campaignId = req.body.campaignId;
+
+            let campaign = null;
+            if (campaignId) {
+                campaign = await Campaign.findById(campaignId);
+                if (!campaign) {
+                    return res.status(404).json({
+                        success: false,
+                        message: 'Draft campaign not found'
+                    });
+                }
+
+                if (req.user.role !== 'admin' && campaign.managerId.toString() !== managerId.toString()) {
+                    return res.status(403).json({
+                        success: false,
+                        message: 'Access denied. You can only edit your own draft.'
+                    });
+                }
+            } else {
+                campaign = new Campaign({
+                    managerId: managerId,
+                    status: 'draft',
+                    metrics: {
+                        totalPosts: 0,
+                        totalEngagement: 0,
+                        totalParticipants: 0
+                    },
+                    participants: []
+                });
+            }
+
+            // Always enforce status = draft when saving as draft
+            campaign.status = 'draft';
+
+            // Assign fields if provided
+            if (req.body.title !== undefined) campaign.title = req.body.title.trim();
+            if (req.body.description !== undefined) campaign.description = req.body.description;
+            if (req.body.category) campaign.category = req.body.category;
+            if (req.body.type) campaign.type = req.body.type;
+            if (req.body.startDate) campaign.startDate = new Date(req.body.startDate);
+            if (req.body.endDate) campaign.endDate = new Date(req.body.endDate);
+            if (req.body.location !== undefined) campaign.location = req.body.location;
+            if (req.body.targetAudience) campaign.targetAudience = req.body.targetAudience;
+            if (req.body.goals !== undefined) campaign.goals = req.body.goals;
+            if (req.body.actionPlan !== undefined) campaign.actionPlan = req.body.actionPlan;
+            if (req.body.expectedImpact !== undefined) campaign.expectedImpact = req.body.expectedImpact;
+
+            if (req.body.contactEmail !== undefined || req.body.contactPhone !== undefined) {
+                campaign.contactInfo = {
+                    ...campaign.contactInfo,
+                    email: req.body.contactEmail || campaign.contactInfo?.email || undefined,
+                    phone: req.body.contactPhone || campaign.contactInfo?.phone,
+                    website: req.body.website || campaign.contactInfo?.website,
+                    socialMedia: req.body.socialMedia || campaign.contactInfo?.socialMedia
+                };
+            }
+
+            if (req.file) {
+                campaign.media = {
+                    ...campaign.media,
+                    imageUrl: `/uploads/campaigns/${req.file.filename}`
+                };
+            }
+            if (req.body.videoUrl !== undefined) {
+                campaign.media = {
+                    ...campaign.media,
+                    videoUrl: req.body.videoUrl
+                };
+            }
+
+            if (req.body.hashtags !== undefined) {
+                campaign.hashtags = req.body.hashtags
+                    ? req.body.hashtags.split(' ').filter(tag => tag.startsWith('#'))
+                    : [];
+            }
+
+            if (req.body.resources !== undefined) {
+                campaign.resources = req.body.resources
+                    ? req.body.resources.split(',').map(r => r.trim())
+                    : [];
+            }
+
+            campaign.updatedAt = Date.now();
+
+            await campaign.save();
+            await campaign.populate('managerId', 'name email');
+
+            res.status(200).json({
+                success: true,
+                message: 'Campaign saved as draft.',
+                campaignId: campaign._id,
+                campaign
+            });
+        } catch (error) {
+            console.error('Error saving draft campaign:', error);
+            res.status(500).json({
+                success: false,
+                message: 'Failed to save campaign draft',
+                error: error.message
+            });
+        }
+    },
 
     // Get single campaign by ID
     getCampaignById: async (req, res) => {

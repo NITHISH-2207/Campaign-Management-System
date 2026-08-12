@@ -237,6 +237,11 @@ async function editCampaign(campaignId) {
         return;
     }
 
+    if (campaign.status === 'draft') {
+        window.location.href = `create-campaign.html?id=${campaignId}`;
+        return;
+    }
+
     console.log('Populating edit form with campaign data:', campaign);
 
     // Helper to format Date objects / ISO strings to YYYY-MM-DD for HTML <input type="date">

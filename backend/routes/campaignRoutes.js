@@ -36,6 +36,14 @@ router.post('/create',
     campaignController.createCampaign
 );
 
+// Save campaign draft
+router.post('/draft',
+    authMiddleware,
+    roleCheck(['campaign_manager', 'admin']),
+    upload.single('campaignImage'),
+    campaignController.saveDraft
+);
+
 // Get single campaign by ID
 router.get('/:campaignId', authMiddleware, campaignController.getCampaignById);
 

@@ -76,41 +76,138 @@ function previewImage(event) {
     }
 }
 
-function saveDraft() {
-    const formData = new FormData(document.getElementById('campaignForm'));
-    const draftData = {};
+async function saveDraft() {
+    const token = localStorage.getItem('token');
+    if (!token) {
+        showNotification('Please log in to save a draft', 'error');
+        return;
+    }
 
-    // Convert FormData to object (excluding file)
-    for (let [key, value] of formData.entries()) {
-        if (key !== 'campaignImage') {
-            draftData[key] = value;
+    const form = document.getElementById('campaignForm');
+    const formData = new FormData(form);
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/campaigns/draft`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+            const savedId = data.campaignId || data.campaign?._id;
+            if (savedId) {
+                document.getElementById('campaignId').value = savedId;
+                const newUrl = `${window.location.pathname}?id=${savedId}`;
+                window.history.replaceState(null, '', newUrl);
+            }
+
+            showNotification('Campaign saved as draft.', 'info');
+        } else {
+            showNotification(data.message || 'Failed to save draft', 'error');
+        }
+    } catch (error) {
+        console.error('Error saving campaign draft:', error);
+        showNotification('Failed to save draft. Please try again.', 'error');
+    }
+}
+
+async function loadDraft() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const campaignId = urlParams.get('id');
+    const token = localStorage.getItem('token');
+
+    if (campaignId && token) {
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/campaigns/${campaignId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success && data.campaign) {
+                    populateFormWithCampaign(data.campaign);
+                    return;
+                }
+            }
+        } catch (error) {
+            console.error('Error loading draft from backend:', error);
         }
     }
 
-    localStorage.setItem('campaignDraft', JSON.stringify(draftData));
-    showNotification('Draft saved successfully!', 'info');
-}
-
-function loadDraft() {
+    // Fallback to local storage draft if available
     const draft = localStorage.getItem('campaignDraft');
     if (draft) {
-        const draftData = JSON.parse(draft);
-
-        // Fill form fields
-        Object.keys(draftData).forEach(key => {
-            const field = document.getElementById(key);
-            if (field) {
-                field.value = draftData[key];
-
-                // Trigger input event for character counters
-                if (field.tagName === 'TEXTAREA' || field.tagName === 'INPUT') {
-                    field.dispatchEvent(new Event('input'));
+        try {
+            const draftData = JSON.parse(draft);
+            Object.keys(draftData).forEach(key => {
+                const field = document.getElementById(key);
+                if (field) {
+                    field.value = draftData[key];
+                    if (field.tagName === 'TEXTAREA' || field.tagName === 'INPUT') {
+                        field.dispatchEvent(new Event('input'));
+                    }
                 }
-            }
-        });
-
-        console.log('Draft loaded');
+            });
+        } catch (e) {}
     }
+}
+
+function populateFormWithCampaign(campaign) {
+    const formatDateForInput = (dateVal) => {
+        if (!dateVal) return '';
+        try {
+            const d = new Date(dateVal);
+            if (isNaN(d.getTime())) return '';
+            return d.toISOString().split('T')[0];
+        } catch (e) {
+            return '';
+        }
+    };
+
+    document.getElementById('campaignId').value = campaign._id || '';
+    if (campaign.title) document.getElementById('title').value = campaign.title;
+    if (campaign.category) document.getElementById('category').value = campaign.category;
+    if (campaign.type) document.getElementById('type').value = campaign.type;
+    if (campaign.description) document.getElementById('description').value = campaign.description;
+    if (campaign.startDate) document.getElementById('startDate').value = formatDateForInput(campaign.startDate);
+    if (campaign.endDate) document.getElementById('endDate').value = formatDateForInput(campaign.endDate);
+    if (campaign.location) document.getElementById('location').value = campaign.location;
+    if (campaign.targetAudience) document.getElementById('targetAudience').value = campaign.targetAudience;
+    if (campaign.goals) document.getElementById('goals').value = campaign.goals;
+    if (campaign.actionPlan) document.getElementById('actionPlan').value = campaign.actionPlan;
+    if (campaign.expectedImpact) document.getElementById('expectedImpact').value = campaign.expectedImpact;
+
+    const contactInfo = campaign.contactInfo || {};
+    if (contactInfo.email) document.getElementById('contactEmail').value = contactInfo.email;
+    if (contactInfo.phone) document.getElementById('contactPhone').value = contactInfo.phone;
+
+    const media = campaign.media || {};
+    if (media.videoUrl) document.getElementById('videoUrl').value = media.videoUrl;
+
+    if (campaign.hashtags) {
+        document.getElementById('hashtags').value = Array.isArray(campaign.hashtags)
+            ? campaign.hashtags.join(' ')
+            : campaign.hashtags;
+    }
+
+    if (media.imageUrl) {
+        const preview = document.getElementById('imagePreview');
+        if (preview) {
+            preview.innerHTML = `<img src="${API_BASE_URL}${media.imageUrl}" alt="Campaign preview">`;
+            preview.style.display = 'block';
+        }
+    }
+
+    ['title', 'description', 'goals', 'actionPlan', 'expectedImpact'].forEach(id => {
+        const field = document.getElementById(id);
+        if (field) field.dispatchEvent(new Event('input'));
+    });
 }
 
 async function handleSubmit(event) {
