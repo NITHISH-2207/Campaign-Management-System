@@ -11,11 +11,20 @@ exports.getDashboardData = async (req, res) => {
     try {
         const { campaignId, dateRange = 7 } = req.query;
         const userId = req.user.id;
-        const startDate = new Date();
-        startDate.setDate(startDate.getDate() - dateRange);
 
-        // Get campaigns managed by user
-        const campaignQuery = { managerId: userId };
+        let days = parseInt(dateRange, 10);
+        if (isNaN(days) || dateRange === 'all') {
+            days = 3650; // 10 years for all-time
+        }
+
+        const startDate = new Date();
+        startDate.setDate(startDate.getDate() - days);
+
+        // Get campaigns managed by user (or all if admin)
+        const campaignQuery = {};
+        if (req.user.role !== 'admin') {
+            campaignQuery.managerId = userId;
+        }
         if (campaignId && campaignId !== 'all') {
             campaignQuery._id = campaignId;
         }
@@ -30,16 +39,20 @@ exports.getDashboardData = async (req, res) => {
 
         // Calculate engagement metrics
         const engagement = posts.reduce((acc, post) => {
-            acc.views += post.engagement.views || 0;
-            acc.likes += post.engagement.likes || 0;
-            acc.shares += post.engagement.shares || 0;
-            acc.comments += post.engagement.comments || 0;
-            acc.total += (post.engagement.views + post.engagement.likes + 
-                         post.engagement.shares + post.engagement.comments) || 0;
+            const views = post.engagement?.views || 0;
+            const likes = post.engagement?.likes || 0;
+            const shares = post.engagement?.shares || 0;
+            const commentsCount = post.engagement?.comments || 0;
+
+            acc.views += views;
+            acc.likes += likes;
+            acc.shares += shares;
+            acc.comments += commentsCount;
+            acc.total += (views + likes + shares + commentsCount);
             return acc;
         }, { views: 0, likes: 0, shares: 0, comments: 0, total: 0 });
 
-        // Get unique active users from the participants array of manager's campaigns
+        // Get unique active users from campaign participants array
         const uniqueUsers = new Set();
         for (const campaign of userCampaigns) {
             if (Array.isArray(campaign.participants)) {
@@ -56,7 +69,7 @@ exports.getDashboardData = async (req, res) => {
             createdAt: { $gte: startDate }
         });
 
-        // Calculate sentiment
+        // Calculate sentiment from real comments
         const sentimentData = comments.reduce((acc, comment) => {
             if (comment.sentiment && comment.sentiment.label) {
                 acc[comment.sentiment.label] = (acc[comment.sentiment.label] || 0) + 1;
@@ -66,18 +79,20 @@ exports.getDashboardData = async (req, res) => {
         }, { positive: 0, negative: 0, neutral: 0, total: 0 });
 
         // Calculate overall sentiment percentage
-        let overallSentiment = 'neutral';
-        let sentimentScore = 50;
+        let overallSentiment = 'N/A';
+        let sentimentScore = 0;
         
         if (sentimentData.total > 0) {
             sentimentScore = Math.round((sentimentData.positive / sentimentData.total) * 100);
             if (sentimentScore > 60) overallSentiment = 'positive';
             else if (sentimentScore < 40) overallSentiment = 'negative';
+            else overallSentiment = 'neutral';
         }
 
-        // Get timeline data for the past dateRange days
+        // Generate daily timeline points for Chart.js
         const timeline = [];
-        for (let i = dateRange - 1; i >= 0; i--) {
+        const numDays = Math.min(days, 90); // Cap chart points at 90 days for visual clarity
+        for (let i = numDays - 1; i >= 0; i--) {
             const date = new Date();
             date.setDate(date.getDate() - i);
             date.setHours(0, 0, 0, 0);
@@ -89,10 +104,13 @@ exports.getDashboardData = async (req, res) => {
                 p.createdAt >= date && p.createdAt < nextDate
             );
             
-            const dayEngagement = dayPosts.reduce((sum, post) => 
-                sum + (post.engagement.views + post.engagement.likes + 
-                      post.engagement.shares + post.engagement.comments || 0), 0
-            );
+            const dayEngagement = dayPosts.reduce((sum, post) => {
+                const views = post.engagement?.views || 0;
+                const likes = post.engagement?.likes || 0;
+                const shares = post.engagement?.shares || 0;
+                const commentsCount = post.engagement?.comments || 0;
+                return sum + views + likes + shares + commentsCount;
+            }, 0);
             
             timeline.push({
                 date: date.toISOString(),
@@ -100,25 +118,26 @@ exports.getDashboardData = async (req, res) => {
             });
         }
 
-        // Get top performing posts
+        // Get top performing posts sorted descending by engagement
         const topPosts = posts
-            .sort((a, b) => {
-                const engagementA = a.engagement.views + a.engagement.likes + 
-                                   a.engagement.shares + a.engagement.comments;
-                const engagementB = b.engagement.views + b.engagement.likes + 
-                                   b.engagement.shares + b.engagement.comments;
-                return engagementB - engagementA;
+            .map(post => {
+                const views = post.engagement?.views || 0;
+                const likes = post.engagement?.likes || 0;
+                const shares = post.engagement?.shares || 0;
+                const commentsCount = post.engagement?.comments || 0;
+                const totalEng = views + likes + shares + commentsCount;
+
+                return {
+                    _id: post._id,
+                    title: post.title,
+                    engagement: totalEng,
+                    sentiment: post.sentiment?.overall || 'neutral',
+                    sentimentScore: (post.sentiment?.scores?.positive || 0) / 100,
+                    shares: shares
+                };
             })
-            .slice(0, 5)
-            .map(post => ({
-                _id: post._id,
-                title: post.title,
-                engagement: post.engagement.views + post.engagement.likes + 
-                           post.engagement.shares + post.engagement.comments,
-                sentiment: post.sentiment.overall,
-                sentimentScore: post.sentiment.scores.positive / 100,
-                shares: post.engagement.shares
-            }));
+            .sort((a, b) => b.engagement - a.engagement)
+            .slice(0, 5);
 
         res.json({
             success: true,
@@ -152,8 +171,12 @@ exports.getRealtimeActivity = async (req, res) => {
     try {
         const userId = req.user.id;
         
-        // Get campaigns managed by user
-        const userCampaigns = await Campaign.find({ managerId: userId });
+        // Get campaigns managed by user (or all if admin)
+        const campaignQuery = {};
+        if (req.user.role !== 'admin') {
+            campaignQuery.managerId = userId;
+        }
+        const userCampaigns = await Campaign.find(campaignQuery);
         const campaignIds = userCampaigns.map(c => c._id);
         
         // Get posts from user's campaigns
@@ -174,9 +197,9 @@ exports.getRealtimeActivity = async (req, res) => {
 
         const activities = recentComments.map(comment => ({
             type: 'comment',
-            user: comment.authorId?.name || 'Anonymous',
-            postTitle: comment.postId?.title || 'Unknown Post',
-            content: comment.content.substring(0, 100) + '...',
+            user: comment.authorId?.name || 'User',
+            postTitle: comment.postId?.title || 'Campaign Post',
+            content: comment.content ? (comment.content.substring(0, 100) + '...') : '',
             sentiment: comment.sentiment || { label: 'neutral', score: 50 },
             time: comment.createdAt
         }));

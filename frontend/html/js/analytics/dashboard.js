@@ -31,6 +31,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
+function getApiBaseUrl() {
+    if (typeof API_BASE_URL !== 'undefined') return API_BASE_URL;
+    const hostname = window.location.hostname;
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+        return 'http://localhost:5000/api';
+    }
+    return window.location.origin + '/api';
+}
+
 async function loadDashboardData() {
     try {
         showLoadingState(true);
@@ -38,7 +47,7 @@ async function loadDashboardData() {
         const dateRange = document.getElementById('dateRange').value;
         const campaignId = new URLSearchParams(window.location.search).get('campaign');
 
-        let url = `https://campaign-management-system-zquy.onrender.com/api/analytics/dashboard?dateRange=${dateRange}`;
+        let url = `${getApiBaseUrl()}/analytics/dashboard?dateRange=${dateRange}`;
         if (campaignId) {
             url += `&campaignId=${campaignId}`;
         }
@@ -104,23 +113,37 @@ function updateSentimentDisplay(sentiment) {
     const scoreEl = document.querySelector('.sentiment-score');
 
     if (sentimentEl) {
-        sentimentEl.textContent = sentiment.label.charAt(0).toUpperCase() + sentiment.label.slice(1);
-        sentimentEl.className = `metric-value sentiment-${sentiment.label}`;
+        if (!sentiment || sentiment.label === 'N/A' || !sentiment.label) {
+            sentimentEl.textContent = 'N/A';
+            sentimentEl.className = 'metric-value sentiment-neutral';
+        } else {
+            sentimentEl.textContent = sentiment.label.charAt(0).toUpperCase() + sentiment.label.slice(1);
+            sentimentEl.className = `metric-value sentiment-${sentiment.label}`;
+        }
     }
 
     if (scoreEl) {
-        scoreEl.textContent = `${sentiment.overall}%`;
+        if (!sentiment || sentiment.label === 'N/A' || !sentiment.label) {
+            scoreEl.textContent = 'No sentiment data available';
+            scoreEl.style.fontSize = '13px';
+            scoreEl.style.color = '#a0a0a0';
+        } else {
+            scoreEl.textContent = `${sentiment.overall}%`;
+            scoreEl.style.fontSize = '18px';
+            scoreEl.style.color = '#22c55e';
+        }
     }
 }
 
 function startRealtimeUpdates() {
-    // Load realtime activity once on page load without periodic auto-refreshing
     loadRealtimeActivity();
+    // Refresh activity feed every 45 seconds
+    setInterval(loadRealtimeActivity, 45000);
 }
 
 async function loadRealtimeActivity() {
     try {
-        const response = await fetch('https://campaign-management-system-zquy.onrender.com/api/analytics/realtime', {
+        const response = await fetch(`${getApiBaseUrl()}/analytics/realtime`, {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
@@ -307,23 +330,34 @@ function updateExistingCharts(data) {
 
 function updateTopPostsTable(posts) {
     const tableBody = document.getElementById('topPostsTable');
-    if (!tableBody || posts.length === 0) return;
+    if (!tableBody) return;
+
+    if (!posts || posts.length === 0) {
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="4" style="text-align: center; color: #a0a0a0; padding: 25px;">
+                    No posts available for the selected period
+                </td>
+            </tr>
+        `;
+        return;
+    }
 
     tableBody.innerHTML = posts.map(post => `
         <tr>
             <td>${escapeHtml(post.title)}</td>
-            <td class="text-center">${formatNumber(post.engagement)}</td>
-            <td class="text-center ${getSentimentClass(post.sentimentScore)}">
-                ${Math.round(post.sentimentScore * 100)}% ${getSentimentEmoji(post.sentiment)}
+            <td>${formatNumber(post.engagement)}</td>
+            <td class="${getSentimentClass(post.sentimentScore)}">
+                ${post.sentimentScore > 0 ? (Math.round(post.sentimentScore * 100) + '% ') : ''}${getSentimentEmoji(post.sentiment)} ${post.sentiment || 'neutral'}
             </td>
-            <td class="text-center">${formatNumber(post.shares)}</td>
+            <td>${formatNumber(post.shares)}</td>
         </tr>
     `).join('');
 }
 
 async function loadSurveyImpact(campaignId) {
     try {
-        const response = await fetch(`https://campaign-management-system-zquy.onrender.com/api/analytics/survey-impact/${campaignId}`, {
+        const response = await fetch(`${getApiBaseUrl()}/analytics/survey-impact/${campaignId}`, {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
@@ -332,8 +366,10 @@ async function loadSurveyImpact(campaignId) {
         if (!response.ok) return;
 
         const impactData = await response.json();
-        displayImpactMetrics(impactData);
-        createImpactCharts(impactData);
+        if (window.chartFunctions) {
+            window.chartFunctions.displayImpactMetrics(impactData);
+            window.chartFunctions.createImpactCharts(impactData);
+        }
     } catch (error) {
         console.error('Error loading survey impact:', error);
     }
