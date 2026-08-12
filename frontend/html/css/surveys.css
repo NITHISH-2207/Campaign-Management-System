@@ -60,23 +60,29 @@
 
 .filters select {
     padding: 10px 15px;
-    border: 1px solid #ddd;
+    border: 1px solid rgba(139, 107, 74, 0.3) !important;
     border-radius: 8px;
-    background: white;
+    background-color: #2d2d2d !important;
+    color: #ffffff !important;
     font-size: 16px;
     min-width: 200px;
     cursor: pointer;
     transition: all 0.3s ease;
 }
 
+.filters select option {
+    background-color: #1a1a1a !important;
+    color: #ffffff !important;
+}
+
 .filters select:hover {
-    border-color: #4CAF50;
+    border-color: #8B6B4A !important;
 }
 
 .filters select:focus {
     outline: none;
-    border-color: #4CAF50;
-    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+    border-color: #8B6B4A !important;
+    box-shadow: 0 0 0 3px rgba(139, 107, 74, 0.2);
 }
 
 /* Survey Grid */
@@ -602,18 +608,25 @@ button:disabled {
 .form-group textarea {
     width: 100%;
     padding: 12px;
-    border: 1px solid #ddd;
+    background-color: #2d2d2d;
+    color: #ffffff;
+    border: 1px solid rgba(139, 107, 74, 0.3);
     border-radius: 6px;
     font-size: 16px;
     transition: border-color 0.3s;
+}
+
+.form-group select option {
+    background-color: #1a1a1a !important;
+    color: #ffffff !important;
 }
 
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: #3498db;
-    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    border-color: #8B6B4A;
+    box-shadow: 0 0 0 3px rgba(139, 107, 74, 0.1);
 }
 
 /* Question Builder */
