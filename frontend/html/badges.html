@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Badges - ChangeWave</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --black: #0a0a0a;
+            --dark-grey: #1a1a1a;
+            --medium-grey: #2d2d2d;
+            --light-grey: #6b6b6b;
+            --lighter-grey: #e5e5e5;
+            --white: #ffffff;
+            --off-white: #f5f5f5;
+            --brown: #8B6B4A;
+            --light-brown: #A67C52;
+            --dark-brown: #6B4423;
+            --gradient-primary: linear-gradient(135deg, var(--brown) 0%, var(--light-brown) 100%);
+            --border-radius: 20px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--black);
+            color: var(--white);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(139, 107, 74, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(107, 68, 35, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(139, 107, 74, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--white) 0%, var(--light-brown) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+            cursor: pointer;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--lighter-grey);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 8px 16px;
+            border-radius: 20px;
+        }
+
+        .nav-links a:hover {
+            color: var(--white);
+            background: rgba(139, 107, 74, 0.1);
+        }
+
+        .btn-nav {
+            background: var(--gradient-primary) !important;
+            color: var(--white) !important;
+            border-radius: 25px !important;
+            font-weight: 600 !important;
+        }
+
+        /* Container */
+        .badges-container {
+            max-width: 1200px;
+            margin: 120px auto 40px;
+            padding: 0 40px;
+        }
+
+        /* Hero */
+        .hero {
+            background: var(--dark-grey);
+            border: 1px solid rgba(139, 107, 74, 0.2);
+            border-radius: 30px;
+            padding: 50px;
+            margin-bottom: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at top center, rgba(139, 107, 74, 0.1) 0%, transparent 50%);
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, var(--white) 0%, var(--light-brown) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            color: var(--light-grey);
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Stats Grid */
+        .stats-summary {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .stat-pill {
+            background: rgba(139, 107, 74, 0.15);
+            border: 1px solid rgba(139, 107, 74, 0.3);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--light-brown);
+        }
+
+        /* Badges Grid */
+        .badges-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        /* Badge Card */
+        .badge-card {
+            background: var(--dark-grey);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--border-radius);
+            padding: 30px 25px;
+            text-align: center;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .badge-card.earned {
+            border: 1px solid rgba(139, 107, 74, 0.2);
+        }
+
+        .badge-card.locked {
+            opacity: 0.55;
+            filter: grayscale(80%);
+        }
+
+        .badge-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .badge-card.earned:hover {
+            border-color: rgba(139, 107, 74, 0.5);
+            box-shadow: 0 15px 30px rgba(139, 107, 74, 0.15);
+        }
+
+        .badge-icon-wrapper {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.03);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-size: 2.2rem;
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        .badge-card.earned .badge-icon-wrapper {
+            background: rgba(139, 107, 74, 0.1);
+            color: var(--light-brown);
+        }
+
+        .badge-card.locked .badge-icon-wrapper {
+            color: var(--light-grey);
+        }
+
+        .badge-card:hover .badge-icon-wrapper {
+            transform: scale(1.1);
+        }
+
+        .badge-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--white);
+        }
+
+        .badge-description {
+            font-size: 0.95rem;
+            color: var(--light-grey);
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        .badge-status {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 6px 14px;
+            border-radius: 12px;
+        }
+
+        .badge-card.earned .badge-status {
+            background: rgba(46, 204, 113, 0.15);
+            color: #2ecc71;
+        }
+
+        .badge-card.locked .badge-status {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--light-grey);
+        }
+
+        .badge-date {
+            font-size: 0.8rem;
+            color: var(--light-grey);
+            margin-top: 10px;
+        }
+
+        /* Loading */
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(139, 107, 74, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--light-brown);
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: var(--dark-grey);
+            border-radius: var(--border-radius);
+            border: 1px solid rgba(139, 107, 74, 0.1);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: rgba(139, 107, 74, 0.2);
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: var(--light-grey);
+            max-width: 400px;
+            margin: 0 auto 20px;
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 20px;
+            }
+            .nav-links {
+                gap: 15px;
+            }
+            .badges-container {
+                padding: 0 20px;
+            }
+            .hero {
+                padding: 30px 20px;
+            }
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="logo" onclick="window.location.href='user-dashboard.html'">ChangeWave</h1>
+            <ul class="nav-links">
+                <li><a href="gamification.html">Gamification</a></li>
+                <li><a href="user-dashboard.html">Dashboard</a></li>
+                <li><a href="post-feed.html">Feed</a></li>
+                <li><a href="leaderboard.html" class="btn-nav">Leaderboard</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="badges-container">
+        <div class="hero">
+            <h1>All Badges</h1>
+            <p>Participate in campaigns, publish posts, and join quizzes to earn badges and increase your impact score.</p>
+            <div class="stats-summary" id="statsSummary" style="display: none;">
+                <div class="stat-pill" id="totalEarnedPill">Earned: 0/8</div>
+                <div class="stat-pill" id="impactPointsPill">Impact Score: 0</div>
+            </div>
+        </div>
+
+        <div id="loading" class="loading-container">
+            <div class="spinner"></div>
+            <p>Loading your badges...</p>
+        </div>
+
+        <div id="error" class="empty-state" style="display: none;">
+            <i class="fas fa-exclamation-circle" style="color: #e74c3c;"></i>
+            <h3>Failed to load badges</h3>
+            <p id="errorMessage">Could not retrieve badge information. Please verify you are logged in.</p>
+        </div>
+
+        <div id="badgesGrid" class="badges-grid" style="display: none;"></div>
+    </div>
+
+    <script>
+        function getApiBaseUrl() {
+            if (typeof API_BASE_URL !== 'undefined' && API_BASE_URL) return API_BASE_URL;
+            if (typeof API_URL !== 'undefined' && API_URL) return API_URL;
+            const hostname = window.location.hostname;
+            if (hostname === 'localhost' || hostname === '127.0.0.1') {
+                return 'http://localhost:5000/api';
+            }
+            return 'https://campaign-management-system-zquy.onrender.com/api';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUserBadges();
+        });
+
+        async function loadUserBadges() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const loadingEl = document.getElementById('loading');
+            const errorEl = document.getElementById('error');
+            const gridEl = document.getElementById('badgesGrid');
+            const statsSummaryEl = document.getElementById('statsSummary');
+
+            try {
+                const response = await fetch(`${getApiBaseUrl()}/auth/profile`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success && data.user) {
+                    const user = data.user;
+                    const badges = user.badges || [];
+                    const stats = user.stats || {};
+
+                    loadingEl.style.display = 'none';
+
+                    if (badges.length === 0) {
+                        gridEl.style.display = 'none';
+                        errorEl.style.display = 'block';
+                        errorEl.querySelector('h3').textContent = 'No badges found';
+                        errorEl.querySelector('p').textContent = 'Badges could not be calculated at this time. Start participating to earn badges!';
+                        return;
+                    }
+
+                    const earnedCount = badges.filter(b => b.earned).length;
+
+                    // Update header pills
+                    document.getElementById('totalEarnedPill').textContent = `Earned: ${earnedCount}/${badges.length}`;
+                    document.getElementById('impactPointsPill').textContent = `Impact Score: ${stats.impactScore || 0}`;
+                    statsSummaryEl.style.display = 'flex';
+
+                    // Build badges grid
+                    gridEl.innerHTML = '';
+                    badges.forEach(badge => {
+                        const card = document.createElement('div');
+                        card.className = `badge-card ${badge.earned ? 'earned' : 'locked'}`;
+
+                        const dateStr = badge.earnedDate ? `Earned: ${new Date(badge.earnedDate).toLocaleDateString()}` : 'Locked';
+
+                        // Set custom icon style color if earned
+                        let colorStyle = '';
+                        if (badge.earned) {
+                            if (badge.color === 'warning') colorStyle = 'color: #f1c40f;';
+                            else if (badge.color === 'danger') colorStyle = 'color: #e74c3c;';
+                            else if (badge.color === 'primary') colorStyle = 'color: #3498db;';
+                            else if (badge.color === 'success') colorStyle = 'color: #2ecc71;';
+                            else if (badge.color === 'info') colorStyle = 'color: #9b59b6;';
+                        }
+
+                        card.innerHTML = `
+                            <div class="badge-icon-wrapper" style="${colorStyle}">
+                                <i class="${badge.icon || 'fas fa-award'}"></i>
+                            </div>
+                            <div class="badge-name">${escapeHtml(badge.name)}</div>
+                            <div class="badge-description">${escapeHtml(badge.description)}</div>
+                            <div class="badge-status">${badge.earned ? 'Earned' : 'Locked'}</div>
+                            ${badge.earned ? `<div class="badge-date">${dateStr}</div>` : ''}
+                        `;
+                        gridEl.appendChild(card);
+                    });
+
+                    gridEl.style.display = 'grid';
+                } else {
+                    throw new Error(data.message || 'Failed to load profile details');
+                }
+            } catch (err) {
+                console.error('Error loading badges:', err);
+                loadingEl.style.display = 'none';
+                errorEl.style.display = 'block';
+                document.getElementById('errorMessage').textContent = err.message || 'Could not connect to backend service.';
+            }
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return String(text).replace(/[&<>"']/g, m => map[m]);
+        }
+    </script>
+</body>
+</html>

@@ -2,6 +2,7 @@ const User = require('../models/User');
 const Campaign = require('../models/Campaign');
 const Post = require('../models/Post');
 const SurveyResponse = require('../models/SurveyResponse');
+const UserProgress = require('../models/UserProgress');
 const jwt = require('jsonwebtoken');
 const config = require('../config/config');
 
@@ -196,6 +197,18 @@ exports.getProfile = async (req, res) => {
             ]
         });
 
+        // Get user's campaigns to evaluate Eco Warrior badge
+        const userCampaigns = await Campaign.find({
+            $or: [
+                { participants: userId },
+                { managerId: userId }
+            ]
+        });
+
+        const hasEcoCampaign = userCampaigns.some(c =>
+            c.category && ['climate', 'environment', 'social', 'poverty'].includes(c.category.toLowerCase())
+        );
+
         // Get recent campaigns joined or managed by user
         const recentCampaigns = await Campaign.find({
             $or: [
@@ -207,22 +220,97 @@ exports.getProfile = async (req, res) => {
         .limit(5)
         .select('title category location startDate endDate status createdAt');
 
-        // Calculate impact points
+        // Calculate impact points and views
         const userPosts = await Post.find({ authorId: userId });
         const postEngagement = userPosts.reduce((sum, p) => {
             return sum + (p.engagement?.likes || 0) + (p.engagement?.comments || 0) + (p.engagement?.shares || 0);
         }, 0);
+        const postViews = userPosts.reduce((sum, p) => {
+            return sum + (p.engagement?.views || 0);
+        }, 0);
 
         const surveyResponsesCount = await SurveyResponse.countDocuments({ userId });
+        const userProgressCount = await UserProgress.countDocuments({ userId, completed: true });
+
         const impactScore = postsCount * 10 + postEngagement * 5 + campaignsJoinedCount * 20 + surveyResponsesCount * 15;
 
-        // Calculate badge count
-        let badgeCount = 0;
-        if (impactScore >= 100) badgeCount++;
-        if (impactScore >= 500) badgeCount++;
-        if (impactScore >= 1000) badgeCount++;
-        if (postsCount >= 5) badgeCount++;
-        if (campaignsJoinedCount >= 3) badgeCount++;
+        // Build list of all badges dynamically
+        const allBadges = [
+            {
+                id: 'changemaker',
+                name: 'Changemaker',
+                description: 'Awarded for reaching 100+ impact points.',
+                icon: 'fas fa-star',
+                color: 'warning',
+                earned: impactScore >= 100,
+                earnedDate: impactScore >= 100 ? user.createdAt : null
+            },
+            {
+                id: 'impact_creator',
+                name: 'Impact Creator',
+                description: 'Awarded for reaching 500+ impact points.',
+                icon: 'fas fa-fire',
+                color: 'danger',
+                earned: impactScore >= 500,
+                earnedDate: impactScore >= 500 ? new Date() : null
+            },
+            {
+                id: 'champion',
+                name: 'Champion',
+                description: 'Awarded for reaching 1000+ impact points.',
+                icon: 'fas fa-trophy',
+                color: 'primary',
+                earned: impactScore >= 1000,
+                earnedDate: impactScore >= 1000 ? new Date() : null
+            },
+            {
+                id: 'storyteller',
+                name: 'Storyteller',
+                description: 'Published 5 or more community posts.',
+                icon: 'fas fa-pen',
+                color: 'info',
+                earned: postsCount >= 5,
+                earnedDate: postsCount >= 5 ? new Date() : null
+            },
+            {
+                id: 'activist',
+                name: 'Activist',
+                description: 'Joined or managed 3 or more social campaigns.',
+                icon: 'fas fa-fist-raised',
+                color: 'success',
+                earned: campaignsJoinedCount >= 3,
+                earnedDate: campaignsJoinedCount >= 3 ? new Date() : null
+            },
+            {
+                id: 'eco_warrior',
+                name: 'Eco Warrior',
+                description: 'Contributed to environmental or social campaigns.',
+                icon: 'fas fa-seedling',
+                color: 'success',
+                earned: hasEcoCampaign,
+                earnedDate: hasEcoCampaign ? new Date() : null
+            },
+            {
+                id: 'voice_of_change',
+                name: 'Voice of Change',
+                description: 'Created posts that reached over 100 views or 50 engagement actions.',
+                icon: 'fas fa-bullhorn',
+                color: 'warning',
+                earned: postViews >= 100 || postEngagement >= 50,
+                earnedDate: (postViews >= 100 || postEngagement >= 50) ? new Date() : null
+            },
+            {
+                id: 'knowledge_seeker',
+                name: 'Knowledge Seeker',
+                description: 'Completed awareness modules, surveys, or quizzes.',
+                icon: 'fas fa-brain',
+                color: 'primary',
+                earned: userProgressCount > 0 || surveyResponsesCount > 0,
+                earnedDate: (userProgressCount > 0 || surveyResponsesCount > 0) ? new Date() : null
+            }
+        ];
+
+        const badgeCount = allBadges.filter(b => b.earned).length;
 
         res.json({
             success: true,
@@ -245,6 +333,7 @@ exports.getProfile = async (req, res) => {
                     impactScore: impactScore,
                     badges: badgeCount
                 },
+                badges: allBadges,
                 recentCampaigns: recentCampaigns.map(c => ({
                     _id: c._id,
                     title: c.title,
