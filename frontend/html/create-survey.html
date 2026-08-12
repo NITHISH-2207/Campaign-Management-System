@@ -24,7 +24,7 @@
             --black: #0a0a0a;
             --dark-grey: #1a1a1a;
             --medium-grey: #2d2d2d;
-            --light-grey: #6b6b6b;
+            --light-grey: #a0a0a0;
             --lighter-grey: #e5e5e5;
             --white: #ffffff;
             --off-white: #f5f5f5;
@@ -32,13 +32,8 @@
             --light-brown: #A67C52;
             --dark-brown: #6B4423;
             --orange: #F97316;
-            --orange-light: #FB923C;
-            --blue: #2193b0;
-            --light-blue: #6dd5ed;
+            --gradient-gold: linear-gradient(135deg, #8B6B4A 0%, #A67C52 100%);
             --gradient-primary: linear-gradient(135deg, var(--brown) 0%, var(--light-brown) 100%);
-            --gradient-success: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-            --gradient-warning: linear-gradient(135deg, var(--orange) 0%, var(--orange-light) 100%);
-            --gradient-info: linear-gradient(135deg, var(--blue) 0%, var(--light-blue) 100%);
             --gradient-danger: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
         }
 
@@ -59,8 +54,8 @@
             right: 0;
             bottom: 0;
             background:
-                radial-gradient(circle at 20% 50%, rgba(33, 147, 176, 0.08) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(139, 107, 74, 0.05) 0%, transparent 50%);
+                radial-gradient(circle at 20% 50%, rgba(139, 107, 74, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(166, 124, 82, 0.06) 0%, transparent 50%);
             pointer-events: none;
             z-index: -1;
         }
@@ -78,7 +73,7 @@
             margin-bottom: 50px;
             font-size: 48px;
             font-weight: 800;
-            background: linear-gradient(135deg, var(--white) 0%, var(--light-blue) 100%);
+            background: linear-gradient(135deg, var(--white) 0%, var(--light-brown) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             animation: fadeInDown 0.8s ease-out;
@@ -91,7 +86,7 @@
             margin-bottom: 30px;
             border-radius: 30px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(33, 147, 176, 0.2);
+            border: 1px solid rgba(139, 107, 74, 0.25);
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
@@ -113,7 +108,7 @@
             left: -2px;
             right: -2px;
             bottom: -2px;
-            background: var(--gradient-info);
+            background: var(--gradient-gold);
             border-radius: 30px;
             z-index: -1;
             opacity: 0;
@@ -127,13 +122,14 @@
         .form-section:hover {
             transform: translateY(-5px);
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+            border-color: var(--brown);
         }
 
         .form-section h2 {
             color: var(--white);
             margin-bottom: 30px;
             padding-bottom: 20px;
-            border-bottom: 1px solid rgba(33, 147, 176, 0.2);
+            border-bottom: 1px solid rgba(139, 107, 74, 0.2);
             font-size: 24px;
             font-weight: 700;
             display: flex;
@@ -145,7 +141,7 @@
             content: '';
             width: 4px;
             height: 24px;
-            background: var(--gradient-info);
+            background: var(--gradient-gold);
             border-radius: 2px;
         }
 
@@ -165,12 +161,11 @@
         }
 
         .form-group input,
-        .form-group select,
         .form-group textarea {
             width: 100%;
             padding: 15px 20px;
             background: var(--medium-grey);
-            border: 1px solid rgba(33, 147, 176, 0.2);
+            border: 1px solid rgba(139, 107, 74, 0.25);
             border-radius: 15px;
             font-size: 15px;
             color: var(--white);
@@ -179,13 +174,51 @@
         }
 
         .form-group input:focus,
-        .form-group select:focus,
         .form-group textarea:focus {
             outline: none;
-            border-color: var(--light-blue);
-            background: rgba(33, 147, 176, 0.05);
+            border-color: var(--light-brown);
+            background: rgba(139, 107, 74, 0.08);
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(33, 147, 176, 0.2);
+            box-shadow: 0 5px 15px rgba(139, 107, 74, 0.2);
+        }
+
+        /* Select dropdown styling - Dark Theme */
+        select,
+        .form-group select {
+            width: 100%;
+            padding: 14px 45px 14px 20px !important;
+            background-color: var(--medium-grey) !important;
+            color: var(--white) !important;
+            border: 1px solid rgba(139, 107, 74, 0.3) !important;
+            border-radius: 15px;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%23A67C52" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"%3e%3cpolyline points="6 9 12 15 18 9"%3e%3c/polyline%3e%3c/svg%3e') !important;
+            background-repeat: no-repeat !important;
+            background-position: right 15px center !important;
+            background-size: 20px !important;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        select:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--light-brown) !important;
+            background-color: rgba(139, 107, 74, 0.1) !important;
+            box-shadow: 0 0 0 3px rgba(139, 107, 74, 0.25) !important;
+        }
+
+        /* Ensure dropdown option items render in dark theme */
+        select option,
+        .form-group select option {
+            background-color: #1a1a1a !important;
+            color: #ffffff !important;
+            padding: 12px;
         }
 
         /* Question Items */
@@ -195,14 +228,14 @@
             border-radius: 20px;
             margin-bottom: 25px;
             position: relative;
-            border: 1px solid rgba(33, 147, 176, 0.2);
+            border: 1px solid rgba(139, 107, 74, 0.25);
             transition: all 0.3s ease;
             animation: slideInLeft 0.3s ease-out;
         }
 
         .question-item:hover {
-            transform: translateX(10px);
-            border-color: var(--light-blue);
+            transform: translateX(6px);
+            border-color: var(--light-brown);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
 
@@ -215,7 +248,7 @@
 
         .question-number {
             font-weight: 700;
-            color: var(--light-blue);
+            color: var(--light-brown);
             font-size: 20px;
             display: flex;
             align-items: center;
@@ -226,7 +259,7 @@
             content: '';
             width: 30px;
             height: 30px;
-            background: var(--gradient-info);
+            background: var(--gradient-gold);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -265,7 +298,7 @@
             padding: 25px;
             background: var(--dark-grey);
             border-radius: 15px;
-            border: 1px solid rgba(33, 147, 176, 0.1);
+            border: 1px solid rgba(139, 107, 74, 0.2);
         }
 
         .options-container h4 {
@@ -306,7 +339,7 @@
         }
 
         .add-option {
-            background: var(--gradient-info);
+            background: var(--gradient-gold);
             color: white;
             border: none;
             padding: 12px 24px;
@@ -322,12 +355,12 @@
 
         .add-option:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(33, 147, 176, 0.3);
+            box-shadow: 0 5px 15px rgba(139, 107, 74, 0.3);
         }
 
         /* Add Question Button */
         .add-question-btn {
-            background: var(--gradient-success);
+            background: var(--gradient-gold);
             color: white;
             border: none;
             padding: 15px 40px;
@@ -340,11 +373,12 @@
             gap: 10px;
             margin: 40px auto 0;
             transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(139, 107, 74, 0.3);
         }
 
         .add-question-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(17, 153, 142, 0.3);
+            box-shadow: 0 10px 30px rgba(139, 107, 74, 0.4);
         }
 
         .add-question-btn span {
@@ -361,7 +395,7 @@
             padding: 20px;
             background: var(--dark-grey);
             border-radius: 15px;
-            border: 1px solid rgba(33, 147, 176, 0.1);
+            border: 1px solid rgba(139, 107, 74, 0.2);
         }
 
         .scale-options label {
@@ -382,9 +416,9 @@
             animation: fadeInUp 1s ease-out 0.6s both;
         }
 
-        .btn-secondary,
         .btn-primary {
-            background: var(--gradient-primary);
+            background: var(--gradient-gold);
+            color: white;
             padding: 15px 40px;
             border: none;
             border-radius: 25px;
@@ -395,26 +429,12 @@
             display: inline-flex;
             align-items: center;
             gap: 10px;
+            box-shadow: 0 4px 15px rgba(139, 107, 74, 0.3);
         }
 
-        .btn-secondary {
-            background: var(--gradient-info);
-            color: white;
-        }
-
-        .btn-primary {
-            background: var(--gradient-success);
-            color: white;
-        }
-
-        .btn-secondary:hover,
         .btn-primary:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-        }
-
-        .btn-primary:hover {
-            box-shadow: 0 10px 30px rgba(17, 153, 142, 0.3);
+            box-shadow: 0 10px 30px rgba(139, 107, 74, 0.4);
         }
 
         /* Loading State */
@@ -425,8 +445,8 @@
         }
 
         .spinner {
-            border: 3px solid rgba(33, 147, 176, 0.1);
-            border-top: 3px solid var(--light-blue);
+            border: 3px solid rgba(139, 107, 74, 0.1);
+            border-top: 3px solid var(--light-brown);
             border-radius: 50%;
             width: 40px;
             height: 40px;
@@ -517,7 +537,6 @@
                 flex-direction: column;
             }
 
-            .btn-secondary,
             .btn-primary {
                 width: 100%;
                 justify-content: center;
@@ -529,23 +548,7 @@
             }
         }
 
-        /* Select dropdown arrow styling */
-        select {
-            appearance: none;
-            background-image: url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%236dd5ed" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"%3e%3cpolyline points="6 9 12 15 18 9"%3e%3c/polyline%3e%3c/svg%3e');
-            background-repeat: no-repeat;
-            background-position: right 15px center;
-            background-size: 20px;
-            padding-right: 45px !important;
-        }
-
         /* Icons for buttons */
-        .btn-secondary::before {
-            content: '\f0c7';
-            font-family: 'Font Awesome 6 Free';
-            font-weight: 900;
-        }
-
         .btn-primary::before {
             content: '\f00c';
             font-family: 'Font Awesome 6 Free';
@@ -613,7 +616,6 @@
             </div>
 
             <div class="form-actions">
-                <button type="button" class="btn-secondary" onclick="surveyBuilder.saveDraft()">Save as Draft</button>
                 <button type="submit" class="btn-primary">Create Survey</button>
             </div>
         </form>
@@ -654,7 +656,8 @@
 
             async loadCampaigns() {
                 try {
-                    const response = await fetch('https://campaign-management-system-zquy.onrender.com/api/campaigns/my-campaigns', {
+                    const apiBase = (typeof API_BASE_URL !== 'undefined' ? API_BASE_URL : (typeof API_URL !== 'undefined' ? API_URL : 'https://campaign-management-system-zquy.onrender.com/api'));
+                    const response = await fetch(`${apiBase}/campaigns/my-campaigns`, {
                         headers: {
                             'Authorization': `Bearer ${localStorage.getItem('token')}`
                         }
@@ -901,7 +904,8 @@
                 document.getElementById('createSurveyForm').classList.add('loading');
 
                 try {
-                    const response = await fetch('https://campaign-management-system-zquy.onrender.com/api/surveys/create', {
+                    const apiBase = (typeof API_BASE_URL !== 'undefined' ? API_BASE_URL : (typeof API_URL !== 'undefined' ? API_URL : 'https://campaign-management-system-zquy.onrender.com/api'));
+                    const response = await fetch(`${apiBase}/surveys/create`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
