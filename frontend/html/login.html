@@ -437,31 +437,6 @@
             color: var(--brown);
         }
 
-        /* Demo Credentials Box */
-        .demo-box {
-            background: rgba(139, 107, 74, 0.1);
-            border: 1px solid rgba(139, 107, 74, 0.3);
-            border-radius: 15px;
-            padding: 20px;
-            margin-top: 30px;
-        }
-
-        .demo-box h6 {
-            color: var(--light-brown);
-            font-weight: 600;
-            margin-bottom: 15px;
-        }
-
-        .demo-box small {
-            color: var(--lighter-grey);
-            display: block;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-        }
-
-        .demo-box strong {
-            color: var(--white);
-        }
 
         /* Alert Messages */
         .alert {
@@ -750,219 +725,213 @@
                         <div id="loginError" class="alert alert-danger mt-3 d-none"></div>
                         <div id="loginSuccess" class="alert alert-success mt-3 d-none"></div>
 
-                        <!-- Demo Credentials -->
-                        <div class="demo-box">
-                            <h6>Demo Credentials:</h6>
-                            <small><strong>Admin:</strong> admin@changewave.com / admin123</small>
-                            <small><strong>Campaign Manager:</strong> manager@changewave.com / manager123</small>
-                        </div>
-                    </div>
 
-                    <div class="back-link">
-                        <a href="index.html">
-                            <i class="fas fa-arrow-left"></i> Back to Home
-                        </a>
+
+                        <div class="back-link">
+                            <a href="index.html">
+                                <i class="fas fa-arrow-left"></i> Back to Home
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Forgot Password Modal -->
-    <div class="modal fade" id="forgotPasswordModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Reset Password</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="forgotPasswordForm">
-                        <div class="mb-3">
-                            <label for="resetEmail" class="form-label">Email Address</label>
-                            <input type="email" class="form-control" id="resetEmail"
-                                placeholder="Enter your email address" required>
-                        </div>
-                        <p class="text-muted small">
-                            We'll send you a link to reset your password.
-                        </p>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" onclick="sendResetLink()">
-                        Send Reset Link
-                    </button>
+        <!-- Forgot Password Modal -->
+        <div class="modal fade" id="forgotPasswordModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Reset Password</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="forgotPasswordForm">
+                            <div class="mb-3">
+                                <label for="resetEmail" class="form-label">Email Address</label>
+                                <input type="email" class="form-control" id="resetEmail"
+                                    placeholder="Enter your email address" required>
+                            </div>
+                            <p class="text-muted small">
+                                We'll send you a link to reset your password.
+                            </p>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" onclick="sendResetLink()">
+                            Send Reset Link
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="js/common/auth.js"></script>
-    <script>
-        // Toggle password visibility
-        function togglePassword() {
-            const passwordInput = document.getElementById('password');
-            const toggleIcon = document.getElementById('toggleIcon');
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="js/common/auth.js"></script>
+        <script>
+            // Toggle password visibility
+            function togglePassword() {
+                const passwordInput = document.getElementById('password');
+                const toggleIcon = document.getElementById('toggleIcon');
 
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                toggleIcon.classList.remove('fa-eye');
-                toggleIcon.classList.add('fa-eye-slash');
-            } else {
-                passwordInput.type = 'password';
-                toggleIcon.classList.remove('fa-eye-slash');
-                toggleIcon.classList.add('fa-eye');
-            }
-        }
-
-        // Show forgot password modal
-        function showForgotPassword() {
-            const modal = new bootstrap.Modal(document.getElementById('forgotPasswordModal'));
-            modal.show();
-        }
-
-        // Send reset link
-        function sendResetLink() {
-            const email = document.getElementById('resetEmail').value;
-            if (!email) {
-                showAlert('Please enter your email address', 'warning');
-                return;
-            }
-
-            // TODO: Implement actual password reset functionality
-            showAlert('Password reset link sent to your email!', 'success');
-            const modal = bootstrap.Modal.getInstance(document.getElementById('forgotPasswordModal'));
-            modal.hide();
-        }
-
-        // Social login functions
-        function loginWithGoogle() {
-            showAlert('Google login will be implemented soon!', 'info');
-        }
-
-        function loginWithFacebook() {
-            showAlert('Facebook login will be implemented soon!', 'info');
-        }
-
-        // Show alert messages
-        function showAlert(message, type) {
-            const alertDiv = type === 'danger' ? document.getElementById('loginError') : document.getElementById('loginSuccess');
-            const otherDiv = type === 'danger' ? document.getElementById('loginSuccess') : document.getElementById('loginError');
-
-            alertDiv.textContent = message;
-            alertDiv.classList.remove('d-none');
-            otherDiv.classList.add('d-none');
-
-            setTimeout(() => {
-                alertDiv.classList.add('d-none');
-            }, 3000);
-        }
-
-        // Handle login form submission
-        document.getElementById('loginForm').addEventListener('submit', async function (e) {
-            e.preventDefault();
-
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const rememberMe = document.getElementById('rememberMe').checked;
-
-            if (!email || !password) {
-                showAlert('Please fill in all fields', 'danger');
-                return;
-            }
-
-            // Show loading state
-            const submitBtn = e.target.querySelector('button[type="submit"]');
-            const originalText = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing In...';
-            submitBtn.disabled = true;
-
-            try {
-                const response = await fetch('https://campaign-management-system-zquy.onrender.com/api/auth/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ email, password })
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    // Store token and user data
-                    localStorage.setItem('token', data.token);
-                    localStorage.setItem('user', JSON.stringify(data.user));
-
-                    // Clear any stale redirectUrl pointing to login/register
-                    const redirectUrl = localStorage.getItem('redirectUrl');
-                    if (redirectUrl && (redirectUrl.includes('login.html') || redirectUrl.includes('register.html') || redirectUrl.includes('index.html'))) {
-                        localStorage.removeItem('redirectUrl');
-                    }
-
-                    if (rememberMe) {
-                        localStorage.setItem('rememberMe', 'true');
-                        localStorage.setItem('savedEmail', email);
-                    }
-
-                    showAlert('Login successful! Redirecting...', 'success');
-
-                    // Redirect based on user role or valid redirectUrl
-                    setTimeout(() => {
-                        const validRedirectUrl = localStorage.getItem('redirectUrl');
-                        if (validRedirectUrl && !validRedirectUrl.includes('login.html') && !validRedirectUrl.includes('register.html')) {
-                            localStorage.removeItem('redirectUrl');
-                            window.location.href = validRedirectUrl;
-                        } else {
-                            switch (data.user.role) {
-                                case 'admin':
-                                    window.location.href = 'admin-dashboard.html';
-                                    break;
-                                case 'campaign_manager':
-                                    window.location.href = 'campaign-manager-dashboard.html';
-                                    break;
-                                default:
-                                    window.location.href = 'user-dashboard.html';
-                            }
-                        }
-                    }, 1500);
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    toggleIcon.classList.remove('fa-eye');
+                    toggleIcon.classList.add('fa-eye-slash');
                 } else {
-                    showAlert(data.message || 'Invalid email or password', 'danger');
+                    passwordInput.type = 'password';
+                    toggleIcon.classList.remove('fa-eye-slash');
+                    toggleIcon.classList.add('fa-eye');
                 }
-            } catch (error) {
-                console.error('Login error:', error);
-                showAlert('An error occurred. Please try again.', 'danger');
-            } finally {
-                // Reset button state
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-            }
-        });
-
-        // Auto-fill remembered email on page load
-        document.addEventListener('DOMContentLoaded', function () {
-            const rememberMe = localStorage.getItem('rememberMe');
-            const savedEmail = localStorage.getItem('savedEmail');
-
-            if (rememberMe === 'true' && savedEmail) {
-                document.getElementById('email').value = savedEmail;
-                document.getElementById('rememberMe').checked = true;
             }
 
-            // Check for demo parameter
-            const urlParams = new URLSearchParams(window.location.search);
-            const demo = urlParams.get('demo');
-
-            if (demo === 'admin') {
-                document.getElementById('email').value = 'admin@changewave.com';
-                document.getElementById('password').value = 'admin123';
-            } else if (demo === 'manager') {
-                document.getElementById('email').value = 'manager@changewave.com';
-                document.getElementById('password').value = 'manager123';
+            // Show forgot password modal
+            function showForgotPassword() {
+                const modal = new bootstrap.Modal(document.getElementById('forgotPasswordModal'));
+                modal.show();
             }
-        });
-    </script>
+
+            // Send reset link
+            function sendResetLink() {
+                const email = document.getElementById('resetEmail').value;
+                if (!email) {
+                    showAlert('Please enter your email address', 'warning');
+                    return;
+                }
+
+                // TODO: Implement actual password reset functionality
+                showAlert('Password reset link sent to your email!', 'success');
+                const modal = bootstrap.Modal.getInstance(document.getElementById('forgotPasswordModal'));
+                modal.hide();
+            }
+
+            // Social login functions
+            function loginWithGoogle() {
+                showAlert('Google login will be implemented soon!', 'info');
+            }
+
+            function loginWithFacebook() {
+                showAlert('Facebook login will be implemented soon!', 'info');
+            }
+
+            // Show alert messages
+            function showAlert(message, type) {
+                const alertDiv = type === 'danger' ? document.getElementById('loginError') : document.getElementById('loginSuccess');
+                const otherDiv = type === 'danger' ? document.getElementById('loginSuccess') : document.getElementById('loginError');
+
+                alertDiv.textContent = message;
+                alertDiv.classList.remove('d-none');
+                otherDiv.classList.add('d-none');
+
+                setTimeout(() => {
+                    alertDiv.classList.add('d-none');
+                }, 3000);
+            }
+
+            // Handle login form submission
+            document.getElementById('loginForm').addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                const rememberMe = document.getElementById('rememberMe').checked;
+
+                if (!email || !password) {
+                    showAlert('Please fill in all fields', 'danger');
+                    return;
+                }
+
+                // Show loading state
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing In...';
+                submitBtn.disabled = true;
+
+                try {
+                    const response = await fetch('https://campaign-management-system-zquy.onrender.com/api/auth/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ email, password })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        // Store token and user data
+                        localStorage.setItem('token', data.token);
+                        localStorage.setItem('user', JSON.stringify(data.user));
+
+                        // Clear any stale redirectUrl pointing to login/register
+                        const redirectUrl = localStorage.getItem('redirectUrl');
+                        if (redirectUrl && (redirectUrl.includes('login.html') || redirectUrl.includes('register.html') || redirectUrl.includes('index.html'))) {
+                            localStorage.removeItem('redirectUrl');
+                        }
+
+                        if (rememberMe) {
+                            localStorage.setItem('rememberMe', 'true');
+                            localStorage.setItem('savedEmail', email);
+                        }
+
+                        showAlert('Login successful! Redirecting...', 'success');
+
+                        // Redirect based on user role or valid redirectUrl
+                        setTimeout(() => {
+                            const validRedirectUrl = localStorage.getItem('redirectUrl');
+                            if (validRedirectUrl && !validRedirectUrl.includes('login.html') && !validRedirectUrl.includes('register.html')) {
+                                localStorage.removeItem('redirectUrl');
+                                window.location.href = validRedirectUrl;
+                            } else {
+                                switch (data.user.role) {
+                                    case 'admin':
+                                        window.location.href = 'admin-dashboard.html';
+                                        break;
+                                    case 'campaign_manager':
+                                        window.location.href = 'campaign-manager-dashboard.html';
+                                        break;
+                                    default:
+                                        window.location.href = 'user-dashboard.html';
+                                }
+                            }
+                        }, 1500);
+                    } else {
+                        showAlert(data.message || 'Invalid email or password', 'danger');
+                    }
+                } catch (error) {
+                    console.error('Login error:', error);
+                    showAlert('An error occurred. Please try again.', 'danger');
+                } finally {
+                    // Reset button state
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            });
+
+            // Auto-fill remembered email on page load
+            document.addEventListener('DOMContentLoaded', function () {
+                const rememberMe = localStorage.getItem('rememberMe');
+                const savedEmail = localStorage.getItem('savedEmail');
+
+                if (rememberMe === 'true' && savedEmail) {
+                    document.getElementById('email').value = savedEmail;
+                    document.getElementById('rememberMe').checked = true;
+                }
+
+                // Check for demo parameter
+                const urlParams = new URLSearchParams(window.location.search);
+                const demo = urlParams.get('demo');
+
+                if (demo === 'admin') {
+                    document.getElementById('email').value = 'admin@changewave.com';
+                    document.getElementById('password').value = 'admin123';
+                } else if (demo === 'manager') {
+                    document.getElementById('email').value = 'manager@changewave.com';
+                    document.getElementById('password').value = 'manager123';
+                }
+            });
+        </script>
 </body>
 
 </html>
