@@ -1,3 +1,24 @@
+function getNavApiBaseUrl() {
+    if (typeof API_BASE_URL !== 'undefined' && API_BASE_URL) return API_BASE_URL;
+    if (typeof API_URL !== 'undefined' && API_URL) return API_URL;
+    const hostname = window.location.hostname;
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+        return 'http://localhost:5000/api';
+    }
+    return 'https://campaign-management-system-zquy.onrender.com/api';
+}
+
+function resolveNavImageUrl(imageUrl) {
+    if (!imageUrl) return '';
+    if (imageUrl.startsWith('data:') || imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+        return imageUrl;
+    }
+    const apiBase = getNavApiBaseUrl();
+    const hostUrl = apiBase.replace(/\/api\/?$/, '');
+    const cleanPath = imageUrl.startsWith('/') ? imageUrl : '/' + imageUrl;
+    return hostUrl + cleanPath;
+}
+
 // Enhanced navigation.js with mobile support and better structure
 function setupNavigation() {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -53,7 +74,7 @@ function setupNavigation() {
             <li><a href="survey-management.html" class="${currentPage === 'survey-management.html' ? 'active' : ''}">Surveys</a></li>
             <li><a href="campaigns-list.html" class="${currentPage === 'campaigns-list.html' ? 'active' : ''}">Campaigns</a></li>
         `;
-    } else if (user.id) {
+    } else if (user.id || user._id) {
         // Regular User Navigation
         navHTML += `
             <li><a href="user-dashboard.html" class="${currentPage === 'user-dashboard.html' ? 'active' : ''}">Dashboard</a></li>
@@ -62,15 +83,24 @@ function setupNavigation() {
             <li><a href="education-library.html" class="${currentPage === 'education-library.html' ? 'active' : ''}">Learn</a></li>
             <li><a href="survey-participation.html" class="${currentPage === 'survey-participation.html' ? 'active' : ''}">Surveys</a></li>
             <li><a href="campaigns-list.html" class="${currentPage === 'campaigns-list.html' ? 'active' : ''}">Campaigns</a></li>
-
         `;
     }
 
     // User menu and logout (only if logged in)
-    if (user.id) {
+    if (user.id || user._id) {
+        const photoUrl = user.profileImage || user.profilePhoto || user.avatar || user.photo;
+        const initial = user.name ? user.name.charAt(0).toUpperCase() : 'U';
+        let avatarHTML = '';
+        if (photoUrl) {
+            const resolvedPhoto = resolveNavImageUrl(photoUrl);
+            avatarHTML = `<img src="${resolvedPhoto}" alt="${user.name || 'User'}" class="user-avatar-img" onerror="this.onerror=null; this.outerHTML='<span class=\\'user-avatar\\'>${initial}</span>';">`;
+        } else {
+            avatarHTML = `<span class="user-avatar">${initial}</span>`;
+        }
+
         navHTML += `
-                <li class="nav-user">
-                    <span class="user-avatar">${user.name ? user.name.charAt(0).toUpperCase() : 'U'}</span>
+                <li class="nav-user" onclick="window.location.href='profile.html'" style="cursor: pointer;" title="View Profile">
+                    ${avatarHTML}
                     <span class="user-name">${user.name || 'User'}</span>
                 </li>
                 <li><a href="#" onclick="logout()" class="logout-btn">Logout</a></li>
@@ -89,6 +119,56 @@ function setupNavigation() {
         
         // Add dropdown functionality
         setupDropdowns();
+    }
+
+    // Background sync user profile from server
+    syncUserProfile();
+}
+
+async function syncUserProfile() {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    try {
+        const response = await fetch(`${getNavApiBaseUrl()}/auth/profile`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success && data.user) {
+                const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+                const updatedUser = { ...currentUser, ...data.user };
+                localStorage.setItem('user', JSON.stringify(updatedUser));
+
+                // Update avatar if profile photo exists
+                const photoUrl = data.user.profileImage || data.user.profilePhoto || data.user.avatar || data.user.photo;
+                if (photoUrl) {
+                    const navUserEl = document.querySelector('.nav-user');
+                    if (navUserEl) {
+                        const existingImg = navUserEl.querySelector('img.user-avatar-img');
+                        const resolvedPhoto = resolveNavImageUrl(photoUrl);
+                        if (existingImg) {
+                            existingImg.src = resolvedPhoto;
+                        } else {
+                            const existingSpan = navUserEl.querySelector('.user-avatar');
+                            if (existingSpan) {
+                                const newImg = document.createElement('img');
+                                newImg.src = resolvedPhoto;
+                                newImg.alt = data.user.name || 'User';
+                                newImg.className = 'user-avatar-img';
+                                newImg.onerror = function() {
+                                    this.onerror = null;
+                                    this.outerHTML = `<span class="user-avatar">${data.user.name ? data.user.name.charAt(0).toUpperCase() : 'U'}</span>`;
+                                };
+                                existingSpan.replaceWith(newImg);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    } catch (e) {
+        console.warn('Could not sync user profile:', e);
     }
 }
 

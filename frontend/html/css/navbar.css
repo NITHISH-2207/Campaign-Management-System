@@ -166,6 +166,15 @@
     color: white;
 }
 
+.user-avatar-img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    border: 1px solid rgba(139, 107, 74, 0.4);
+}
+
 .user-name {
     color: #e5e5e5;
     font-weight: 500;
