@@ -1,4 +1,7 @@
 const User = require('../models/User');
+const Campaign = require('../models/Campaign');
+const Post = require('../models/Post');
+const SurveyResponse = require('../models/SurveyResponse');
 const jwt = require('jsonwebtoken');
 const config = require('../config/config');
 
@@ -168,7 +171,7 @@ exports.login = async (req, res) => {
     }
 };
 
-// Get current user profile
+// Get current user profile with real database stats
 exports.getProfile = async (req, res) => {
     try {
         const user = await User.findById(req.user.id).select('-password');
@@ -179,6 +182,47 @@ exports.getProfile = async (req, res) => {
                 message: 'User not found'
             });
         }
+
+        const userId = user._id;
+
+        // Count posts created by user
+        const postsCount = await Post.countDocuments({ authorId: userId });
+
+        // Count campaigns joined or managed by user
+        const campaignsJoinedCount = await Campaign.countDocuments({
+            $or: [
+                { participants: userId },
+                { managerId: userId }
+            ]
+        });
+
+        // Get recent campaigns joined or managed by user
+        const recentCampaigns = await Campaign.find({
+            $or: [
+                { participants: userId },
+                { managerId: userId }
+            ]
+        })
+        .sort({ createdAt: -1 })
+        .limit(5)
+        .select('title category location startDate endDate status createdAt');
+
+        // Calculate impact points
+        const userPosts = await Post.find({ authorId: userId });
+        const postEngagement = userPosts.reduce((sum, p) => {
+            return sum + (p.engagement?.likes || 0) + (p.engagement?.comments || 0) + (p.engagement?.shares || 0);
+        }, 0);
+
+        const surveyResponsesCount = await SurveyResponse.countDocuments({ userId });
+        const impactScore = postsCount * 10 + postEngagement * 5 + campaignsJoinedCount * 20 + surveyResponsesCount * 15;
+
+        // Calculate badge count
+        let badgeCount = 0;
+        if (impactScore >= 100) badgeCount++;
+        if (impactScore >= 500) badgeCount++;
+        if (impactScore >= 1000) badgeCount++;
+        if (postsCount >= 5) badgeCount++;
+        if (campaignsJoinedCount >= 3) badgeCount++;
 
         res.json({
             success: true,
@@ -194,7 +238,20 @@ exports.getProfile = async (req, res) => {
                 interests: user.interests,
                 emailUpdates: user.emailUpdates,
                 profileImage: user.profileImage,
-                createdAt: user.createdAt
+                createdAt: user.createdAt,
+                stats: {
+                    campaigns: campaignsJoinedCount,
+                    posts: postsCount,
+                    impactScore: impactScore,
+                    badges: badgeCount
+                },
+                recentCampaigns: recentCampaigns.map(c => ({
+                    _id: c._id,
+                    title: c.title,
+                    category: c.category,
+                    location: c.location,
+                    date: c.startDate || c.createdAt
+                }))
             }
         });
     } catch (error) {
@@ -209,7 +266,7 @@ exports.getProfile = async (req, res) => {
 // Update user profile
 exports.updateProfile = async (req, res) => {
     try {
-        const allowedUpdates = ['name', 'phone', 'location', 'organization', 'bio', 'interests', 'emailUpdates'];
+        const allowedUpdates = ['name', 'phone', 'location', 'organization', 'bio', 'interests', 'emailUpdates', 'profileImage'];
         const updates = {};
 
         allowedUpdates.forEach(field => {

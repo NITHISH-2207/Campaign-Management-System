@@ -698,7 +698,17 @@
         </div>
     </div>
 
+    <script src="js/common/auth.js"></script>
     <script>
+        function getApiBaseUrl() {
+            if (typeof API_BASE_URL !== 'undefined') return API_BASE_URL;
+            const hostname = window.location.hostname;
+            if (hostname === 'localhost' || hostname === '127.0.0.1') {
+                return 'http://localhost:5000/api';
+            }
+            return window.location.origin + '/api';
+        }
+
         // Profile data structure
         let profileData = {
             firstName: '',
@@ -721,42 +731,85 @@
         document.addEventListener('DOMContentLoaded', function() {
             loadProfileData();
             animateFadeIn();
-            loadUserStats();
             addNavbarScrollEffect();
         });
 
-        // Load profile data from localStorage
-        function loadProfileData() {
-            const savedProfile = localStorage.getItem('userProfile');
-            const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-            
-            if (savedProfile) {
-                profileData = JSON.parse(savedProfile);
-            } else if (currentUser) {
-                // Initialize with current user data
-                profileData.firstName = currentUser.name?.split(' ')[0] || '';
-                profileData.lastName = currentUser.name?.split(' ').slice(1).join(' ') || '';
-                profileData.email = currentUser.email || '';
+        // Load profile data from MongoDB via Backend API
+        async function loadProfileData() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
             }
 
-            // Populate form fields
-            document.getElementById('firstName').value = profileData.firstName || '';
-            document.getElementById('lastName').value = profileData.lastName || '';
-            document.getElementById('email').value = profileData.email || '';
-            document.getElementById('contact').value = profileData.contact || '';
-            document.getElementById('location').value = profileData.location || '';
-            document.getElementById('bio').value = profileData.bio || '';
+            const spinner = document.getElementById('loadingSpinner');
+            if (spinner) spinner.classList.add('show');
 
-            // Load profile photo
-            if (profileData.photo) {
-                displayProfilePhoto(profileData.photo);
+            try {
+                const response = await fetch(`${getApiBaseUrl()}/auth/profile`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to load profile');
+                }
+
+                const data = await response.json();
+                if (data.success && data.user) {
+                    const user = data.user;
+
+                    const nameParts = (user.name || '').trim().split(' ');
+                    profileData.firstName = nameParts[0] || '';
+                    profileData.lastName = nameParts.slice(1).join(' ') || '';
+                    profileData.email = user.email || '';
+                    profileData.contact = user.phone || '';
+                    profileData.location = user.location || '';
+                    profileData.bio = user.bio || '';
+                    profileData.photo = user.profileImage || null;
+
+                    profileData.stats = user.stats || {
+                        campaigns: 0,
+                        posts: 0,
+                        impactScore: 0,
+                        badges: 0
+                    };
+
+                    profileData.campaignsAttended = user.recentCampaigns || [];
+
+                    // Populate form fields
+                    document.getElementById('firstName').value = profileData.firstName;
+                    document.getElementById('lastName').value = profileData.lastName;
+                    document.getElementById('email').value = profileData.email;
+                    document.getElementById('contact').value = profileData.contact;
+                    document.getElementById('location').value = profileData.location;
+                    document.getElementById('bio').value = profileData.bio;
+
+                    // Load profile photo
+                    if (profileData.photo) {
+                        displayProfilePhoto(profileData.photo);
+                    } else {
+                        const photoDisplay = document.getElementById('photoDisplay');
+                        if (photoDisplay) {
+                            photoDisplay.innerHTML = '<i class="fas fa-camera"></i>';
+                            photoDisplay.className = 'photo-placeholder';
+                        }
+                    }
+
+                    // Load stats
+                    updateStatsDisplay();
+                    animateNumbers();
+
+                    // Load campaigns
+                    renderCampaigns(profileData.campaignsAttended);
+                }
+            } catch (error) {
+                console.error('Profile load error:', error);
+                showMessage('Failed to load profile data from server', 'error');
+            } finally {
+                if (spinner) spinner.classList.remove('show');
             }
-
-            // Load stats
-            updateStatsDisplay();
-            
-            // Load campaigns
-            loadCampaigns();
         }
 
         // Handle photo upload with compression
@@ -764,31 +817,26 @@
             const file = event.target.files[0];
             if (!file) return;
 
-            // Validate file type
             if (!file.type.startsWith('image/')) {
                 showMessage('Please select an image file', 'error');
                 return;
             }
 
-            // Check file size (5MB limit)
             if (file.size > 5 * 1024 * 1024) {
                 showMessage('Image size should be less than 5MB', 'error');
                 return;
             }
 
-            // Show loading spinner
-            document.getElementById('loadingSpinner').classList.add('show');
+            const spinner = document.getElementById('loadingSpinner');
+            if (spinner) spinner.classList.add('show');
 
             const reader = new FileReader();
             reader.onload = function(e) {
-                // Create image for compression
                 const img = new Image();
                 img.onload = function() {
-                    // Compress image
                     const canvas = document.createElement('canvas');
                     const ctx = canvas.getContext('2d');
                     
-                    // Calculate new dimensions (max 300x300)
                     let width = img.width;
                     let height = img.height;
                     const maxSize = 300;
@@ -807,21 +855,15 @@
                     
                     canvas.width = width;
                     canvas.height = height;
-                    
-                    // Draw compressed image
                     ctx.drawImage(img, 0, 0, width, height);
                     
-                    // Get compressed image data
                     const compressedData = canvas.toDataURL('image/jpeg', 0.8);
                     
-                    // Save to profile data
                     profileData.photo = compressedData;
                     displayProfilePhoto(compressedData);
-                    saveProfileData();
                     
-                    // Hide loading spinner
-                    document.getElementById('loadingSpinner').classList.remove('show');
-                    showMessage('Photo uploaded successfully!', 'success');
+                    if (spinner) spinner.classList.remove('show');
+                    showMessage('Photo uploaded! Click "Update Profile" to save changes.', 'success');
                 };
                 img.src = e.target.result;
             };
@@ -831,103 +873,120 @@
         // Display profile photo
         function displayProfilePhoto(photoData) {
             const photoDisplay = document.getElementById('photoDisplay');
+            if (!photoDisplay) return;
             photoDisplay.innerHTML = `<img src="${photoData}" alt="Profile Photo" class="profile-photo">`;
             photoDisplay.className = 'photo-container';
         }
 
-        // Update profile
-        function updateProfile(event) {
+        // Update profile in MongoDB
+        async function updateProfile(event) {
             event.preventDefault();
-            
-            // Collect form data
-            profileData.firstName = document.getElementById('firstName').value;
-            profileData.lastName = document.getElementById('lastName').value;
-            profileData.email = document.getElementById('email').value;
-            profileData.contact = document.getElementById('contact').value;
-            profileData.location = document.getElementById('location').value;
-            profileData.bio = document.getElementById('bio').value;
-            
-            // Save to localStorage
-            saveProfileData();
-            
-            // Update user object
-            const user = JSON.parse(localStorage.getItem('user') || '{}');
-            user.name = `${profileData.firstName} ${profileData.lastName}`.trim();
-            user.email = profileData.email;
-            localStorage.setItem('user', JSON.stringify(user));
-            
-            showMessage('Profile updated successfully!', 'success');
-        }
 
-        // Save profile data to localStorage
-        function saveProfileData() {
-            try {
-                localStorage.setItem('userProfile', JSON.stringify(profileData));
-            } catch (e) {
-                if (e.code === 22 || e.code === 1014) {
-                    // Storage quota exceeded
-                    showMessage('Storage limit reached. Consider removing old data.', 'error');
-                }
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
             }
-        }
+            
+            profileData.firstName = document.getElementById('firstName').value.trim();
+            profileData.lastName = document.getElementById('lastName').value.trim();
+            profileData.email = document.getElementById('email').value.trim();
+            profileData.contact = document.getElementById('contact').value.trim();
+            profileData.location = document.getElementById('location').value.trim();
+            profileData.bio = document.getElementById('bio').value.trim();
 
-        // Load user stats
-        function loadUserStats() {
-            // Simulate loading stats (in real app, this would be an API call)
-            setTimeout(() => {
-                profileData.stats = {
-                    campaigns: 12,
-                    posts: 45,
-                    impactScore: 890,
-                    badges: 7
-                };
-                updateStatsDisplay();
-                animateNumbers();
-            }, 500);
+            const fullName = `${profileData.firstName} ${profileData.lastName}`.trim();
+
+            const spinner = document.getElementById('loadingSpinner');
+            if (spinner) spinner.classList.add('show');
+
+            try {
+                const response = await fetch(`${getApiBaseUrl()}/auth/profile`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        name: fullName,
+                        phone: profileData.contact,
+                        location: profileData.location,
+                        bio: profileData.bio,
+                        profileImage: profileData.photo
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to update profile');
+                }
+
+                const data = await response.json();
+                if (data.success && data.user) {
+                    const user = JSON.parse(localStorage.getItem('user') || '{}');
+                    user.name = data.user.name;
+                    user.email = data.user.email;
+                    user.phone = data.user.phone;
+                    user.location = data.user.location;
+                    user.bio = data.user.bio;
+                    user.profileImage = data.user.profileImage;
+                    localStorage.setItem('user', JSON.stringify(user));
+
+                    showMessage('Profile updated successfully!', 'success');
+                }
+            } catch (error) {
+                console.error('Update profile error:', error);
+                showMessage('Failed to update profile on server', 'error');
+            } finally {
+                if (spinner) spinner.classList.remove('show');
+            }
         }
 
         // Update stats display
         function updateStatsDisplay() {
-            document.getElementById('campaignCount').textContent = profileData.stats.campaigns;
-            document.getElementById('postCount').textContent = profileData.stats.posts;
-            document.getElementById('impactScore').textContent = profileData.stats.impactScore;
-            document.getElementById('badgeCount').textContent = profileData.stats.badges;
+            const cEl = document.getElementById('campaignCount');
+            const pEl = document.getElementById('postCount');
+            const iEl = document.getElementById('impactScore');
+            const bEl = document.getElementById('badgeCount');
+
+            if (cEl) cEl.textContent = profileData.stats.campaigns || 0;
+            if (pEl) pEl.textContent = profileData.stats.posts || 0;
+            if (iEl) iEl.textContent = profileData.stats.impactScore || 0;
+            if (bEl) bEl.textContent = profileData.stats.badges || 0;
         }
 
         // Animate numbers
         function animateNumbers() {
             const stats = document.querySelectorAll('.stat-number');
             stats.forEach(stat => {
-                const target = parseInt(stat.textContent);
+                const target = parseInt(stat.textContent) || 0;
+                if (target === 0) {
+                    stat.textContent = '0';
+                    return;
+                }
                 let current = 0;
-                const increment = target / 50;
+                const increment = Math.max(1, Math.ceil(target / 30));
                 const timer = setInterval(() => {
                     current += increment;
                     if (current >= target) {
                         current = target;
                         clearInterval(timer);
                     }
-                    stat.textContent = Math.floor(current);
+                    stat.textContent = current;
                 }, 20);
             });
         }
 
-        // Load campaigns
-        function loadCampaigns() {
-            // Simulate loading campaigns (in real app, this would be an API call)
-            const campaigns = [
-                { title: 'Clean Water Initiative', date: '2024-01-15' },
-                { title: 'Education for All', date: '2024-02-20' },
-                { title: 'Climate Action Now', date: '2024-03-10' }
-            ];
-            
+        // Render recent campaigns from MongoDB
+        function renderCampaigns(campaigns) {
             const campaignsList = document.getElementById('campaignsList');
+            if (!campaignsList) return;
+
             campaignsList.innerHTML = '';
             
-            if (campaigns.length === 0) {
+            if (!campaigns || campaigns.length === 0) {
                 campaignsList.innerHTML = `
-                    <p style="color: var(--light-grey); text-align: center; grid-column: 1/-1;">
-                        No campaigns attended yet. Start making an impact!
+                    <p style="color: var(--light-grey); text-align: center; grid-column: 1/-1; padding: 20px;">
+                        No recent campaigns
                     </p>
                 `;
                 return;
@@ -936,14 +995,27 @@
             campaigns.forEach(campaign => {
                 const card = document.createElement('div');
                 card.className = 'campaign-card';
+                const dateStr = campaign.date ? new Date(campaign.date).toLocaleDateString() : 'N/A';
                 card.innerHTML = `
-                    <div class="campaign-title">${campaign.title}</div>
+                    <div class="campaign-title">${escapeHtml(campaign.title || 'Untitled Campaign')}</div>
                     <div class="campaign-date">
-                        <i class="fas fa-calendar"></i> ${new Date(campaign.date).toLocaleDateString()}
+                        <i class="fas fa-calendar me-1"></i> ${dateStr} ${campaign.category ? '• ' + escapeHtml(campaign.category) : ''}
                     </div>
                 `;
                 campaignsList.appendChild(card);
             });
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return String(text).replace(/[&<>"']/g, m => map[m]);
         }
 
         // Reset form
