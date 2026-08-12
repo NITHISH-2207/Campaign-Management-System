@@ -175,7 +175,7 @@ function createCampaignCard(campaign) {
                 ${canJoin && !isOwnCampaign ? `
                     <button class="btn-join ${isJoined ? 'joined' : ''}" 
                             onclick="event.stopPropagation(); toggleJoinCampaign('${campaign._id}', this)">
-                        ${isJoined ? '✓ Joined' : 'Join Campaign'}
+                        ${isJoined ? 'Leave Campaign' : 'Join Campaign'}
                     </button>
                 ` : ''}
                 ${isOwnCampaign ? `
@@ -192,20 +192,6 @@ function createCampaignCard(campaign) {
     `;
 
     // Add event listeners after creating the card
-    const joinBtn = card.querySelector('.btn-join');
-    if (joinBtn) {
-        joinBtn.addEventListener('mouseenter', () => {
-            if (joinBtn.classList.contains('joined')) {
-                joinBtn.textContent = 'Leave Campaign';
-            }
-        });
-        joinBtn.addEventListener('mouseleave', () => {
-            if (joinBtn.classList.contains('joined')) {
-                joinBtn.textContent = '✓ Joined';
-            }
-        });
-    }
-
     const detailsBtn = card.querySelector('.btn-details');
     if (detailsBtn) {
         detailsBtn.addEventListener('click', (e) => {
@@ -271,7 +257,7 @@ async function toggleJoinCampaign(campaignId, button) {
                 joinedCampaigns.add(campaignId);
                 if (cardButton) {
                     cardButton.classList.add('joined');
-                    cardButton.textContent = '✓ Joined';
+                    cardButton.textContent = 'Leave Campaign';
                 }
                 if (card) {
                     card.classList.add('joined');
@@ -396,7 +382,7 @@ function showCampaignDetails(campaign) {
                 ${canJoin && !isOwnCampaign ? `
                     <button class="btn-join-modal ${isJoined ? 'joined' : ''}" 
                             onclick="toggleJoinCampaign('${campaign._id}', this); closeCampaignModal();">
-                        ${isJoined ? '✓ Already Joined' : 'Join This Campaign'}
+                        ${isJoined ? 'Leave Campaign' : 'Join This Campaign'}
                     </button>
                 ` : ''}
                 ${isOwnCampaign ? `
