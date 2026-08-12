@@ -270,10 +270,14 @@ exports.updateProfile = async (req, res) => {
         const updates = {};
 
         allowedUpdates.forEach(field => {
-            if (req.body[field] !== undefined) {
+            if (req.body && req.body[field] !== undefined) {
                 updates[field] = req.body[field];
             }
         });
+
+        if (req.file) {
+            updates.profileImage = '/uploads/profiles/' + req.file.filename;
+        }
 
         const user = await User.findByIdAndUpdate(
             req.user.id,
@@ -309,7 +313,7 @@ exports.updateProfile = async (req, res) => {
         console.error('Update profile error:', error);
         res.status(500).json({
             success: false,
-            message: 'Error updating profile'
+            message: error.message || 'Error updating profile'
         });
     }
 };

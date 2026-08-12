@@ -701,12 +701,24 @@
     <script src="js/common/auth.js"></script>
     <script>
         function getApiBaseUrl() {
-            if (typeof API_BASE_URL !== 'undefined') return API_BASE_URL;
+            if (typeof API_BASE_URL !== 'undefined' && API_BASE_URL) return API_BASE_URL;
+            if (typeof API_URL !== 'undefined' && API_URL) return API_URL;
             const hostname = window.location.hostname;
             if (hostname === 'localhost' || hostname === '127.0.0.1') {
                 return 'http://localhost:5000/api';
             }
-            return window.location.origin + '/api';
+            return 'https://campaign-management-system-zquy.onrender.com/api';
+        }
+
+        function resolveImageUrl(imageUrl) {
+            if (!imageUrl) return '';
+            if (imageUrl.startsWith('data:') || imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+                return imageUrl;
+            }
+            const apiBase = getApiBaseUrl();
+            const hostUrl = apiBase.replace(/\/api\/?$/, '');
+            const cleanPath = imageUrl.startsWith('/') ? imageUrl : '/' + imageUrl;
+            return hostUrl + cleanPath;
         }
 
         // Profile data structure
@@ -752,12 +764,9 @@
                     }
                 });
 
-                if (!response.ok) {
-                    throw new Error('Failed to load profile');
-                }
-
                 const data = await response.json();
-                if (data.success && data.user) {
+
+                if (response.ok && data.success && data.user) {
                     const user = data.user;
 
                     const nameParts = (user.name || '').trim().split(' ');
@@ -803,16 +812,19 @@
 
                     // Load campaigns
                     renderCampaigns(profileData.campaignsAttended);
+                } else {
+                    const errorMsg = data.message || data.error || 'Failed to load profile';
+                    showMessage(errorMsg, 'error');
                 }
             } catch (error) {
                 console.error('Profile load error:', error);
-                showMessage('Failed to load profile data from server', 'error');
+                showMessage(error.message || 'Failed to load profile data from server', 'error');
             } finally {
                 if (spinner) spinner.classList.remove('show');
             }
         }
 
-        // Handle photo upload with compression
+        // Handle photo upload with compression & preview
         function handlePhotoUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -836,11 +848,11 @@
                 img.onload = function() {
                     const canvas = document.createElement('canvas');
                     const ctx = canvas.getContext('2d');
-                    
+
                     let width = img.width;
                     let height = img.height;
                     const maxSize = 300;
-                    
+
                     if (width > height) {
                         if (width > maxSize) {
                             height = (height * maxSize) / width;
@@ -852,18 +864,18 @@
                             height = maxSize;
                         }
                     }
-                    
+
                     canvas.width = width;
                     canvas.height = height;
                     ctx.drawImage(img, 0, 0, width, height);
-                    
+
                     const compressedData = canvas.toDataURL('image/jpeg', 0.8);
-                    
+
                     profileData.photo = compressedData;
                     displayProfilePhoto(compressedData);
-                    
+
                     if (spinner) spinner.classList.remove('show');
-                    showMessage('Photo uploaded! Click "Update Profile" to save changes.', 'success');
+                    showMessage('Photo selected! Click "Update Profile" to save.', 'success');
                 };
                 img.src = e.target.result;
             };
@@ -874,7 +886,8 @@
         function displayProfilePhoto(photoData) {
             const photoDisplay = document.getElementById('photoDisplay');
             if (!photoDisplay) return;
-            photoDisplay.innerHTML = `<img src="${photoData}" alt="Profile Photo" class="profile-photo">`;
+            const resolvedUrl = resolveImageUrl(photoData);
+            photoDisplay.innerHTML = `<img src="${resolvedUrl}" alt="Profile Photo" class="profile-photo">`;
             photoDisplay.className = 'photo-container';
         }
 
@@ -887,7 +900,7 @@
                 window.location.href = 'login.html';
                 return;
             }
-            
+
             profileData.firstName = document.getElementById('firstName').value.trim();
             profileData.lastName = document.getElementById('lastName').value.trim();
             profileData.email = document.getElementById('email').value.trim();
@@ -896,32 +909,52 @@
             profileData.bio = document.getElementById('bio').value.trim();
 
             const fullName = `${profileData.firstName} ${profileData.lastName}`.trim();
+            const photoInput = document.getElementById('photoInput');
+            const photoFile = photoInput && photoInput.files && photoInput.files[0];
 
             const spinner = document.getElementById('loadingSpinner');
             if (spinner) spinner.classList.add('show');
 
             try {
-                const response = await fetch(`${getApiBaseUrl()}/auth/profile`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({
-                        name: fullName,
-                        phone: profileData.contact,
-                        location: profileData.location,
-                        bio: profileData.bio,
-                        profileImage: profileData.photo
-                    })
-                });
+                let response;
+                if (photoFile) {
+                    // Send FormData when a physical file is selected.
+                    // IMPORTANT: Do NOT set Content-Type header manually for FormData!
+                    const formData = new FormData();
+                    formData.append('name', fullName);
+                    formData.append('phone', profileData.contact);
+                    formData.append('location', profileData.location);
+                    formData.append('bio', profileData.bio);
+                    formData.append('profileImage', photoFile);
 
-                if (!response.ok) {
-                    throw new Error('Failed to update profile');
+                    response = await fetch(`${getApiBaseUrl()}/auth/profile`, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: formData
+                    });
+                } else {
+                    // Send JSON when updating text fields
+                    response = await fetch(`${getApiBaseUrl()}/auth/profile`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({
+                            name: fullName,
+                            phone: profileData.contact,
+                            location: profileData.location,
+                            bio: profileData.bio,
+                            profileImage: profileData.photo
+                        })
+                    });
                 }
 
                 const data = await response.json();
-                if (data.success && data.user) {
+
+                if (response.ok && data.success && data.user) {
                     const user = JSON.parse(localStorage.getItem('user') || '{}');
                     user.name = data.user.name;
                     user.email = data.user.email;
@@ -931,11 +964,21 @@
                     user.profileImage = data.user.profileImage;
                     localStorage.setItem('user', JSON.stringify(user));
 
+                    if (data.user.profileImage) {
+                        profileData.photo = data.user.profileImage;
+                        displayProfilePhoto(data.user.profileImage);
+                    }
+
+                    if (photoInput) photoInput.value = '';
+
                     showMessage('Profile updated successfully!', 'success');
+                } else {
+                    const errorMsg = data.message || data.error || 'Failed to update profile';
+                    showMessage(errorMsg, 'error');
                 }
             } catch (error) {
                 console.error('Update profile error:', error);
-                showMessage('Failed to update profile on server', 'error');
+                showMessage(error.message || 'Failed to connect to backend server', 'error');
             } finally {
                 if (spinner) spinner.classList.remove('show');
             }
