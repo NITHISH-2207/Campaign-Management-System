@@ -571,7 +571,7 @@ joinCampaign: async (req, res) => {
             });
         }
 
-        if (campaign.status !== 'active') {
+        if (!['approved', 'active'].includes(campaign.status)) {
             return res.status(400).json({
                 success: false,
                 message: 'This campaign is not active'
@@ -654,7 +654,7 @@ joinCampaign: async (req, res) => {
 
             const campaigns = await Campaign.find({
                 participants: userId,
-                status: 'active'
+                status: { $in: ['approved', 'active'] }
             }).select('_id title status');
 
             res.json({
@@ -673,8 +673,8 @@ joinCampaign: async (req, res) => {
     // Get campaign statistics
     getCampaignStats: async (req, res) => {
         try {
-            const totalActive = await Campaign.countDocuments({ status: 'active' });
-            const allCampaigns = await Campaign.find({ status: 'active' });
+            const totalActive = await Campaign.countDocuments({ status: { $in: ['approved', 'active'] } });
+            const allCampaigns = await Campaign.find({ status: { $in: ['approved', 'active'] } });
             
             const totalParticipants = allCampaigns.reduce((sum, campaign) => {
                 return sum + (campaign.metrics?.totalParticipants || 0);
