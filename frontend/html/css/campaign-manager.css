@@ -173,8 +173,18 @@ body {
 }
 
 .action-icon {
-    font-size: 48px;
+    font-size: 38px;
+    color: #8B6B4A;
     margin-bottom: 15px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.action-card:hover .action-icon {
+    color: #A67C52;
+    transform: scale(1.1);
 }
 
 .action-card h3 {
