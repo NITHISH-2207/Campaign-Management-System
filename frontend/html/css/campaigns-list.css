@@ -258,16 +258,17 @@ body {
 
 .btn-join.joined,
 .btn-join-modal.joined {
-    background: rgba(220, 38, 38, 0.15) !important;
-    color: #ef4444 !important;
-    border: 1px solid rgba(239, 68, 68, 0.4) !important;
+    background: #7f1d1d !important;
+    color: #ffffff !important;
+    border: 1px solid #b91c1c !important;
 }
 
 .btn-join.joined:hover,
 .btn-join-modal.joined:hover {
-    background: rgba(220, 38, 38, 0.25) !important;
-    color: #f87171 !important;
-    border-color: rgba(239, 68, 68, 0.6) !important;
+    background: #991b1b !important;
+    color: #ffffff !important;
+    border-color: #dc2626 !important;
+    box-shadow: 0 4px 12px rgba(153, 27, 27, 0.5) !important;
 }
 
 /* Campaign card content */
@@ -498,8 +499,15 @@ body .btn-join-modal:hover {
 }
 
 body .btn-join-modal.joined {
-    background: #27ae60 !important;
+    background: #7f1d1d !important;
     color: white !important;
+    border: 1px solid #b91c1c !important;
+}
+
+body .btn-join-modal.joined:hover {
+    background: #991b1b !important;
+    color: white !important;
+    border-color: #dc2626 !important;
 }
 
 body .contact-info {
@@ -851,7 +859,15 @@ html, body {
 }
 
 .btn-join.joined {
-    background: #27ae60 !important;
+    background: #7f1d1d !important;
+    color: white !important;
+    border: 1px solid #b91c1c !important;
+}
+
+.btn-join.joined:hover {
+    background: #991b1b !important;
+    color: white !important;
+    border-color: #dc2626 !important;
 }
 
 .btn-details {
