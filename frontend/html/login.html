@@ -458,6 +458,49 @@
             border: 1px solid rgba(34, 197, 94, 0.2);
         }
 
+        /* Fixed Toast Success Notification */
+        #loginSuccess {
+            position: fixed;
+            top: 80px;
+            right: 24px;
+            z-index: 9999;
+            background: var(--dark-grey);
+            color: var(--white);
+            border: 1px solid rgba(34, 197, 94, 0.4);
+            border-left: 4px solid #22c55e;
+            border-radius: 12px;
+            padding: 14px 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 0;
+            max-width: 360px;
+            animation: slideInToast 0.3s ease-out;
+        }
+
+        @keyframes slideInToast {
+            from {
+                opacity: 0;
+                transform: translateY(-15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            #loginSuccess {
+                top: 70px;
+                right: 16px;
+                left: 16px;
+                max-width: calc(100% - 32px);
+            }
+        }
+
         /* Modal Styling */
         .modal-content {
             background: var(--dark-grey);
@@ -820,7 +863,12 @@
                 const alertDiv = type === 'danger' ? document.getElementById('loginError') : document.getElementById('loginSuccess');
                 const otherDiv = type === 'danger' ? document.getElementById('loginSuccess') : document.getElementById('loginError');
 
-                alertDiv.textContent = message;
+                if (type === 'success') {
+                    alertDiv.innerHTML = `<i class="fas fa-check-circle" style="color: #22c55e; font-size: 18px;"></i> <span>${message}</span>`;
+                } else {
+                    alertDiv.textContent = message;
+                }
+
                 alertDiv.classList.remove('d-none');
                 otherDiv.classList.add('d-none');
 
