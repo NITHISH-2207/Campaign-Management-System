@@ -199,7 +199,7 @@ function populateFormWithCampaign(campaign) {
     if (media.imageUrl) {
         const preview = document.getElementById('imagePreview');
         if (preview) {
-            preview.innerHTML = `<img src="${API_BASE_URL}${media.imageUrl}" alt="Campaign preview">`;
+            preview.innerHTML = `<img src="${getCampaignImageUrl(media.imageUrl)}" alt="Campaign preview">`;
             preview.style.display = 'block';
         }
     }

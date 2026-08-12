@@ -1,5 +1,16 @@
-// frontend/js/common/auth.js
 const API_URL = 'https://campaign-management-system-zquy.onrender.com/api';
+
+// Helper function to construct full campaign image URL from backend host
+function getCampaignImageUrl(imageUrl) {
+    if (!imageUrl) return '';
+    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+        return imageUrl;
+    }
+    const apiBase = (typeof API_BASE_URL !== 'undefined' ? API_BASE_URL : (typeof API_URL !== 'undefined' ? API_URL : 'https://campaign-management-system-zquy.onrender.com/api'));
+    const hostUrl = apiBase.replace(/\/api\/?$/, '');
+    const cleanPath = imageUrl.startsWith('/') ? imageUrl : '/' + imageUrl;
+    return hostUrl + cleanPath;
+}
 
 // Tab switching
 function switchTab(tab) {

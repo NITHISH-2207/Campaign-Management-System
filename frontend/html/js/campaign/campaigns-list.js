@@ -141,7 +141,7 @@ function createCampaignCard(campaign) {
 
     card.innerHTML = `
         ${campaign.media?.imageUrl ?
-            `<img src="${API_BASE_URL}${campaign.media.imageUrl}" alt="${campaign.title}" class="campaign-image" onerror="this.src='https://via.placeholder.com/350x200?text=Campaign'">` :
+            `<img src="${getCampaignImageUrl(campaign.media.imageUrl)}" alt="${campaign.title}" class="campaign-image" onerror="this.src='https://via.placeholder.com/350x200?text=Campaign'">` :
             `<div class="campaign-image" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>`
         }
         
@@ -314,7 +314,7 @@ function showCampaignDetails(campaign) {
         
         <div class="modal-body" style="padding: 30px;">
             ${campaign.media?.imageUrl ?
-            `<img src="${API_BASE_URL}${campaign.media.imageUrl}" alt="${campaign.title}" style="width: 100%; height: 300px; object-fit: cover; border-radius: 10px; margin-bottom: 20px;">` :
+            `<img src="${getCampaignImageUrl(campaign.media.imageUrl)}" alt="${campaign.title}" style="width: 100%; height: 300px; object-fit: cover; border-radius: 10px; margin-bottom: 20px;" onerror="this.style.display='none'">` :
             ''
         }
             

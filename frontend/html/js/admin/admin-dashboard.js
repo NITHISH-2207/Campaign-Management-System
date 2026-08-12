@@ -108,31 +108,37 @@ function displayAdminCampaigns(campaigns) {
     }
 
     container.innerHTML = campaigns.map(c => `
-        <div class="campaign-card">
-            <div>
-                <span class="campaign-status ${c.status}">${c.status}</span>
-                <h3 style="margin-top: 10px;">${escapeHtml(c.title)}</h3>
-                <p class="campaign-category">${escapeHtml(c.category)} • ${escapeHtml(c.type || 'Online')}</p>
-                <p style="font-size: 0.85rem; color: var(--light-brown); margin-bottom: 8px;">
-                    <i class="fas fa-building me-1"></i> ${escapeHtml(c.managerId?.organization || c.managerId?.name || 'Organization')}
-                </p>
-                <p class="campaign-description">${escapeHtml(c.description || '')}</p>
-                
-                <div style="font-size: 0.85rem; color: var(--light-grey); margin: 12px 0;">
-                    <div><i class="fas fa-map-marker-alt me-1"></i> ${escapeHtml(c.location || 'N/A')}</div>
-                    <div><i class="fas fa-calendar-alt me-1"></i> ${formatDate(c.startDate)} - ${formatDate(c.endDate)}</div>
-                    <div><i class="fas fa-envelope me-1"></i> ${escapeHtml(c.contactInfo?.email || c.managerId?.email || 'N/A')}</div>
+        <div class="campaign-card" style="overflow: hidden; padding: 0; display: flex; flex-direction: column;">
+            ${c.media?.imageUrl ? `
+                <div style="width: 100%; height: 180px; overflow: hidden; background: #1a1a1a;">
+                    <img src="${getCampaignImageUrl(c.media.imageUrl)}" alt="${escapeHtml(c.title)}" style="width: 100%; height: 180px; object-fit: cover; display: block;" onerror="this.parentNode.style.display='none'">
                 </div>
-            </div>
+            ` : ''}
+            <div style="padding: 20px; flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                    <span class="campaign-status ${c.status}">${c.status}</span>
+                    <h3 style="margin-top: 10px;">${escapeHtml(c.title)}</h3>
+                    <p class="campaign-category">${escapeHtml(c.category)} • ${escapeHtml(c.type || 'Online')}</p>
+                    <p style="font-size: 0.85rem; color: var(--light-brown); margin-bottom: 8px;">
+                        <i class="fas fa-building me-1"></i> ${escapeHtml(c.managerId?.organization || c.managerId?.name || 'Organization')}
+                    </p>
+                    <p class="campaign-description">${escapeHtml(c.description || '')}</p>
+                    <div style="font-size: 0.85rem; color: var(--light-grey); margin: 12px 0;">
+                        <div><i class="fas fa-map-marker-alt me-1"></i> ${escapeHtml(c.location || 'N/A')}</div>
+                        <div><i class="fas fa-calendar-alt me-1"></i> ${formatDate(c.startDate)} - ${formatDate(c.endDate)}</div>
+                        <div><i class="fas fa-envelope me-1"></i> ${escapeHtml(c.contactInfo?.email || c.managerId?.email || 'N/A')}</div>
+                    </div>
+                </div>
 
-            <div class="campaign-actions" style="margin-top: 15px; display: flex; gap: 8px; flex-wrap: wrap;">
-                <button class="btn-view" style="flex: 1;" onclick="viewCampaignDetails('${c._id}')">Details</button>
-                ${c.status === 'pending' || c.status === 'rejected' ? `
-                    <button class="btn-approve" style="flex: 1;" onclick="handleApproveReject('${c._id}', true)"><i class="fas fa-check"></i> Approve</button>
-                ` : ''}
-                ${c.status === 'pending' || c.status === 'approved' || c.status === 'active' ? `
-                    <button class="btn-reject" style="flex: 1;" onclick="handleApproveReject('${c._id}', false)"><i class="fas fa-times"></i> Reject</button>
-                ` : ''}
+                <div class="campaign-actions" style="margin-top: 15px; display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button class="btn-view" style="flex: 1;" onclick="viewCampaignDetails('${c._id}')">Details</button>
+                    ${c.status === 'pending' || c.status === 'rejected' ? `
+                        <button class="btn-approve" style="flex: 1;" onclick="handleApproveReject('${c._id}', true)"><i class="fas fa-check"></i> Approve</button>
+                    ` : ''}
+                    ${c.status === 'pending' || c.status === 'approved' || c.status === 'active' ? `
+                        <button class="btn-reject" style="flex: 1;" onclick="handleApproveReject('${c._id}', false)"><i class="fas fa-times"></i> Reject</button>
+                    ` : ''}
+                </div>
             </div>
         </div>
     `).join('');
@@ -159,10 +165,9 @@ function viewCampaignDetails(campaignId) {
 
     const imgEl = document.getElementById('modalImage');
     if (campaign.media?.imageUrl) {
-        imgEl.src = campaign.media.imageUrl.startsWith('http')
-            ? campaign.media.imageUrl
-            : `${window.location.origin}${campaign.media.imageUrl}`;
+        imgEl.src = getCampaignImageUrl(campaign.media.imageUrl);
         imgEl.style.display = 'block';
+        imgEl.onerror = () => { imgEl.style.display = 'none'; };
     } else {
         imgEl.style.display = 'none';
     }
