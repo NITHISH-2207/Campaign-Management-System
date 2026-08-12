@@ -219,6 +219,8 @@ async function toggleJoinCampaign(campaignId, button) {
         const data = await response.json();
 
         if (response.ok) {
+            const card = button.closest('.campaign-card');
+
             if (isJoined) {
                 joinedCampaigns.delete(campaignId);
                 button.classList.remove('joined');
@@ -228,11 +230,12 @@ async function toggleJoinCampaign(campaignId, button) {
                 joinedCampaigns.add(campaignId);
                 button.classList.add('joined');
                 button.textContent = '✓ Joined';
-                showNotification('Successfully joined the campaign!', 'success');
+                if (card) {
+                    showCardJoinNotification(card, 'Successfully joined the campaign!');
+                }
             }
 
             // Update the card styling
-            const card = button.closest('.campaign-card');
             if (card) {
                 card.classList.toggle('joined');
             }
@@ -531,6 +534,31 @@ function showNotification(message, type = 'info') {
     setTimeout(() => {
         notification.remove();
     }, 3000);
+}
+
+function showCardJoinNotification(card, message) {
+    if (!card) return;
+
+    // Remove existing in-card notification on this card if present
+    const existing = card.querySelector('.card-join-notification');
+    if (existing) existing.remove();
+
+    const notification = document.createElement('div');
+    notification.className = 'card-join-notification';
+    notification.innerHTML = `
+        <i class="fas fa-check-circle" style="color: #22c55e; font-size: 15px;"></i>
+        <span>${message}</span>
+    `;
+
+    card.appendChild(notification);
+
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateY(8px)';
+        setTimeout(() => {
+            notification.remove();
+        }, 400);
+    }, 2500);
 }
 
 function displayError() {

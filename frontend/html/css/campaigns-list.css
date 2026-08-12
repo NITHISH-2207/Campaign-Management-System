@@ -204,6 +204,41 @@ body {
     border-color: #8B6B4A !important;
 }
 
+/* In-Card Join Success Notification */
+.card-join-notification {
+    position: absolute;
+    bottom: 65px;
+    left: 20px;
+    right: 20px;
+    z-index: 10;
+    background: #1a1a1a;
+    color: #ffffff;
+    border: 1px solid rgba(34, 197, 94, 0.4);
+    border-left: 4px solid #22c55e;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
+    pointer-events: none;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    animation: slideInCardNotice 0.3s ease-out;
+}
+
+@keyframes slideInCardNotice {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* Campaign card content */
 .campaign-card h3 {
     color: #ffffff !important;
