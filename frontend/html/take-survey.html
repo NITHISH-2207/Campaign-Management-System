@@ -4,51 +4,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Take Surveys - ChangeWave</title>
+    <title>Take Survey - ChangeWave</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-
-    <!-- Remove or comment out these CSS links that are overriding the dark theme -->
-    <!-- <link rel="stylesheet" href="../css/common.css">
-    <link rel="stylesheet" href="../css/surveys.css"> -->
-
-    <!-- Only keep navbar CSS -->
-    <link rel="stylesheet" href="../css/navbar.css">
-
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/navbar.css">
     <style>
-        /* Reset and base styles */
+        :root {
+            --black: #0a0a0a;
+            --dark-grey: #1a1a1a;
+            --medium-grey: #2d2d2d;
+            --light-grey: #a0a0a0;
+            --lighter-grey: #e5e5e5;
+            --white: #ffffff;
+            --brown: #8B6B4A;
+            --light-brown: #A67C52;
+            --gradient-gold: linear-gradient(135deg, #8B6B4A 0%, #A67C52 100%);
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        :root {
-            --black: #0a0a0a;
-            --dark-grey: #1a1a1a;
-            --medium-grey: #2d2d2d;
-            --light-grey: #6b6b6b;
-            --lighter-grey: #e5e5e5;
-            --white: #ffffff;
-            --brown: #8B6B4A;
-            --light-brown: #A67C52;
-            --gradient-primary: linear-gradient(135deg, var(--brown) 0%, var(--light-brown) 100%);
-            --gradient-info: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%);
-        }
-
-        /* Force dark theme on body */
         body {
             font-family: 'Inter', sans-serif !important;
             background-color: var(--black) !important;
             color: var(--white) !important;
             line-height: 1.6;
-            overflow-x: hidden;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
         }
 
-        /* Background effect */
         body::before {
             content: '';
             position: fixed;
@@ -56,664 +47,389 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background:
-                radial-gradient(circle at 20% 50%, rgba(139, 107, 74, 0.08) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(107, 68, 35, 0.05) 0%, transparent 50%);
+            background: radial-gradient(circle at 20% 30%, rgba(139, 107, 74, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(166, 124, 82, 0.06) 0%, transparent 50%);
             pointer-events: none;
             z-index: -1;
         }
 
-        /* Main container */
-        .main-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 100px 40px 80px;
-            min-height: calc(100vh - 80px);
-            position: relative;
+        .take-survey-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 24px 60px;
         }
 
-        /* Page header */
-        .page-header {
-            text-align: center;
-            margin-bottom: 60px;
-            animation: fadeInDown 0.8s ease-out;
+        .back-nav {
+            margin-bottom: 24px;
         }
 
-        .page-header h1 {
-            font-size: 48px;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--white) 0%, var(--light-brown) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 12px;
-            letter-spacing: -0.5px;
-        }
-
-        .page-header p {
-            font-size: 20px;
-            color: var(--lighter-grey);
-            font-weight: 400;
-        }
-
-        /* Survey tabs */
-        .survey-tabs {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin-bottom: 60px;
-            animation: fadeInUp 0.8s ease-out 0.2s both;
-        }
-
-        .tab-btn {
-            padding: 12px 32px;
-            border: 2px solid rgba(139, 107, 74, 0.2);
-            background: var(--dark-grey);
-            border-radius: 30px;
-            font-weight: 600;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            color: var(--lighter-grey);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            font-family: 'Inter', sans-serif;
-        }
-
-        .tab-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-            border-color: var(--brown);
-            background: rgba(139, 107, 74, 0.1);
-            color: var(--white);
-        }
-
-        .tab-btn.active {
-            background: var(--gradient-primary);
-            color: white;
-            border-color: transparent;
-            box-shadow: 0 8px 25px rgba(139, 107, 74, 0.4);
-        }
-
-        /* Content area - fixed alignment */
-        .content-wrapper {
-            max-width: 1000px;
-            margin: 0 auto;
-            animation: fadeInUp 0.8s ease-out 0.4s both;
-        }
-
-        /* Survey grid - fixed to 2 columns */
-        .surveys-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 30px;
-            margin-bottom: 48px;
-            padding: 0 20px;
-        }
-
-        /* Survey card styling */
-        .survey-card {
-            background: var(--dark-grey) !important;
-            border: 1px solid rgba(139, 107, 74, 0.2) !important;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            color: var(--white) !important;
-        }
-
-        .survey-card::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: var(--gradient-primary);
-            border-radius: 20px;
-            z-index: -1;
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-
-        .survey-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
-            border-color: var(--brown) !important;
-        }
-
-        .survey-card:hover::before {
-            opacity: 0.1;
-        }
-
-        /* Survey type badge */
-        .survey-type {
-            display: inline-block;
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 16px;
-        }
-
-        .survey-type.before {
-            background: rgba(33, 147, 176, 0.2);
-            color: #6dd5ed;
-        }
-
-        .survey-type.after {
-            background: rgba(139, 92, 246, 0.2);
-            color: #A78BFA;
-        }
-
-        /* Survey card content */
-        .survey-card h3 {
-            font-size: 20px;
-            font-weight: 600;
-            color: var(--white) !important;
-            margin-bottom: 8px;
-        }
-
-        .survey-card p {
-            color: var(--lighter-grey) !important;
-            margin-bottom: 20px;
-            line-height: 1.5;
-            font-size: 14px;
-        }
-
-        /* Survey meta */
-        .survey-meta {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 20px;
-            font-size: 14px;
-            color: var(--lighter-grey) !important;
-        }
-
-        .survey-meta span {
-            display: flex;
+        .back-btn {
+            display: inline-flex;
             align-items: center;
-            gap: 6px;
-            color: var(--lighter-grey) !important;
+            gap: 8px;
+            color: var(--light-grey);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.3s ease;
         }
 
-        .survey-meta i {
+        .back-btn:hover {
             color: var(--light-brown);
         }
 
-        /* Action buttons */
-        .take-survey-btn {
-            width: 100%;
-            padding: 12px 24px;
-            background: var(--gradient-info);
-            color: white !important;
-            border: none;
-            border-radius: 25px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: 'Inter', sans-serif;
-        }
-
-        .take-survey-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(33, 147, 176, 0.4);
-        }
-
-        .completed-btn {
-            width: 100%;
-            padding: 12px 24px;
-            background: var(--medium-grey);
-            color: var(--lighter-grey) !important;
-            border: 1px solid rgba(139, 107, 74, 0.1);
-            border-radius: 25px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: not-allowed;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            font-family: 'Inter', sans-serif;
-        }
-
-        .completed-btn i {
-            color: #10B981;
-        }
-
-        /* Empty state */
-        .empty-state {
-            grid-column: 1 / -1;
-            /* Span full width */
-            text-align: center;
-            padding: 120px 40px;
+        /* Header Card */
+        .survey-header-card {
             background: var(--dark-grey);
-            border: 1px solid rgba(139, 107, 74, 0.2);
-            border-radius: 30px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(139, 107, 74, 0.25);
+            border-radius: 16px;
+            padding: 28px 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
         }
 
-        .empty-state-icon {
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 24px;
-            background: var(--medium-grey);
-            border-radius: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .empty-state-icon i {
-            font-size: 48px;
-            color: var(--light-grey);
-            opacity: 0.7;
-        }
-
-        .empty-state h3 {
-            font-size: 24px;
-            font-weight: 600;
-            color: var(--lighter-grey);
+        .survey-header-card h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--white);
             margin-bottom: 8px;
         }
 
-        .empty-state p {
+        .survey-header-card p {
             color: var(--light-grey);
-            font-size: 16px;
+            font-size: 1rem;
+            margin-bottom: 20px;
         }
 
-        /* Completed section */
-        .completed-section {
-            margin-top: 80px;
-            animation: fadeInUp 0.8s ease-out 0.6s both;
+        /* Progress Bar */
+        .progress-container {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 12px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
-        .completed-section h2 {
-            font-size: 32px;
-            font-weight: 600;
-            text-align: center;
-            color: var(--white);
-            margin-bottom: 40px;
-        }
-
-        .completed-list {
-            max-width: 700px;
-            margin: 0 auto;
-            display: grid;
-            gap: 16px;
-        }
-
-        .completed-item {
-            background: var(--dark-grey);
-            border: 1px solid rgba(139, 107, 74, 0.2);
-            padding: 24px;
-            border-radius: 20px;
+        .progress-text {
             display: flex;
             justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--light-brown);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 8px;
+            background: #252525;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--gradient-gold);
+            transition: width 0.4s ease;
+            border-radius: 4px;
+        }
+
+        /* Question Card */
+        .question-card {
+            background: var(--dark-grey);
+            border: 1px solid rgba(139, 107, 74, 0.25);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .question-card h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        /* Rating / Scale options */
+        .rating-scale {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .rating-option {
+            flex: 1;
+            min-width: 50px;
+            display: flex;
             align-items: center;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            justify-content: center;
+            padding: 14px 8px;
+            background: #252525;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            cursor: pointer;
             transition: all 0.3s ease;
         }
 
-        .completed-item:hover {
-            transform: translateX(4px);
-            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
-            border-color: var(--brown);
+        .rating-option:hover {
+            border-color: var(--light-brown);
+            background: rgba(139, 107, 74, 0.15);
         }
 
-        .completed-info h4 {
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--white);
-            margin-bottom: 4px;
+        .rating-option input[type="radio"] {
+            display: none;
         }
 
-        .completed-info p {
-            color: var(--lighter-grey);
-            font-size: 14px;
+        .rating-option input[type="radio"]:checked + .rating-label {
+            background: var(--gradient-gold);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(139, 107, 74, 0.4);
         }
 
-        .completed-date {
-            color: #10B981;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        /* Loading state */
-        .loading-surveys {
-            grid-column: 1 / -1;
-            /* Span full width */
-            text-align: center;
-            padding: 80px 20px;
-        }
-
-        .spinner {
-            width: 48px;
-            height: 48px;
-            border: 3px solid var(--medium-grey);
-            border-top: 3px solid var(--brown);
+        .rating-label {
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin: 0 auto 20px;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        .loading-surveys p {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
             color: var(--lighter-grey);
-            font-size: 16px;
+            transition: all 0.3s ease;
         }
 
-        /* Animations */
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .scale-labels {
+            display: flex;
+            justify-content: space-between;
+            color: var(--light-grey);
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-top: 8px;
         }
 
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        /* Options */
+        .multiple-choice-options, .yes-no-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
 
-        /* Responsive */
-        @media (max-width: 968px) {
-            .surveys-grid {
-                grid-template-columns: 1fr;
-                padding: 0 10px;
-            }
+        .mc-option, .yn-option {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px 20px;
+            background: #252525;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--lighter-grey);
+            font-size: 0.95rem;
         }
 
-        @media (max-width: 768px) {
-            .main-content {
-                padding: 80px 20px 60px;
-            }
+        .mc-option:hover, .yn-option:hover {
+            border-color: var(--light-brown);
+            background: rgba(139, 107, 74, 0.15);
+            color: var(--white);
+        }
 
-            .page-header h1 {
-                font-size: 36px;
-            }
+        .mc-option input[type="radio"], .yn-option input[type="radio"] {
+            accent-color: var(--brown);
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
 
-            .page-header p {
-                font-size: 18px;
-            }
+        .text-response {
+            width: 100%;
+            background: #252525;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 16px;
+            color: var(--white);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
 
-            .survey-tabs {
+        .text-response:focus {
+            border-color: var(--brown);
+            box-shadow: 0 0 0 3px rgba(139, 107, 74, 0.2);
+        }
+
+        /* Nav Action Buttons */
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 24px;
+        }
+
+        .btn-prev {
+            padding: 12px 28px;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--lighter-grey);
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-prev:hover:not(:disabled) {
+            border-color: var(--light-brown);
+            color: var(--white);
+        }
+
+        .btn-prev:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .btn-next, .btn-submit {
+            padding: 12px 32px;
+            background: var(--gradient-gold);
+            color: var(--white);
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(139, 107, 74, 0.3);
+        }
+
+        .btn-next:hover, .btn-submit:hover {
+            background: linear-gradient(135deg, #a67c52 0%, #c49666 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(139, 107, 74, 0.5);
+        }
+
+        /* Completion Card */
+        .completion-message {
+            text-align: center;
+            padding: 60px 30px;
+            background: var(--dark-grey);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .completion-message .success-icon {
+            width: 70px;
+            height: 70px;
+            background: rgba(34, 197, 94, 0.15);
+            color: #22c55e;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            margin: 0 auto 24px;
+            border: 2px solid rgba(34, 197, 94, 0.4);
+        }
+
+        .completion-message h2 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--white);
+            margin-bottom: 12px;
+        }
+
+        .completion-message p {
+            color: var(--light-grey);
+            font-size: 1rem;
+            margin-bottom: 24px;
+        }
+
+        .return-btn {
+            padding: 12px 28px;
+            background: var(--gradient-gold);
+            color: var(--white);
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .return-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(139, 107, 74, 0.5);
+        }
+
+        @media (max-width: 600px) {
+            .rating-scale {
                 flex-wrap: wrap;
             }
-
-            .tab-btn {
-                flex: 1;
-                min-width: 120px;
-                padding: 10px 20px;
-                font-size: 14px;
-            }
-
-            .empty-state {
-                padding: 80px 20px;
-            }
-
-            .completed-item {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 12px;
-            }
-
-            .survey-card {
-                padding: 20px;
+            .rating-option {
+                min-width: 40px;
             }
         }
     </style>
 </head>
 
 <body>
-    <!-- Navigation will be loaded by navigation.js -->
     <nav class="navbar"></nav>
 
-    <main class="main-content">
-        <div class="page-header">
-            <h1>Impact Surveys</h1>
-            <p>Help us measure the effectiveness of our campaigns</p>
+    <main class="take-survey-container">
+        <div class="back-nav">
+            <a href="survey-participation.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Back to Impact Surveys
+            </a>
         </div>
 
-        <!-- Survey Tabs -->
-        <div class="survey-tabs">
-            <button class="tab-btn active" onclick="filterSurveys('all')">All Surveys</button>
-            <button class="tab-btn" onclick="filterSurveys('available')">Available</button>
-            <button class="tab-btn" onclick="filterSurveys('completed')">Completed</button>
-        </div>
+        <div id="survey-container">
+            <!-- Header Card -->
+            <div class="survey-header-card" id="survey-header-card" style="display: none;">
+                <h1 id="survey-title">Loading Survey...</h1>
+                <p id="survey-description"></p>
 
-        <!-- Content wrapper for proper centering -->
-        <div class="content-wrapper">
-            <!-- Available Surveys -->
-            <div id="available-surveys">
-                <div class="surveys-grid" id="surveysGrid">
-                    <div class="loading-surveys">
-                        <div class="spinner"></div>
-                        <p>Loading surveys...</p>
+                <div class="progress-container">
+                    <div class="progress-text">
+                        <span>Question <span id="current-question">1</span> of <span id="total-questions">1</span></span>
+                        <span>Impact Survey</span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-fill" id="progress-fill"></div>
                     </div>
                 </div>
             </div>
 
-            <!-- Completed Surveys -->
-            <div class="completed-section" id="completedSection" style="display: none;">
-                <h2>Completed Surveys</h2>
-                <div class="completed-list" id="completedList">
-                    <!-- Completed surveys will be loaded here -->
+            <!-- Dynamic Question Container -->
+            <div id="question-container">
+                <div class="question-card" style="text-align: center; padding: 60px 20px;">
+                    <i class="fas fa-spinner fa-spin fa-2x" style="color: var(--brown); margin-bottom: 16px;"></i>
+                    <p style="color: var(--light-grey);">Loading survey questions...</p>
                 </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="nav-buttons" id="nav-buttons-container">
+                <button id="prev-btn" class="btn-prev" onclick="surveyTaker.previousQuestion()" disabled>
+                    <i class="fas fa-chevron-left me-1"></i> Previous
+                </button>
+                <button id="next-btn" class="btn-next" onclick="surveyTaker.nextQuestion()">
+                    Next <i class="fas fa-chevron-right ms-1"></i>
+                </button>
+                <button id="submit-btn" class="btn-submit" onclick="surveyTaker.submitSurvey()" style="display: none;">
+                    <i class="fas fa-paper-plane me-1"></i> Submit Survey
+                </button>
             </div>
         </div>
     </main>
 
     <script src="js/common/auth.js"></script>
     <script src="js/common/navigation.js"></script>
-    <script>
-        let allSurveys = [];
-        let currentFilter = 'all';
-
-        document.addEventListener('DOMContentLoaded', async () => {
-            const user = JSON.parse(localStorage.getItem('user') || '{}');
-            await loadSurveys();
-        });
-
-        async function loadSurveys() {
-            try {
-                const token = localStorage.getItem('token');
-                if (!token) {
-                    showError('Please login to view surveys');
-                    return;
-                }
-
-                const response = await fetch('https://campaign-management-system-zquy.onrender.com/api/surveys', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error('Failed to load surveys');
-                }
-
-                const data = await response.json();
-                allSurveys = data.surveys || data;
-                displaySurveys();
-            } catch (error) {
-                console.error('Error loading surveys:', error);
-                showError('Unable to load surveys. Please try again later.');
-            }
-        }
-
-        function displaySurveys() {
-            const available = allSurveys.filter(s => !s.completed);
-            const completed = allSurveys.filter(s => s.completed);
-
-            let surveysToShow = [];
-
-            switch (currentFilter) {
-                case 'available':
-                    surveysToShow = available;
-                    document.getElementById('completedSection').style.display = 'none';
-                    break;
-                case 'completed':
-                    surveysToShow = [];
-                    document.getElementById('completedSection').style.display = 'block';
-                    displayCompletedSurveys(completed);
-                    break;
-                default:
-                    surveysToShow = available;
-                    document.getElementById('completedSection').style.display = completed.length > 0 ? 'block' : 'none';
-                    if (completed.length > 0) {
-                        displayCompletedSurveys(completed);
-                    }
-            }
-
-            const grid = document.getElementById('surveysGrid');
-
-            if (surveysToShow.length === 0 && currentFilter !== 'completed') {
-                grid.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon">
-                            <i class="fas fa-clipboard-list"></i>
-                        </div>
-                        <h3>No available surveys</h3>
-                        <p>Check back later for new surveys to participate in</p>
-                    </div>
-                `;
-            } else if (currentFilter !== 'completed') {
-                grid.innerHTML = surveysToShow.map(survey => createSurveyCard(survey)).join('');
-            } else {
-                grid.innerHTML = '';
-            }
-        }
-
-        function createSurveyCard(survey) {
-            const typeText = survey.type === 'before' ? 'Pre-Campaign' : 'Post-Campaign';
-            const questionCount = survey.questions ? survey.questions.length : 0;
-            const estimatedTime = Math.ceil(questionCount * 0.5);
-
-            return `
-                <div class="survey-card">
-                    <span class="survey-type ${survey.type}">
-                        ${typeText}
-                    </span>
-                    <h3>${survey.title}</h3>
-                    <p>${survey.description || 'Share your thoughts and help us measure campaign impact'}</p>
-                    <div class="survey-meta">
-                        <span><i class="fas fa-list-check"></i> ${questionCount} questions</span>
-                        <span><i class="fas fa-clock"></i> ~${estimatedTime} minutes</span>
-                    </div>
-                    ${survey.completed ?
-                    '<button class="completed-btn"><i class="fas fa-check-circle"></i> Completed</button>' :
-                    `<button class="take-survey-btn" onclick="takeSurvey('${survey._id}')">Take Survey</button>`
-                }
-                </div>
-            `;
-        }
-
-        function displayCompletedSurveys(surveys) {
-            const list = document.getElementById('completedList');
-
-            if (surveys.length === 0) {
-                list.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon">
-                            <i class="fas fa-clipboard-check"></i>
-                        </div>
-                        <h3>No completed surveys yet</h3>
-                        <p>Complete surveys to see them here</p>
-                    </div>
-                `;
-            } else {
-                list.innerHTML = surveys.map(survey => `
-                    <div class="completed-item">
-                        <div class="completed-info">
-                            <h4>${survey.title}</h4>
-                            <p>${survey.type === 'before' ? 'Pre-Campaign' : 'Post-Campaign'} Survey • ${survey.questions?.length || 0} questions</p>
-                        </div>
-                        <div class="completed-date">
-                            Completed ${formatDate(survey.completedAt)}
-                        </div>
-                    </div>
-                `).join('');
-            }
-        }
-
-        function filterSurveys(filter) {
-            currentFilter = filter;
-
-            // Update active tab
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-
-            displaySurveys();
-        }
-
-        function takeSurvey(surveyId) {
-            window.location.href = `take-survey.html?id=${surveyId}`;
-        }
-
-        function formatDate(dateString) {
-            if (!dateString) return 'Recently';
-            const date = new Date(dateString);
-            const now = new Date();
-            const diffTime = Math.abs(now - date);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-            if (diffDays === 0) return 'Today';
-            if (diffDays === 1) return 'Yesterday';
-            if (diffDays < 7) return `${diffDays} days ago`;
-
-            return date.toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric',
-                year: 'numeric'
-            });
-        }
-
-        function showError(message) {
-            document.getElementById('surveysGrid').innerHTML = `
-                <div class="empty-state">
-                    <div class="empty-state-icon">
-                        <i class="fas fa-exclamation-circle"></i>
-                    </div>
-                    <h3>Error</h3>
-                    <p>${message}</p>
-                </div>
-            `;
-        }
-
-        function logout() {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            window.location.href = 'login.html';
-        }
-    </script>
+    <script src="js/surveys/take-survey.js"></script>
 </body>
 
 </html>

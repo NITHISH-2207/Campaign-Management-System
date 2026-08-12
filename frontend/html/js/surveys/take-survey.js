@@ -12,66 +12,87 @@ class SurveyTaker {
         return urlParams.get('id');
     }
 
+    getApiBaseUrl() {
+        if (typeof API_BASE_URL !== 'undefined' && API_BASE_URL) return API_BASE_URL;
+        if (typeof API_URL !== 'undefined' && API_URL) return API_URL;
+        return 'https://campaign-management-system-zquy.onrender.com/api';
+    }
+
     async init() {
         if (!this.surveyId) {
-            alert('No survey ID provided');
-            window.location.href = 'user-dashboard.html';
+            this.showError('No survey ID provided in the URL. Please select a survey from the Impact Surveys page.');
             return;
         }
 
         await this.loadSurvey();
-        if (this.survey) {
+        if (this.survey && !this.survey.completed) {
             this.displaySurvey();
-            this.showQuestion(0);
+            if (this.survey.questions && this.survey.questions.length > 0) {
+                this.showQuestion(0);
+            } else {
+                this.showError('This survey currently has no questions.');
+            }
         }
     }
 
     async loadSurvey() {
         try {
-            const response = await fetch(`https://campaign-management-system-zquy.onrender.com/api/surveys/${this.surveyId}`, {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                this.showError('Please login to take this survey.');
+                return;
+            }
+
+            const response = await fetch(`${this.getApiBaseUrl()}/surveys/${this.surveyId}`, {
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    'Authorization': `Bearer ${token}`
                 }
             });
 
             if (!response.ok) {
-                throw new Error('Failed to load survey');
+                throw new Error('Survey not found or server error');
             }
 
-            this.survey = await response.json();
+            const data = await response.json();
+            this.survey = data.survey || data;
 
             // Check if user already completed this survey
             if (this.survey.completed) {
-                alert('You have already completed this survey');
-                window.location.href = 'user-dashboard.html';
+                this.showCompletedState();
             }
         } catch (error) {
             console.error('Error loading survey:', error);
-            alert('Failed to load survey');
-            window.location.href = 'user-dashboard.html';
+            this.showError('Unable to load survey. ' + error.message);
         }
     }
 
     displaySurvey() {
-        document.getElementById('survey-title').textContent = this.survey.title;
-        document.getElementById('survey-description').textContent = this.survey.description || '';
-        document.getElementById('total-questions').textContent = this.survey.questions.length;
+        const titleEl = document.getElementById('survey-title');
+        const descEl = document.getElementById('survey-description');
+        const totalEl = document.getElementById('total-questions');
+        const headerEl = document.getElementById('survey-header-card');
+
+        if (titleEl) titleEl.textContent = this.survey.title || 'Impact Survey';
+        if (descEl) descEl.textContent = this.survey.description || 'Share your feedback to help us measure campaign impact.';
+        if (totalEl) totalEl.textContent = this.survey.questions ? this.survey.questions.length : 0;
+        if (headerEl) headerEl.style.display = 'block';
     }
 
     showQuestion(index) {
-        if (index < 0 || index >= this.survey.questions.length) return;
+        if (!this.survey || !this.survey.questions || index < 0 || index >= this.survey.questions.length) return;
 
         this.currentQuestionIndex = index;
         const question = this.survey.questions[index];
         const container = document.getElementById('question-container');
+        if (!container) return;
 
         // Update progress
         this.updateProgress();
 
         // Generate question HTML
         let questionHTML = `
-            <div class="question">
-                <h3>${question.text}</h3>
+            <div class="question-card">
+                <h3><span style="color: var(--light-brown); margin-right: 8px;">Q${index + 1}.</span>${this.escapeHtml(question.text)}</h3>
                 <div class="answer-container">
         `;
 
@@ -89,6 +110,8 @@ class SurveyTaker {
             case 'text':
                 questionHTML += this.generateTextQuestion(question);
                 break;
+            default:
+                questionHTML += this.generateTextQuestion(question);
         }
 
         questionHTML += '</div></div>';
@@ -132,15 +155,17 @@ class SurveyTaker {
 
     generateMultipleChoiceQuestion(question) {
         let html = '<div class="multiple-choice-options">';
+        const options = question.options || [];
 
-        question.options.forEach((option, index) => {
+        options.forEach((option) => {
+            const safeOpt = this.escapeHtml(option);
             html += `
                 <label class="mc-option">
                     <input type="radio" 
                            name="mc" 
-                           value="${option}" 
-                           onchange="surveyTaker.saveResponse('${question.questionId}', '${option}')">
-                    <span>${option}</span>
+                           value="${safeOpt}"
+                           onchange="surveyTaker.saveResponse('${question.questionId}', '${safeOpt.replace(/'/g, "\\'")}')">
+                    <span>${safeOpt}</span>
                 </label>
             `;
         });
@@ -175,6 +200,7 @@ class SurveyTaker {
             <textarea class="text-response" 
                       placeholder="Type your answer here..." 
                       onchange="surveyTaker.saveResponse('${question.questionId}', this.value)"
+                      oninput="surveyTaker.saveResponse('${question.questionId}', this.value)"
                       rows="4"></textarea>
         `;
     }
@@ -184,7 +210,7 @@ class SurveyTaker {
         this.responses[questionId] = {
             questionId: questionId,
             answer: value,
-            category: question.category
+            category: question ? question.category : ''
         };
     }
 
@@ -197,7 +223,7 @@ class SurveyTaker {
             case 'scale':
             case 'multiple-choice':
             case 'yes-no':
-                const radio = document.querySelector(`input[type="radio"][value="${savedResponse.answer}"]`);
+                const radio = document.querySelector(`input[type="radio"][value="${CSS.escape(savedResponse.answer)}"]`);
                 if (radio) radio.checked = true;
                 break;
             case 'text':
@@ -208,9 +234,12 @@ class SurveyTaker {
     }
 
     updateProgress() {
+        if (!this.survey || !this.survey.questions) return;
         const progress = ((this.currentQuestionIndex + 1) / this.survey.questions.length) * 100;
-        document.getElementById('progress-fill').style.width = `${progress}%`;
-        document.getElementById('current-question').textContent = this.currentQuestionIndex + 1;
+        const fillEl = document.getElementById('progress-fill');
+        const currentEl = document.getElementById('current-question');
+        if (fillEl) fillEl.style.width = `${progress}%`;
+        if (currentEl) currentEl.textContent = this.currentQuestionIndex + 1;
     }
 
     updateNavigationButtons() {
@@ -218,14 +247,14 @@ class SurveyTaker {
         const nextBtn = document.getElementById('next-btn');
         const submitBtn = document.getElementById('submit-btn');
 
-        prevBtn.disabled = this.currentQuestionIndex === 0;
+        if (prevBtn) prevBtn.disabled = this.currentQuestionIndex === 0;
 
         if (this.currentQuestionIndex === this.survey.questions.length - 1) {
-            nextBtn.style.display = 'none';
-            submitBtn.style.display = 'inline-block';
+            if (nextBtn) nextBtn.style.display = 'none';
+            if (submitBtn) submitBtn.style.display = 'inline-block';
         } else {
-            nextBtn.style.display = 'inline-block';
-            submitBtn.style.display = 'none';
+            if (nextBtn) nextBtn.style.display = 'inline-block';
+            if (submitBtn) submitBtn.style.display = 'none';
         }
     }
 
@@ -240,7 +269,7 @@ class SurveyTaker {
 
         // Validate if required question is answered
         if (currentQuestion.required && !this.responses[currentQuestion.questionId]) {
-            alert('Please answer this question before proceeding');
+            this.showNotice('Please answer this question before proceeding.');
             return;
         }
 
@@ -256,16 +285,17 @@ class SurveyTaker {
         );
 
         if (unanswered.length > 0) {
-            alert(`Please answer all required questions. ${unanswered.length} questions remaining.`);
+            this.showNotice(`Please answer all required questions. ${unanswered.length} questions remaining.`);
             return;
         }
 
         try {
-            const response = await fetch(`https://campaign-management-system-zquy.onrender.com/api/surveys/${this.surveyId}/response`, {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${this.getApiBaseUrl()}/surveys/${this.surveyId}/response`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({
                     responses: Object.values(this.responses)
@@ -280,27 +310,94 @@ class SurveyTaker {
             this.showCompletionMessage();
         } catch (error) {
             console.error('Error submitting survey:', error);
-            alert('Failed to submit survey: ' + error.message);
+            this.showNotice('Failed to submit survey: ' + error.message);
         }
     }
 
     showCompletionMessage() {
-        document.getElementById('survey-container').innerHTML = `
+        const container = document.getElementById('survey-container');
+        if (!container) return;
+        container.innerHTML = `
             <div class="completion-message">
-                <div class="success-icon">✓</div>
-                <h2>Thank you for completing the survey!</h2>
-                <p>Your responses have been recorded and will help us measure the impact of this campaign.</p>
-                ${this.survey.type === 'before' ?
-                '<p>We\'ll invite you to take the post-campaign survey once the campaign concludes.</p>' :
-                '<p>Your feedback will help us understand the campaign\'s effectiveness.</p>'
-            }
-                <button onclick="window.location.href='user-dashboard.html'" class="return-btn">
-                    Return to Dashboard
-                </button>
+                <div class="success-icon"><i class="fas fa-check"></i></div>
+                <h2>Survey Submitted Successfully!</h2>
+                <p>Thank you for your response. Your input directly helps us measure campaign effectiveness and scale social impact.</p>
+                <div style="display: flex; gap: 12px; justify-content: center; margin-top: 20px; flex-wrap: wrap;">
+                    <button onclick="window.location.href='survey-participation.html'" class="return-btn">
+                        <i class="fas fa-list-check me-1"></i> Back to Impact Surveys
+                    </button>
+                    <button onclick="window.location.href='user-dashboard.html'" class="return-btn" style="background: var(--medium-grey); border: 1px solid rgba(255,255,255,0.2);">
+                        <i class="fas fa-home me-1"></i> Dashboard
+                    </button>
+                </div>
             </div>
         `;
     }
+
+    showCompletedState() {
+        const container = document.getElementById('survey-container');
+        if (!container) return;
+        container.innerHTML = `
+            <div class="completion-message" style="border-color: rgba(139, 107, 74, 0.4);">
+                <div class="success-icon" style="background: rgba(139, 107, 74, 0.2); color: var(--light-brown); border-color: var(--brown);"><i class="fas fa-info-circle"></i></div>
+                <h2>Already Completed</h2>
+                <p>You have already submitted your response for this survey. Thank you for participating!</p>
+                <div style="display: flex; gap: 12px; justify-content: center; margin-top: 20px; flex-wrap: wrap;">
+                    <button onclick="window.location.href='survey-participation.html'" class="return-btn">
+                        <i class="fas fa-arrow-left me-1"></i> Back to Impact Surveys
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    showError(message) {
+        const container = document.getElementById('survey-container');
+        if (!container) return;
+        container.innerHTML = `
+            <div class="completion-message" style="border-color: rgba(239, 68, 68, 0.4);">
+                <div class="success-icon" style="background: rgba(239, 68, 68, 0.15); color: #ef4444; border-color: rgba(239, 68, 68, 0.4);"><i class="fas fa-exclamation-triangle"></i></div>
+                <h2>Survey Error</h2>
+                <p style="color: var(--lighter-grey);">${this.escapeHtml(message)}</p>
+                <div style="display: flex; gap: 12px; justify-content: center; margin-top: 20px; flex-wrap: wrap;">
+                    <button onclick="window.location.href='survey-participation.html'" class="return-btn">
+                        <i class="fas fa-arrow-left me-1"></i> Return to Surveys
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    showNotice(message) {
+        let noticeBox = document.getElementById('survey-notice-box');
+        if (!noticeBox) {
+            noticeBox = document.createElement('div');
+            noticeBox.id = 'survey-notice-box';
+            noticeBox.style.cssText = 'background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #ef4444; padding: 12px 16px; border-radius: 10px; margin-bottom: 20px; font-weight: 500; text-align: center;';
+            const qContainer = document.getElementById('question-container');
+            if (qContainer && qContainer.parentNode) {
+                qContainer.parentNode.insertBefore(noticeBox, qContainer);
+            }
+        }
+        noticeBox.textContent = message;
+        noticeBox.style.display = 'block';
+        setTimeout(() => {
+            if (noticeBox) noticeBox.style.display = 'none';
+        }, 3500);
+    }
+
+    escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
 }
 
-// Initialize survey taker
-const surveyTaker = new SurveyTaker();
+// Initialize survey taker when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    window.surveyTaker = new SurveyTaker();
+});
