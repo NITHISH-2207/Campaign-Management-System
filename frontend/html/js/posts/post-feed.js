@@ -157,29 +157,29 @@ function createPostHTML(post) {
                     <div class="sentiment-details">
                         <span class="sentiment-label">Overall: ${getSentimentEmoji(post.sentiment.overall)} ${post.sentiment.overall}</span>
                         <span class="sentiment-breakdown">(${post.engagement.comments} comments analyzed)</span>
-                        <button class="refresh-sentiment" onclick="refreshPost('${post._id}')" title="Refresh sentiment">🔄</button>
+                        <button class="refresh-sentiment" onclick="refreshPost('${post._id}')" title="Refresh sentiment"><i class="fas fa-sync-alt"></i></button>
                     </div>
                 </div>
             ` : ''}
 
             <div class="post-actions">
                 <button class="action-btn ${isLiked ? 'liked' : ''}" onclick="likePost('${post._id}')">
-                    <span class="action-icon">${isLiked ? '❤️' : '🤍'}</span> 
+                    <span class="action-icon">${isLiked ? '<i class="fas fa-heart text-danger"></i>' : '<i class="far fa-heart"></i>'}</span>
                     <span class="action-text">Like</span>
                     <span class="action-count">(${post.engagement.likes})</span>
                 </button>
                 <button class="action-btn" onclick="toggleComments('${post._id}')">
-                    <span class="action-icon">💬</span> 
+                    <span class="action-icon"><i class="fas fa-comment"></i></span>
                     <span class="action-text">Comment</span>
                     <span class="action-count">(${post.engagement.comments})</span>
                 </button>
                 <button class="action-btn" onclick="sharePost('${post._id}')">
-                    <span class="action-icon">🔗</span> 
+                    <span class="action-icon"><i class="fas fa-share-alt"></i></span>
                     <span class="action-text">Share</span>
                     <span class="action-count">(${post.engagement.shares})</span>
                 </button>
                 <button class="action-btn" onclick="showPostStats('${post._id}')">
-                    <span class="action-icon">📊</span> 
+                    <span class="action-icon"><i class="fas fa-chart-bar"></i></span>
                     <span class="action-text">Stats</span>
                 </button>
             </div>

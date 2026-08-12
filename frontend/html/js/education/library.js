@@ -198,9 +198,9 @@
                     <h3>${module.title}</h3>
                     <p>${module.description}</p>
                     <div class="module-meta">
-                        <span class="duration">⏱️ ${module.duration} min</span>
-                        <span class="difficulty">📊 ${capitalizeFirst(module.difficulty)}</span>
-                        <span class="completions">👥 ${module.completions} completed</span>
+                        <span class="duration"><i class="fas fa-clock"></i> ${module.duration} min</span>
+                        <span class="difficulty"><i class="fas fa-signal"></i> ${capitalizeFirst(module.difficulty)}</span>
+                        <span class="completions"><i class="fas fa-users"></i> ${module.completions} completed</span>
                     </div>
                     ${progress ? `
                         <div class="module-progress">
@@ -221,10 +221,10 @@
                     ${isCreator && currentUser.role === 'campaign_manager' ? `
                         <div class="module-actions">
                             <button class="view-stats-btn" onclick="viewModuleStats('${module._id}')">
-                                📊 View Stats
+                                <i class="fas fa-chart-bar"></i> View Stats
                             </button>
                             <button class="edit-module-btn" onclick="editModule('${module._id}')">
-                                ✏️ Edit
+                                <i class="fas fa-edit"></i> Edit
                             </button>
                         </div>
                     ` : canStart ? `
@@ -309,7 +309,7 @@
                             <h3>Additional Resources</h3>
                             ${module.content.resources.map(r => `
                                 <a href="${r.url}" target="_blank" class="resource-link">
-                                    📎 ${r.title}
+                                    <i class="fas fa-paperclip"></i> ${r.title}
                                 </a>
                             `).join('')}
                         </div>
@@ -346,7 +346,7 @@
                         <h3>Additional Resources</h3>
                         ${module.content.resources.map(r => `
                             <a href="${r.url}" target="_blank" class="resource-link">
-                                📎 ${r.title}
+                                <i class="fas fa-paperclip"></i> ${r.title}
                             </a>
                         `).join('')}
                     </div>
@@ -532,7 +532,7 @@
         const content = document.getElementById('moduleContent');
         content.innerHTML = `
             <div class="quiz-result">
-                <h2>${result.passed ? '🎉 Congratulations!' : '📚 Keep Learning!'}</h2>
+                <h2>${result.passed ? '<i class="fas fa-trophy"></i> Congratulations!' : '<i class="fas fa-book-open"></i> Keep Learning!'}</h2>
                 <div class="score-display">
                     <div class="score-circle ${result.passed ? 'passed' : 'failed'}">
                         ${result.score}%

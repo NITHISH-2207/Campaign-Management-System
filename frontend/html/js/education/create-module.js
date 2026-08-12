@@ -437,10 +437,10 @@
                     <p style="color: #666;">${moduleData.description}</p>
                     <div style="margin: 20px 0;">
                         <span style="background: #f0f0f0; padding: 5px 10px; border-radius: 5px; margin-right: 10px;">
-                            📊 ${moduleData.difficulty}
+                            <i class="fas fa-signal"></i> ${moduleData.difficulty}
                         </span>
                         <span style="background: #f0f0f0; padding: 5px 10px; border-radius: 5px;">
-                            ⏱️ ${moduleData.duration} minutes
+                            <i class="fas fa-clock"></i> ${moduleData.duration} minutes
                         </span>
                     </div>
                     <hr>

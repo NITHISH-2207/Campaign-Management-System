@@ -42,10 +42,10 @@ function setupNavigation() {
                     Create <span class="dropdown-arrow">▼</span>
                 </a>
                 <ul class="dropdown-menu">
-                    <li><a href="create-campaign.html">📢 New Campaign</a></li>
-                    <li><a href="create-post.html">📝 New Post</a></li>
-                    <li><a href="create-education-module.html">📚 Education Module</a></li>
-                    <li><a href="create-survey.html">📊 New Survey</a></li>
+                    <li><a href="create-campaign.html"><i class="fas fa-bullhorn me-2"></i> New Campaign</a></li>
+                    <li><a href="create-post.html"><i class="fas fa-pen-to-square me-2"></i> New Post</a></li>
+                    <li><a href="create-education-module.html"><i class="fas fa-book-open me-2"></i> Education Module</a></li>
+                    <li><a href="create-survey.html"><i class="fas fa-clipboard-list me-2"></i> New Survey</a></li>
                 </ul>
             </li>
             <li><a href="analytics-dashboard.html" class="${currentPage === 'analytics-dashboard.html' ? 'active' : ''}">Analytics</a></li>

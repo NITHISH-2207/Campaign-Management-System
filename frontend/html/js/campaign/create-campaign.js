@@ -233,8 +233,8 @@ async function handleSubmit(event) {
 
     // Show loading state
     const submitBtn = event.target.querySelector('button[type="submit"]');
-    const originalText = submitBtn.textContent;
-    submitBtn.textContent = '📤 Submitting...';
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Submitting...';
     submitBtn.disabled = true;
 
     try {

@@ -26,7 +26,7 @@ class PostCreator {
         // Add personal post option for all users
         const personalOption = document.createElement('option');
         personalOption.value = 'personal';
-        personalOption.textContent = '📝 Personal Experience';
+        personalOption.textContent = 'Personal Experience';
         personalOption.selected = true; // Select by default
         campaignSelect.appendChild(personalOption);
     }
@@ -52,7 +52,7 @@ class PostCreator {
                 campaigns.forEach(campaign => {
                     const option = document.createElement('option');
                     option.value = campaign._id;
-                    option.textContent = `📢 ${campaign.title}`;
+                    option.textContent = campaign.title;
                     select.appendChild(option);
                 });
             }

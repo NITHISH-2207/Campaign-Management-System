@@ -691,7 +691,7 @@
             for (let i = 0; i < 5; i++) {
                 const star = document.createElement('span');
                 star.className = 'star';
-                star.innerHTML = i < stars ? '⭐' : '☆';
+                star.innerHTML = i < stars ? '<i class="fas fa-star text-warning"></i>' : '<i class="far fa-star"></i>';
                 starsContainer.appendChild(star);
             }
             
@@ -729,14 +729,14 @@
             const percentage = Math.round((totalScore / totalQuestions) * 100);
             const stars = Math.ceil((totalScore / totalQuestions) * 5);
             
-            document.querySelector('.score-title').textContent = '🏆 Quiz Complete!';
+            document.querySelector('.score-title').innerHTML = '<i class="fas fa-trophy me-2"></i> Quiz Complete!';
             document.getElementById('scorePercentage').textContent = `${percentage}%`;
             document.getElementById('scoreDetails').innerHTML = `
                 Final Score: <strong>${totalScore}</strong> out of <strong>${totalQuestions}</strong> questions!<br>
                 Total time: <strong>${timerEl.textContent}</strong><br><br>
-                ${percentage >= 80 ? '🎉 Excellent work! You\'re a social awareness champion!' : 
-                  percentage >= 60 ? '👏 Good job! Keep learning and growing!' : 
-                  '💪 Nice try! Review the topics and try again!'}
+                ${percentage >= 80 ? '<i class="fas fa-medal text-warning me-1"></i> Excellent work! You\'re a social awareness champion!' :
+                  percentage >= 60 ? '<i class="fas fa-thumbs-up text-primary me-1"></i> Good job! Keep learning and growing!' :
+                  '<i class="fas fa-bullseye text-info me-1"></i> Nice try! Review the topics and try again!'}
             `;
             
             // Show stars
@@ -745,7 +745,7 @@
             for (let i = 0; i < 5; i++) {
                 const star = document.createElement('span');
                 star.className = 'star';
-                star.innerHTML = i < stars ? '⭐' : '☆';
+                star.innerHTML = i < stars ? '<i class="fas fa-star text-warning"></i>' : '<i class="far fa-star"></i>';
                 starsContainer.appendChild(star);
             }
             

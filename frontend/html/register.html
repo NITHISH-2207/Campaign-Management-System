@@ -1322,7 +1322,7 @@
                 strengthText.textContent = 'Add numbers and special characters for stronger security';
                 strengthText.style.color = '#fbbf24';
             } else {
-                strengthText.textContent = 'Strong password ✓';
+                strengthText.innerHTML = 'Strong password <i class="fas fa-check-circle"></i>';
                 strengthText.style.color = '#10b981';
             }
         });

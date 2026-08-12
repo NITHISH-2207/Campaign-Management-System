@@ -415,7 +415,8 @@
         }
 
         .action-icon {
-            font-size: 48px;
+            font-size: 38px;
+            color: var(--brown);
             margin-bottom: 20px;
             transition: transform 0.4s ease;
             display: inline-block;
@@ -1399,22 +1400,22 @@
             <h2>What would you like to do today?</h2>
             <div class="action-grid">
                 <div class="action-card" onclick="window.location.href='post-feed.html'">
-                    <div class="action-icon">📰</div>
+                    <div class="action-icon"><i class="fas fa-newspaper"></i></div>
                     <h3>Browse Feed</h3>
                     <p>See latest updates</p>
                 </div>
                 <div class="action-card" onclick="window.location.href='create-post.html'">
-                    <div class="action-icon">✍️</div>
+                    <div class="action-icon"><i class="fas fa-pen-to-square"></i></div>
                     <h3>Create Post</h3>
                     <p>Share your experience</p>
                 </div>
                 <div class="action-card" onclick="window.location.href='education-library.html'">
-                    <div class="action-icon">📚</div>
+                    <div class="action-icon"><i class="fas fa-book-open"></i></div>
                     <h3>Learn</h3>
                     <p>Explore content</p>
                 </div>
                 <div class="action-card" onclick="window.location.href='survey-participation.html'">
-                    <div class="action-icon">📊</div>
+                    <div class="action-icon"><i class="fas fa-clipboard-list"></i></div>
                     <h3>Surveys</h3>
                     <p>Contribute research</p>
                 </div>
@@ -1500,7 +1501,7 @@
     <!-- Chatbot Integration -->
     <div id="chatbot-container">
         <div id="chatbot-header">
-            <span>💬 ChangeWave Assistant</span>
+            <span><i class="fas fa-comments me-2"></i> ChangeWave Assistant</span>
             <button class="close-btn" onclick="toggleChatbot()">×</button>
         </div>
 

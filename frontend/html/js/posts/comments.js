@@ -68,14 +68,14 @@ class CommentManager {
                         </div>
                         ${isCommentAuthor ? `
                             <button class="comment-delete" onclick="deleteComment('${comment._id}', '${this.currentPostId}')">
-                                <span>🗑️</span>
+                                <span><i class="fas fa-trash-can"></i></span>
                             </button>
                         ` : ''}
                     </div>
                     <p class="comment-text">${this.escapeHtml(comment.content)}</p>
                     <div class="comment-actions">
                         <button class="comment-like" onclick="likeComment('${comment._id}')">
-                            👍 ${comment.likes || 0}
+                            <i class="fas fa-thumbs-up"></i> ${comment.likes || 0}
                         </button>
                         <button class="comment-reply" onclick="showReplyForm('${comment._id}')">
                             Reply
@@ -108,7 +108,7 @@ class CommentManager {
                     </div>
                     ${isReplyAuthor ? `
                         <button class="comment-delete" onclick="deleteComment('${reply._id}', '${this.currentPostId}')">
-                            <span>🗑️</span>
+                            <span><i class="fas fa-trash-can"></i></span>
                         </button>
                     ` : ''}
                 </div>
@@ -258,7 +258,7 @@ async function likeComment(commentId) {
             // Update like count in UI
             const likeButton = document.querySelector(`[data-comment-id="${commentId}"] .comment-like`);
             if (likeButton) {
-                likeButton.textContent = `👍 ${data.likes || 0}`;
+                likeButton.innerHTML = `<i class="fas fa-thumbs-up"></i> ${data.likes || 0}`;
             }
         }
     } catch (error) {
