@@ -161,13 +161,15 @@ function createCampaignCard(campaign) {
             
             <div class="campaign-progress">
                 <div class="progress-header">
-                    <span>${participantCount} participants</span>
+                    <span class="participant-count-text">${participantCount} participants</span>
                     <span>${campaign.targetAudience}</span>
                 </div>
                 <div class="progress-bar">
                     <div class="progress-fill" style="width: ${Math.min(participantCount / 100 * 100, 100)}%"></div>
                 </div>
             </div>
+
+            <div class="card-notification-area"></div>
             
             <div class="campaign-actions">
                 ${canJoin && !isOwnCampaign ? `
@@ -190,6 +192,20 @@ function createCampaignCard(campaign) {
     `;
 
     // Add event listeners after creating the card
+    const joinBtn = card.querySelector('.btn-join');
+    if (joinBtn) {
+        joinBtn.addEventListener('mouseenter', () => {
+            if (joinBtn.classList.contains('joined')) {
+                joinBtn.textContent = 'Leave Campaign';
+            }
+        });
+        joinBtn.addEventListener('mouseleave', () => {
+            if (joinBtn.classList.contains('joined')) {
+                joinBtn.textContent = '✓ Joined';
+            }
+        });
+    }
+
     const detailsBtn = card.querySelector('.btn-details');
     if (detailsBtn) {
         detailsBtn.addEventListener('click', (e) => {
@@ -219,25 +235,61 @@ async function toggleJoinCampaign(campaignId, button) {
         const data = await response.json();
 
         if (response.ok) {
-            const card = button.closest('.campaign-card');
+            let card = button ? button.closest('.campaign-card') : null;
+            if (!card && campaignId) {
+                card = document.querySelector(`.campaign-card[data-campaign-id="${campaignId}"]`);
+            }
+
+            const cardButton = card ? card.querySelector('.btn-join') : button;
+            const participantCountEl = card ? card.querySelector('.participant-count-text') : null;
+            const progressFillEl = card ? card.querySelector('.progress-fill') : null;
 
             if (isJoined) {
                 joinedCampaigns.delete(campaignId);
-                button.classList.remove('joined');
-                button.textContent = 'Join Campaign';
-                showNotification('You have left the campaign', 'info');
+                if (cardButton) {
+                    cardButton.classList.remove('joined');
+                    cardButton.textContent = 'Join Campaign';
+                }
+                if (card) {
+                    card.classList.remove('joined');
+                    showCardNotification(card, 'Successfully left the campaign!', 'leave');
+
+                    if (participantCountEl) {
+                        const currentText = participantCountEl.textContent;
+                        const match = currentText.match(/\d+/);
+                        if (match) {
+                            const currentNum = parseInt(match[0], 10);
+                            const newNum = Math.max(0, currentNum - 1);
+                            participantCountEl.textContent = `${newNum} participants`;
+                            if (progressFillEl) {
+                                progressFillEl.style.width = `${Math.min(newNum, 100)}%`;
+                            }
+                        }
+                    }
+                }
             } else {
                 joinedCampaigns.add(campaignId);
-                button.classList.add('joined');
-                button.textContent = '✓ Joined';
-                if (card) {
-                    showCardJoinNotification(card, 'Successfully joined the campaign!');
+                if (cardButton) {
+                    cardButton.classList.add('joined');
+                    cardButton.textContent = '✓ Joined';
                 }
-            }
+                if (card) {
+                    card.classList.add('joined');
+                    showCardNotification(card, 'Successfully joined the campaign!', 'join');
 
-            // Update the card styling
-            if (card) {
-                card.classList.toggle('joined');
+                    if (participantCountEl) {
+                        const currentText = participantCountEl.textContent;
+                        const match = currentText.match(/\d+/);
+                        if (match) {
+                            const currentNum = parseInt(match[0], 10);
+                            const newNum = currentNum + 1;
+                            participantCountEl.textContent = `${newNum} participants`;
+                            if (progressFillEl) {
+                                progressFillEl.style.width = `${Math.min(newNum, 100)}%`;
+                            }
+                        }
+                    }
+                }
             }
 
             // Update stats
@@ -536,25 +588,36 @@ function showNotification(message, type = 'info') {
     }, 3000);
 }
 
-function showCardJoinNotification(card, message) {
+function showCardNotification(card, message, type = 'join') {
     if (!card) return;
 
-    // Remove existing in-card notification on this card if present
-    const existing = card.querySelector('.card-join-notification');
-    if (existing) existing.remove();
+    let area = card.querySelector('.card-notification-area');
+    if (!area) {
+        const actions = card.querySelector('.campaign-actions');
+        if (actions) {
+            area = document.createElement('div');
+            area.className = 'card-notification-area';
+            actions.parentNode.insertBefore(area, actions);
+        } else {
+            area = card;
+        }
+    }
+
+    // Clear existing notification in this card's area
+    area.innerHTML = '';
 
     const notification = document.createElement('div');
-    notification.className = 'card-join-notification';
+    notification.className = type === 'leave' ? 'card-leave-notification' : 'card-join-notification';
     notification.innerHTML = `
-        <i class="fas fa-check-circle" style="color: #22c55e; font-size: 15px;"></i>
+        <i class="${type === 'leave' ? 'fas fa-info-circle' : 'fas fa-check-circle'}" style="color: ${type === 'leave' ? '#ef4444' : '#22c55e'}; font-size: 15px;"></i>
         <span>${message}</span>
     `;
 
-    card.appendChild(notification);
+    area.appendChild(notification);
 
     setTimeout(() => {
         notification.style.opacity = '0';
-        notification.style.transform = 'translateY(8px)';
+        notification.style.transform = 'translateY(-4px)';
         setTimeout(() => {
             notification.remove();
         }, 400);
