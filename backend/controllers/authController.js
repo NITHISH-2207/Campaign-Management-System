@@ -173,16 +173,16 @@ exports.register = async (req, res) => {
 
         const now = new Date();
 
-        // Create new user with encrypted sensitive fields
+        // Create new user with plaintext fields (encryption occurs in pre-save hook)
         const user = new User({
             name: name ? name.trim() : '',
             email: normalizedEmail,
             password,
             role: role || 'participant',
-            phone: encryptText(normalizedPhone),
-            dob: encryptText(validDob),
-            gender: encryptText(selectedGender),
-            category: encryptText(selectedCategory),
+            phone: normalizedPhone,
+            dob: validDob,
+            gender: selectedGender,
+            category: selectedCategory,
             termsAccepted: true,
             termsAcceptedAt: now,
             privacyPolicyAccepted: true,
@@ -495,26 +495,31 @@ exports.getProfile = async (req, res) => {
     }
 };
 
-// Update user profile
 exports.updateProfile = async (req, res) => {
     try {
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
+
         // STRICT PROTECTION: Email MUST NOT be updated through normal profile update endpoint
         if (req.body && req.body.email !== undefined) {
             delete req.body.email;
         }
 
-        const updates = {};
-
         if (req.body) {
-            if (req.body.name !== undefined) updates.name = req.body.name.trim();
-            if (req.body.location !== undefined) updates.location = req.body.location;
-            if (req.body.organization !== undefined) updates.organization = req.body.organization;
-            if (req.body.bio !== undefined) updates.bio = req.body.bio;
-            if (req.body.interests !== undefined) updates.interests = req.body.interests;
-            if (req.body.emailUpdates !== undefined) updates.emailUpdates = req.body.emailUpdates;
-            if (req.body.profileImage !== undefined) updates.profileImage = req.body.profileImage;
+            if (req.body.name !== undefined) user.name = req.body.name.trim();
+            if (req.body.location !== undefined) user.location = req.body.location;
+            if (req.body.organization !== undefined) user.organization = req.body.organization;
+            if (req.body.bio !== undefined) user.bio = req.body.bio;
+            if (req.body.interests !== undefined) user.interests = req.body.interests;
+            if (req.body.emailUpdates !== undefined) user.emailUpdates = req.body.emailUpdates;
+            if (req.body.profileImage !== undefined) user.profileImage = req.body.profileImage;
 
-            // Phone update validation & encryption
+            // Phone update validation (remain plaintext for schema validation; encryption occurs in pre-save)
             if (req.body.phone !== undefined && req.body.phone !== '') {
                 const validPhone = validateAndNormalizeIndianPhone(req.body.phone);
                 if (!validPhone) {
@@ -523,12 +528,12 @@ exports.updateProfile = async (req, res) => {
                         message: 'Please enter a valid 10-digit Indian phone number starting with 6, 7, 8, or 9.'
                     });
                 }
-                updates.phone = encryptText(validPhone);
+                user.phone = validPhone;
             } else if (req.body.phone === '') {
-                updates.phone = '';
+                user.phone = '';
             }
 
-            // DOB update validation & encryption
+            // DOB update validation
             if (req.body.dob !== undefined && req.body.dob !== '') {
                 const dobDate = new Date(req.body.dob);
                 const today = new Date();
@@ -538,21 +543,25 @@ exports.updateProfile = async (req, res) => {
                         message: 'Invalid Date of Birth.'
                     });
                 }
-                const formattedDob = dobDate.toISOString().split('T')[0];
-                updates.dob = encryptText(formattedDob);
+                user.dob = dobDate.toISOString().split('T')[0];
             } else if (req.body.dob === '') {
-                updates.dob = '';
+                user.dob = '';
             }
 
-            // Gender update validation & encryption
+            // Gender update validation
             if (req.body.gender !== undefined) {
                 const validGenders = ['Male', 'Female', 'Others', 'Prefer not to say', ''];
                 if (validGenders.includes(req.body.gender)) {
-                    updates.gender = req.body.gender ? encryptText(req.body.gender) : '';
+                    user.gender = req.body.gender;
+                } else {
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Invalid gender value.'
+                    });
                 }
             }
 
-            // Category update validation & encryption
+            // Category update validation
             if (req.body.category !== undefined) {
                 const validCategories = [
                     'School Student', 'College Student', 'Working Professional / Employee',
@@ -561,27 +570,21 @@ exports.updateProfile = async (req, res) => {
                     'Other', 'Prefer not to say', ''
                 ];
                 if (validCategories.includes(req.body.category)) {
-                    updates.category = req.body.category ? encryptText(req.body.category) : '';
+                    user.category = req.body.category;
+                } else {
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Invalid user category / occupation.'
+                    });
                 }
             }
         }
 
         if (req.file) {
-            updates.profileImage = '/uploads/profiles/' + req.file.filename;
+            user.profileImage = '/uploads/profiles/' + req.file.filename;
         }
 
-        const user = await User.findByIdAndUpdate(
-            req.user.id,
-            updates,
-            { new: true, runValidators: true }
-        ).select('-password');
-
-        if (!user) {
-            return res.status(404).json({
-                success: false,
-                message: 'User not found'
-            });
-        }
+        await user.save();
 
         const sanitizedUser = sanitizeUserResponse(user);
 

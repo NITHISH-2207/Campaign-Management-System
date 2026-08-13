@@ -101,16 +101,49 @@ const userSchema = new mongoose.Schema({
     }
 });
 
-// Hash password before saving
+const { encryptText, decryptText } = require('../services/encryptionService');
+
+// Hash password and encrypt sensitive fields before saving
 userSchema.pre('save', async function(next) {
-    if (!this.isModified('password')) return next();
+    // 1. Password hashing
+    if (this.isModified('password')) {
+        try {
+            const salt = await bcrypt.genSalt(10);
+            this.password = await bcrypt.hash(this.password, salt);
+        } catch (error) {
+            return next(error);
+        }
+    }
     
+    // 2. Sensitive fields encryption
     try {
-        const salt = await bcrypt.genSalt(10);
-        this.password = await bcrypt.hash(this.password, salt);
+        if (this.phone && !this.phone.startsWith('enc:')) {
+            this.phone = encryptText(this.phone);
+        }
+        if (this.dob && !this.dob.startsWith('enc:')) {
+            this.dob = encryptText(this.dob);
+        }
+        if (this.gender && !this.gender.startsWith('enc:')) {
+            this.gender = encryptText(this.gender);
+        }
+        if (this.category && !this.category.startsWith('enc:')) {
+            this.category = encryptText(this.category);
+        }
         next();
+    } catch (err) {
+        next(err);
+    }
+});
+
+// Decrypt sensitive fields when document is loaded/initialized from database
+userSchema.post('init', function(doc) {
+    try {
+        if (doc.phone) doc.phone = decryptText(doc.phone);
+        if (doc.dob) doc.dob = decryptText(doc.dob);
+        if (doc.gender) doc.gender = decryptText(doc.gender);
+        if (doc.category) doc.category = decryptText(doc.category);
     } catch (error) {
-        next(error);
+        console.error('Error decrypting initialized user fields:', error);
     }
 });
 

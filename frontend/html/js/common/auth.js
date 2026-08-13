@@ -116,7 +116,6 @@ document.getElementById('registerForm')?.addEventListener('submit', async (e) =>
 
     // Skip if required elements don't exist (page uses different form IDs)
     if (!nameEl || !emailEl || !passwordEl) {
-        console.warn('auth.js: Register form elements not found, skipping auth.js register handler.');
         return;
     }
 
