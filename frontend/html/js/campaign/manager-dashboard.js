@@ -50,15 +50,13 @@ async function loadManagerDashboardData(token) {
             displayModuleCompletions(data.recentActivity?.moduleCompletions || []);
         } else {
             console.error('Error fetching manager dashboard data:', data.message);
-            setTrendFallbacks();
         }
     } catch (error) {
         console.error('Failed to load manager dashboard:', error);
-        setTrendFallbacks();
     }
 }
 
-// Update performance metric counters and percentage trends
+// Update performance metric counters
 function updateDashboardStats(stats) {
     document.getElementById('totalEngagement').textContent =
         (stats.totalEngagement || 0).toLocaleString();
@@ -68,42 +66,6 @@ function updateDashboardStats(stats) {
         (stats.surveyResponses || 0).toLocaleString();
     document.getElementById('moduleComplete').textContent =
         (stats.moduleCompletions || 0).toLocaleString();
-
-    // Update dynamic percentage indicators from real MongoDB calculations
-    if (stats.trends) {
-        updateTrendBadge('totalEngagementTrend', stats.trends.totalEngagement);
-        updateTrendBadge('activeUsersTrend', stats.trends.activeUsers);
-        updateTrendBadge('surveyResponsesTrend', stats.trends.surveyResponses);
-        updateTrendBadge('moduleCompleteTrend', stats.trends.moduleCompletions);
-    } else {
-        setTrendFallbacks();
-    }
-}
-
-function updateTrendBadge(elementId, trendData) {
-    const el = document.getElementById(elementId);
-    if (!el) return;
-    if (!trendData || trendData.text === undefined || trendData.text === null) {
-        el.textContent = '--';
-        el.className = 'metric-trend positive';
-        return;
-    }
-    el.textContent = trendData.text;
-    if (trendData.isPositive) {
-        el.className = 'metric-trend positive';
-    } else {
-        el.className = 'metric-trend negative';
-    }
-}
-
-function setTrendFallbacks() {
-    ['totalEngagementTrend', 'activeUsersTrend', 'surveyResponsesTrend', 'moduleCompleteTrend'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) {
-            el.textContent = '--';
-            el.className = 'metric-trend positive';
-        }
-    });
 }
 
 // Display manager's campaigns
