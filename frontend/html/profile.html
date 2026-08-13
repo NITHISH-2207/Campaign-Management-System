@@ -635,7 +635,7 @@
 
                 <div class="form-group">
                     <label for="email">Email Address</label>
-                    <input type="email" id="email" class="form-input" placeholder="your.email@example.com" required>
+                    <input type="email" id="email" class="form-input" placeholder="your.email@example.com" readonly disabled style="opacity: 0.7; cursor: not-allowed; background: var(--medium-grey);">
                 </div>
 
                 <div class="form-row">
@@ -694,6 +694,13 @@
                         <i class="fas fa-undo"></i> Reset Changes
                     </button>
                 </div>
+
+                <!-- Delete Account Action -->
+                <div class="danger-zone-section" style="margin-top: 50px; padding-top: 30px; border-top: 1px solid rgba(229, 57, 53, 0.3); text-align: center;">
+                    <button type="button" class="btn btn-danger" onclick="openDeleteModalStep1()" style="background: linear-gradient(135deg, #e53935 0%, #c62828 100%); color: #ffffff; border: none; padding: 14px 35px; border-radius: 25px; font-weight: 600; font-size: 16px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 8px 25px rgba(229, 57, 53, 0.3); display: inline-flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-trash-alt"></i> Delete Account
+                    </button>
+                </div>
             </form>
         </div>
     </div>
@@ -705,7 +712,7 @@
             if (typeof API_URL !== 'undefined' && API_URL) return API_URL;
             const hostname = window.location.hostname;
             if (hostname === 'localhost' || hostname === '127.0.0.1') {
-                return 'http://localhost:5000/api';
+                return 'http://localhost:3000/api';
             }
             return 'https://campaign-management-system-zquy.onrender.com/api';
         }
@@ -886,9 +893,21 @@
         function displayProfilePhoto(photoData) {
             const photoDisplay = document.getElementById('photoDisplay');
             if (!photoDisplay) return;
+            if (!photoData) {
+                photoDisplay.className = 'photo-placeholder';
+                photoDisplay.style.padding = '';
+                photoDisplay.style.overflow = '';
+                photoDisplay.innerHTML = '<i class="fas fa-camera"></i>';
+                return;
+            }
             const resolvedUrl = resolveImageUrl(photoData);
-            photoDisplay.innerHTML = `<img src="${resolvedUrl}" alt="Profile Photo" class="profile-photo">`;
-            photoDisplay.className = 'photo-container';
+            photoDisplay.className = 'photo-placeholder';
+            photoDisplay.style.padding = '0';
+            photoDisplay.style.overflow = 'hidden';
+            photoDisplay.style.border = '5px solid var(--brown)';
+            photoDisplay.innerHTML = `
+                <img src="${resolvedUrl}" alt="Profile Photo" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null; this.parentElement.className='photo-placeholder'; this.parentElement.style.padding=''; this.parentElement.style.overflow=''; this.parentElement.innerHTML='<i class=\\'fas fa-camera\\'></i>';">
+            `;
         }
 
         // Update profile in MongoDB
@@ -1140,6 +1159,137 @@
             // Remove non-numeric characters except +, space, and hyphen
             this.value = this.value.replace(/[^0-9+\s-]/g, '');
         });
+
+        // Delete Account Modals & Deletion Execution
+        function openDeleteModalStep1() {
+            const modal1 = document.getElementById('deleteModalStep1');
+            if (modal1) modal1.style.display = 'flex';
+        }
+
+        function openDeleteModalStep2() {
+            const modal1 = document.getElementById('deleteModalStep1');
+            const modal2 = document.getElementById('deleteModalStep2');
+            if (modal1) modal1.style.display = 'none';
+            if (modal2) {
+                modal2.style.display = 'flex';
+                const pwdInput = document.getElementById('deleteConfirmPassword');
+                if (pwdInput) pwdInput.value = '';
+                const errDiv = document.getElementById('deleteErrorMsg');
+                if (errDiv) { errDiv.style.display = 'none'; errDiv.textContent = ''; }
+            }
+        }
+
+        function closeDeleteModals() {
+            const modal1 = document.getElementById('deleteModalStep1');
+            const modal2 = document.getElementById('deleteModalStep2');
+            if (modal1) modal1.style.display = 'none';
+            if (modal2) modal2.style.display = 'none';
+        }
+
+        async function executeAccountDeletion() {
+            const pwdInput = document.getElementById('deleteConfirmPassword');
+            const password = pwdInput ? pwdInput.value.trim() : '';
+            const errDiv = document.getElementById('deleteErrorMsg');
+            const deleteBtn = document.getElementById('confirmDeleteBtn');
+
+            if (!password) {
+                if (errDiv) {
+                    errDiv.textContent = 'Please enter your password.';
+                    errDiv.style.display = 'block';
+                }
+                return;
+            }
+
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            if (deleteBtn) {
+                deleteBtn.disabled = true;
+                deleteBtn.textContent = 'Deleting...';
+            }
+
+            try {
+                const response = await fetch(`${getApiBaseUrl()}/auth/delete-account`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    closeDeleteModals();
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    alert('Your account has been permanently deleted.');
+                    window.location.href = 'login.html';
+                } else {
+                    if (errDiv) {
+                        errDiv.textContent = data.message || 'Incorrect password. Account deletion failed.';
+                        errDiv.style.display = 'block';
+                    }
+                }
+            } catch (error) {
+                console.error('Error during account deletion:', error);
+                if (errDiv) {
+                    errDiv.textContent = 'Network or server error. Please try again.';
+                    errDiv.style.display = 'block';
+                }
+            } finally {
+                if (deleteBtn) {
+                    deleteBtn.disabled = false;
+                    deleteBtn.textContent = 'Permanently Delete Account';
+                }
+            }
+        }
     </script>
+    <!-- Delete Account Modal Step 1: Confirmation -->
+    <div id="deleteModalStep1" class="custom-modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); z-index: 9999; align-items: center; justify-content: center; padding: 20px;">
+        <div class="custom-modal-content" style="background: var(--dark-grey); border: 1px solid rgba(229, 57, 53, 0.4); border-radius: 25px; padding: 40px; max-width: 500px; width: 100%; text-align: center; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);">
+            <div style="width: 70px; height: 70px; border-radius: 50%; background: rgba(229, 57, 53, 0.15); color: #e53935; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 20px; border: 2px solid rgba(229, 57, 53, 0.3);">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3 style="color: var(--white); font-size: 22px; font-weight: 700; margin-bottom: 12px;">Delete Account</h3>
+            <p style="color: var(--lighter-grey); font-size: 15px; line-height: 1.6; margin-bottom: 25px;">
+                Are you sure you want to permanently delete your account?<br>
+                <strong style="color: #ff6b6b;">This action cannot be undone.</strong> Your account and associated data will be permanently deleted.
+            </p>
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <button type="button" class="btn btn-secondary" onclick="closeDeleteModals()">Cancel</button>
+                <button type="button" class="btn" onclick="openDeleteModalStep2()" style="background: linear-gradient(135deg, #e53935 0%, #c62828 100%); color: #ffffff; border: none; padding: 12px 25px; border-radius: 25px; font-weight: 600; cursor: pointer;">Continue / Delete Account</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Account Modal Step 2: Password Verification -->
+    <div id="deleteModalStep2" class="custom-modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); z-index: 9999; align-items: center; justify-content: center; padding: 20px;">
+        <div class="custom-modal-content" style="background: var(--dark-grey); border: 1px solid rgba(229, 57, 53, 0.4); border-radius: 25px; padding: 40px; max-width: 500px; width: 100%; text-align: center; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);">
+            <div style="width: 70px; height: 70px; border-radius: 50%; background: rgba(229, 57, 53, 0.15); color: #e53935; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 20px; border: 2px solid rgba(229, 57, 53, 0.3);">
+                <i class="fas fa-lock"></i>
+            </div>
+            <h3 style="color: var(--white); font-size: 22px; font-weight: 700; margin-bottom: 12px;">Confirm Password</h3>
+            <p style="color: var(--lighter-grey); font-size: 14px; margin-bottom: 20px;">
+                Enter your password to confirm account deletion.
+            </p>
+
+            <div id="deleteErrorMsg" style="display: none; background: rgba(229, 57, 53, 0.15); border: 1px solid rgba(229, 57, 53, 0.4); color: #ff6b6b; padding: 10px 15px; border-radius: 12px; font-size: 14px; margin-bottom: 18px;"></div>
+
+            <div style="margin-bottom: 25px; text-align: left;">
+                <label for="deleteConfirmPassword" style="display: block; color: var(--white); font-size: 13px; font-weight: 600; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">Password</label>
+                <input type="password" id="deleteConfirmPassword" class="form-input" placeholder="Enter your password" required style="width: 100%;">
+            </div>
+
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <button type="button" class="btn btn-secondary" onclick="closeDeleteModals()">Cancel</button>
+                <button type="button" id="confirmDeleteBtn" class="btn" onclick="executeAccountDeletion()" style="background: linear-gradient(135deg, #e53935 0%, #c62828 100%); color: #ffffff; border: none; padding: 12px 25px; border-radius: 25px; font-weight: 600; cursor: pointer;">Permanently Delete Account</button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

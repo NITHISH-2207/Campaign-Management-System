@@ -355,6 +355,11 @@ exports.getProfile = async (req, res) => {
 // Update user profile
 exports.updateProfile = async (req, res) => {
     try {
+        // STRICT PROTECTION: Email MUST NOT be updated through normal profile update endpoint
+        if (req.body && req.body.email !== undefined) {
+            delete req.body.email;
+        }
+
         const allowedUpdates = ['name', 'phone', 'location', 'organization', 'bio', 'interests', 'emailUpdates', 'profileImage'];
         const updates = {};
 
@@ -403,6 +408,101 @@ exports.updateProfile = async (req, res) => {
         res.status(500).json({
             success: false,
             message: error.message || 'Error updating profile'
+        });
+    }
+};
+
+// Permanently Delete Authenticated User Account
+exports.deleteAccount = async (req, res) => {
+    try {
+        const userId = req.user.id || req.user._id;
+        const { password } = req.body;
+
+        if (!password) {
+            return res.status(400).json({
+                success: false,
+                message: 'Password is required to confirm account deletion.'
+            });
+        }
+
+        // 1. Fetch authenticated user with password hash
+        const user = await User.findById(userId).select('+password');
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User account not found.'
+            });
+        }
+
+        // 2. Verify current password securely against stored hash
+        const isPasswordMatch = await user.comparePassword(password);
+        if (!isPasswordMatch) {
+            return res.status(401).json({
+                success: false,
+                message: 'Incorrect password. Account deletion cancelled.'
+            });
+        }
+
+        // 3. Clean up user's associated data across MongoDB collections
+
+        // Delete user's posts
+        await Post.deleteMany({ authorId: userId });
+
+        // Remove user references from post engagement arrays (likedBy, viewedBy, sharedBy)
+        await Post.updateMany(
+            { $or: [{ likedBy: userId }, { viewedBy: userId }, { sharedBy: userId }] },
+            {
+                $pull: {
+                    likedBy: userId,
+                    viewedBy: userId,
+                    sharedBy: userId
+                }
+            }
+        );
+
+        // Delete user's comments
+        try {
+            const Comment = require('../models/Comment');
+            if (Comment) {
+                await Comment.deleteMany({ authorId: userId });
+            }
+        } catch (e) {
+            console.warn('Comment cleanup notice:', e.message);
+        }
+
+        // Delete survey responses
+        await SurveyResponse.deleteMany({ $or: [{ user: userId }, { userId: userId }] });
+
+        // Delete learning module progress
+        await UserProgress.deleteMany({ userId: userId });
+
+        // Remove user from campaign participants
+        const joinedCampaigns = await Campaign.find({ participants: userId });
+        for (const campaign of joinedCampaigns) {
+            if (Array.isArray(campaign.participants)) {
+                campaign.participants = campaign.participants.filter(p => p.toString() !== userId.toString());
+                if (campaign.metrics) {
+                    campaign.metrics.totalParticipants = campaign.participants.length;
+                }
+                await campaign.save();
+            }
+        }
+
+        // If user is a campaign manager, deactivate manager's campaigns
+        await Campaign.updateMany({ managerId: userId }, { status: 'inactive' });
+
+        // 4. Permanently delete the User document
+        await User.findByIdAndDelete(userId);
+
+        res.json({
+            success: true,
+            message: 'Your account and associated data have been permanently deleted.'
+        });
+    } catch (error) {
+        console.error('Delete account error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'An error occurred while deleting your account. Please try again.'
         });
     }
 };
