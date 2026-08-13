@@ -28,6 +28,49 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: ''
     },
+    dob: {
+        type: String,
+        default: ''
+    },
+    gender: {
+        type: String,
+        enum: ['Male', 'Female', 'Others', 'Prefer not to say', ''],
+        default: ''
+    },
+    category: {
+        type: String,
+        enum: [
+            'School Student',
+            'College Student',
+            'Working Professional / Employee',
+            'Self-Employed',
+            'Entrepreneur / Business Owner',
+            'Government Employee',
+            'Teacher / Faculty',
+            'Researcher',
+            'Unemployed',
+            'Retired',
+            'Homemaker',
+            'Other',
+            'Prefer not to say',
+            ''
+        ],
+        default: ''
+    },
+    termsAccepted: {
+        type: Boolean,
+        default: false
+    },
+    termsAcceptedAt: {
+        type: Date
+    },
+    privacyPolicyAccepted: {
+        type: Boolean,
+        default: false
+    },
+    privacyPolicyAcceptedAt: {
+        type: Date
+    },
     location: {
         type: String,
         default: ''

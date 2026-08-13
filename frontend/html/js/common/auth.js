@@ -54,9 +54,10 @@ function getDashboardByRole(role) {
 document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const email = document.getElementById('loginEmail').value;
-    const password = document.getElementById('loginPassword').value;
-    const errorEl = document.getElementById('loginError');
+    const rawEmail = document.getElementById('loginEmail') ? document.getElementById('loginEmail').value : (document.getElementById('email') ? document.getElementById('email').value : '');
+    const email = rawEmail.trim().toLowerCase();
+    const password = document.getElementById('loginPassword') ? document.getElementById('loginPassword').value : (document.getElementById('password') ? document.getElementById('password').value : '');
+    const errorEl = document.getElementById('loginError') || document.getElementById('registerError');
     const submitBtn = e.target.querySelector('button[type="submit"]');
 
     // Disable submit button and show loading state

@@ -14,14 +14,58 @@ const generateToken = (user) => {
     );
 };
 
+const { encryptText, decryptText } = require('../services/encryptionService');
+
+// Helper to validate and normalize Indian Phone Numbers
+function validateAndNormalizeIndianPhone(phone) {
+    if (!phone) return '';
+    // Strip space, hyphens, parentheses
+    const cleaned = phone.toString().replace(/[\s\-\(\)]/g, '');
+    let digits = '';
+    if (cleaned.startsWith('+91')) {
+        digits = cleaned.slice(3);
+    } else if (cleaned.startsWith('91') && cleaned.length === 12) {
+        digits = cleaned.slice(2);
+    } else if (cleaned.startsWith('0') && cleaned.length === 11) {
+        digits = cleaned.slice(1);
+    } else {
+        digits = cleaned;
+    }
+    // Indian mobile numbers must be 10 digits starting with 6, 7, 8, or 9
+    const indianMobileRegex = /^[6-9]\d{9}$/;
+    if (!indianMobileRegex.test(digits)) {
+        return null; // Invalid
+    }
+    return `+91${digits}`;
+}
+
+// Helper to decrypt sensitive user fields before sending to client
+function sanitizeUserResponse(user) {
+    if (!user) return null;
+    const u = user.toObject ? user.toObject() : { ...user };
+    delete u.password;
+    
+    u.phone = decryptText(u.phone);
+    u.dob = decryptText(u.dob);
+    u.gender = decryptText(u.gender);
+    u.category = decryptText(u.category);
+    
+    return u;
+}
+
 exports.register = async (req, res) => {
     try {
-        const {
+        let {
             name,
             email,
             password,
             role,
             phone,
+            dob,
+            gender,
+            category,
+            termsAccepted,
+            privacyPolicyAccepted,
             location,
             organization,
             bio,
@@ -37,22 +81,112 @@ exports.register = async (req, res) => {
             });
         }
 
-        // Check if user already exists
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
+        // 1. Email Normalization & Validation
+        if (!email || typeof email !== 'string') {
             return res.status(400).json({
                 success: false,
-                message: 'An account with this email already exists. Please use a different email or sign in.'
+                message: 'A valid email address is required.'
+            });
+        }
+        const normalizedEmail = email.trim().toLowerCase();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(normalizedEmail)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid email address format.'
             });
         }
 
-        // Create new user with all fields
+        // 2. Terms & Privacy Acceptance Verification
+        if (termsAccepted !== true || privacyPolicyAccepted !== true) {
+            return res.status(400).json({
+                success: false,
+                message: 'You must agree to the Terms & Conditions and Privacy Policy to register.'
+            });
+        }
+
+        // 3. Indian Phone Number Validation & Normalization
+        let normalizedPhone = '';
+        if (phone) {
+            const validPhone = validateAndNormalizeIndianPhone(phone);
+            if (!validPhone) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Please enter a valid 10-digit Indian phone number starting with 6, 7, 8, or 9.'
+                });
+            }
+            normalizedPhone = validPhone;
+        }
+
+        // 4. DOB Validation
+        let validDob = '';
+        if (dob) {
+            const dobDate = new Date(dob);
+            const today = new Date();
+            if (isNaN(dobDate.getTime())) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Invalid Date of Birth provided.'
+                });
+            }
+            if (dobDate > today) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Date of Birth cannot be in the future.'
+                });
+            }
+            // Age check (at least 13 years old)
+            let age = today.getFullYear() - dobDate.getFullYear();
+            const monthDiff = today.getMonth() - dobDate.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dobDate.getDate())) {
+                age--;
+            }
+            if (age < 13) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'You must be at least 13 years old to register.'
+                });
+            }
+            validDob = dobDate.toISOString().split('T')[0];
+        }
+
+        // 5. Gender & Category Validation
+        const validGenders = ['Male', 'Female', 'Others', 'Prefer not to say', ''];
+        const selectedGender = validGenders.includes(gender) ? gender : '';
+
+        const validCategories = [
+            'School Student', 'College Student', 'Working Professional / Employee',
+            'Self-Employed', 'Entrepreneur / Business Owner', 'Government Employee',
+            'Teacher / Faculty', 'Researcher', 'Unemployed', 'Retired', 'Homemaker',
+            'Other', 'Prefer not to say', ''
+        ];
+        const selectedCategory = validCategories.includes(category) ? category : '';
+
+        // Check if user already exists with normalized email
+        const existingUser = await User.findOne({ email: normalizedEmail });
+        if (existingUser) {
+            return res.status(400).json({
+                success: false,
+                message: 'An account with this email already exists.'
+            });
+        }
+
+        const now = new Date();
+
+        // Create new user with encrypted sensitive fields
         const user = new User({
-            name,
-            email,
+            name: name ? name.trim() : '',
+            email: normalizedEmail,
             password,
             role: role || 'participant',
-            phone: phone || '',
+            phone: encryptText(normalizedPhone),
+            dob: encryptText(validDob),
+            gender: encryptText(selectedGender),
+            category: encryptText(selectedCategory),
+            termsAccepted: true,
+            termsAcceptedAt: now,
+            privacyPolicyAccepted: true,
+            privacyPolicyAcceptedAt: now,
             location: location || '',
             organization: organization || '',
             bio: bio || '',
@@ -73,7 +207,10 @@ exports.register = async (req, res) => {
                 name: user.name,
                 email: user.email,
                 role: user.role,
-                phone: user.phone,
+                phone: normalizedPhone,
+                dob: validDob,
+                gender: selectedGender,
+                category: selectedCategory,
                 location: user.location,
                 organization: user.organization,
                 bio: user.bio,
@@ -84,7 +221,6 @@ exports.register = async (req, res) => {
     } catch (error) {
         console.error('Registration error:', error);
 
-        // Handle validation errors
         if (error.name === 'ValidationError') {
             const messages = Object.values(error.errors).map(err => err.message);
             return res.status(400).json({
@@ -93,7 +229,6 @@ exports.register = async (req, res) => {
             });
         }
 
-        // Handle duplicate key errors
         if (error.code === 11000) {
             return res.status(400).json({
                 success: false,
@@ -110,7 +245,7 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        let { email, password } = req.body;
 
         // Validate input
         if (!email || !password) {
@@ -120,8 +255,10 @@ exports.login = async (req, res) => {
             });
         }
 
+        const normalizedEmail = email.trim().toLowerCase();
+
         // Find user and include password for comparison
-        const user = await User.findOne({ email }).select('+password');
+        const user = await User.findOne({ email: normalizedEmail }).select('+password');
 
         if (!user) {
             return res.status(401).json({
@@ -141,9 +278,8 @@ exports.login = async (req, res) => {
 
         const token = generateToken(user);
 
-        // Remove password from user object
-        const userObject = user.toObject();
-        delete userObject.password;
+        // Sanitize user object (decrypt sensitive fields)
+        const sanitizedUser = sanitizeUserResponse(user);
 
         res.json({
             success: true,
@@ -154,7 +290,10 @@ exports.login = async (req, res) => {
                 name: user.name,
                 email: user.email,
                 role: user.role,
-                phone: user.phone,
+                phone: sanitizedUser.phone,
+                dob: sanitizedUser.dob,
+                gender: sanitizedUser.gender,
+                category: sanitizedUser.category,
                 location: user.location,
                 organization: user.organization,
                 bio: user.bio,
@@ -311,6 +450,7 @@ exports.getProfile = async (req, res) => {
         ];
 
         const badgeCount = allBadges.filter(b => b.earned).length;
+        const sanitizedUser = sanitizeUserResponse(user);
 
         res.json({
             success: true,
@@ -319,7 +459,10 @@ exports.getProfile = async (req, res) => {
                 name: user.name,
                 email: user.email,
                 role: user.role,
-                phone: user.phone,
+                phone: sanitizedUser.phone,
+                dob: sanitizedUser.dob,
+                gender: sanitizedUser.gender,
+                category: sanitizedUser.category,
                 location: user.location,
                 organization: user.organization,
                 bio: user.bio,
@@ -360,14 +503,68 @@ exports.updateProfile = async (req, res) => {
             delete req.body.email;
         }
 
-        const allowedUpdates = ['name', 'phone', 'location', 'organization', 'bio', 'interests', 'emailUpdates', 'profileImage'];
         const updates = {};
 
-        allowedUpdates.forEach(field => {
-            if (req.body && req.body[field] !== undefined) {
-                updates[field] = req.body[field];
+        if (req.body) {
+            if (req.body.name !== undefined) updates.name = req.body.name.trim();
+            if (req.body.location !== undefined) updates.location = req.body.location;
+            if (req.body.organization !== undefined) updates.organization = req.body.organization;
+            if (req.body.bio !== undefined) updates.bio = req.body.bio;
+            if (req.body.interests !== undefined) updates.interests = req.body.interests;
+            if (req.body.emailUpdates !== undefined) updates.emailUpdates = req.body.emailUpdates;
+            if (req.body.profileImage !== undefined) updates.profileImage = req.body.profileImage;
+
+            // Phone update validation & encryption
+            if (req.body.phone !== undefined && req.body.phone !== '') {
+                const validPhone = validateAndNormalizeIndianPhone(req.body.phone);
+                if (!validPhone) {
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Please enter a valid 10-digit Indian phone number starting with 6, 7, 8, or 9.'
+                    });
+                }
+                updates.phone = encryptText(validPhone);
+            } else if (req.body.phone === '') {
+                updates.phone = '';
             }
-        });
+
+            // DOB update validation & encryption
+            if (req.body.dob !== undefined && req.body.dob !== '') {
+                const dobDate = new Date(req.body.dob);
+                const today = new Date();
+                if (isNaN(dobDate.getTime()) || dobDate > today) {
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Invalid Date of Birth.'
+                    });
+                }
+                const formattedDob = dobDate.toISOString().split('T')[0];
+                updates.dob = encryptText(formattedDob);
+            } else if (req.body.dob === '') {
+                updates.dob = '';
+            }
+
+            // Gender update validation & encryption
+            if (req.body.gender !== undefined) {
+                const validGenders = ['Male', 'Female', 'Others', 'Prefer not to say', ''];
+                if (validGenders.includes(req.body.gender)) {
+                    updates.gender = req.body.gender ? encryptText(req.body.gender) : '';
+                }
+            }
+
+            // Category update validation & encryption
+            if (req.body.category !== undefined) {
+                const validCategories = [
+                    'School Student', 'College Student', 'Working Professional / Employee',
+                    'Self-Employed', 'Entrepreneur / Business Owner', 'Government Employee',
+                    'Teacher / Faculty', 'Researcher', 'Unemployed', 'Retired', 'Homemaker',
+                    'Other', 'Prefer not to say', ''
+                ];
+                if (validCategories.includes(req.body.category)) {
+                    updates.category = req.body.category ? encryptText(req.body.category) : '';
+                }
+            }
+        }
 
         if (req.file) {
             updates.profileImage = '/uploads/profiles/' + req.file.filename;
@@ -386,6 +583,8 @@ exports.updateProfile = async (req, res) => {
             });
         }
 
+        const sanitizedUser = sanitizeUserResponse(user);
+
         res.json({
             success: true,
             message: 'Profile updated successfully',
@@ -394,7 +593,10 @@ exports.updateProfile = async (req, res) => {
                 name: user.name,
                 email: user.email,
                 role: user.role,
-                phone: user.phone,
+                phone: sanitizedUser.phone,
+                dob: sanitizedUser.dob,
+                gender: sanitizedUser.gender,
+                category: sanitizedUser.category,
                 location: user.location,
                 organization: user.organization,
                 bio: user.bio,

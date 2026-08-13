@@ -640,18 +640,59 @@
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="contact">Contact Number</label>
-                        <input type="tel" id="contact" class="form-input" placeholder="+91 98765 43210" pattern="[0-9+\s-]+" required>
+                        <label for="contact">Contact Number (Indian Mobile)</label>
+                        <div style="display: flex; gap: 8px;">
+                            <span style="background: var(--medium-grey); border: 2px solid rgba(139, 107, 74, 0.2); border-radius: 15px; padding: 15px 18px; color: var(--light-brown); font-weight: 600;">+91</span>
+                            <input type="tel" id="contact" class="form-input" placeholder="9876543210" maxlength="10" pattern="[6-9][0-9]{9}" required>
+                        </div>
                     </div>
+                    <div class="form-group">
+                        <label for="dob">Date of Birth</label>
+                        <input type="date" id="dob" class="form-input">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="gender">Gender</label>
+                        <select id="gender" class="form-input" style="background: var(--medium-grey); color: var(--white);">
+                            <option value="">Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Others">Others</option>
+                            <option value="Prefer not to say">Prefer not to say</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="category">User Category / Occupation</label>
+                        <select id="category" class="form-input" style="background: var(--medium-grey); color: var(--white);">
+                            <option value="">Select Category</option>
+                            <option value="School Student">School Student</option>
+                            <option value="College Student">College Student</option>
+                            <option value="Working Professional / Employee">Working Professional / Employee</option>
+                            <option value="Self-Employed">Self-Employed</option>
+                            <option value="Entrepreneur / Business Owner">Entrepreneur / Business Owner</option>
+                            <option value="Government Employee">Government Employee</option>
+                            <option value="Teacher / Faculty">Teacher / Faculty</option>
+                            <option value="Researcher">Researcher</option>
+                            <option value="Unemployed">Unemployed</option>
+                            <option value="Retired">Retired</option>
+                            <option value="Homemaker">Homemaker</option>
+                            <option value="Other">Other</option>
+                            <option value="Prefer not to say">Prefer not to say</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
                     <div class="form-group">
                         <label for="location">Location</label>
                         <input type="text" id="location" class="form-input" placeholder="City, Country">
                     </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="bio">Bio</label>
-                    <textarea id="bio" class="form-input" placeholder="Tell us about yourself and your passion for social change..."></textarea>
+                    <div class="form-group">
+                        <label for="bio">Bio</label>
+                        <textarea id="bio" class="form-input" style="min-height: 55px;" placeholder="Tell us about yourself and your passion for social change..."></textarea>
+                    </div>
                 </div>
 
                 <!-- Stats Section -->
@@ -734,6 +775,9 @@
             lastName: '',
             email: '',
             contact: '',
+            dob: '',
+            gender: '',
+            category: '',
             location: '',
             bio: '',
             photo: null,
@@ -780,7 +824,16 @@
                     profileData.firstName = nameParts[0] || '';
                     profileData.lastName = nameParts.slice(1).join(' ') || '';
                     profileData.email = user.email || '';
-                    profileData.contact = user.phone || '';
+                    
+                    // Strip +91 prefix for the 10-digit input box display
+                    let rawPhone = user.phone || '';
+                    if (rawPhone.startsWith('+91')) {
+                        rawPhone = rawPhone.slice(3);
+                    }
+                    profileData.contact = rawPhone;
+                    profileData.dob = user.dob || '';
+                    profileData.gender = user.gender || '';
+                    profileData.category = user.category || '';
                     profileData.location = user.location || '';
                     profileData.bio = user.bio || '';
                     profileData.photo = user.profileImage || null;
@@ -799,6 +852,9 @@
                     document.getElementById('lastName').value = profileData.lastName;
                     document.getElementById('email').value = profileData.email;
                     document.getElementById('contact').value = profileData.contact;
+                    if (document.getElementById('dob')) document.getElementById('dob').value = profileData.dob;
+                    if (document.getElementById('gender')) document.getElementById('gender').value = profileData.gender;
+                    if (document.getElementById('category')) document.getElementById('category').value = profileData.category;
                     document.getElementById('location').value = profileData.location;
                     document.getElementById('bio').value = profileData.bio;
 
@@ -920,10 +976,20 @@
                 return;
             }
 
+            const rawContact = document.getElementById('contact').value.trim();
+            const indianPhoneRegex = /^[6-9]\d{9}$/;
+            if (rawContact && !indianPhoneRegex.test(rawContact)) {
+                showMessage('Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9', 'error');
+                return;
+            }
+
             profileData.firstName = document.getElementById('firstName').value.trim();
             profileData.lastName = document.getElementById('lastName').value.trim();
             profileData.email = document.getElementById('email').value.trim();
-            profileData.contact = document.getElementById('contact').value.trim();
+            profileData.contact = rawContact ? `+91${rawContact}` : '';
+            profileData.dob = document.getElementById('dob') ? document.getElementById('dob').value : '';
+            profileData.gender = document.getElementById('gender') ? document.getElementById('gender').value : '';
+            profileData.category = document.getElementById('category') ? document.getElementById('category').value : '';
             profileData.location = document.getElementById('location').value.trim();
             profileData.bio = document.getElementById('bio').value.trim();
 
@@ -937,11 +1003,12 @@
             try {
                 let response;
                 if (photoFile) {
-                    // Send FormData when a physical file is selected.
-                    // IMPORTANT: Do NOT set Content-Type header manually for FormData!
                     const formData = new FormData();
                     formData.append('name', fullName);
                     formData.append('phone', profileData.contact);
+                    formData.append('dob', profileData.dob);
+                    formData.append('gender', profileData.gender);
+                    formData.append('category', profileData.category);
                     formData.append('location', profileData.location);
                     formData.append('bio', profileData.bio);
                     formData.append('profileImage', photoFile);
@@ -954,7 +1021,6 @@
                         body: formData
                     });
                 } else {
-                    // Send JSON when updating text fields
                     response = await fetch(`${getApiBaseUrl()}/auth/profile`, {
                         method: 'PUT',
                         headers: {
@@ -964,6 +1030,9 @@
                         body: JSON.stringify({
                             name: fullName,
                             phone: profileData.contact,
+                            dob: profileData.dob,
+                            gender: profileData.gender,
+                            category: profileData.category,
                             location: profileData.location,
                             bio: profileData.bio,
                             profileImage: profileData.photo
