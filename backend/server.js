@@ -111,6 +111,9 @@ const setupRoutes = () => {
         app.use('/api/campaigns', require('./routes/campaignRoutes'));
         console.log('✅ Campaign routes loaded');
         
+        app.use('/api/whatsapp', require('./routes/whatsappRoutes'));
+        console.log('✅ WhatsApp routes loaded');
+        
     } catch (error) {
         console.error('❌ Error loading routes:', error);
     }

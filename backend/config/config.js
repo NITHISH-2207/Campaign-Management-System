@@ -43,5 +43,13 @@ module.exports = {
     notifications: {
         enabled: process.env.ENABLE_NOTIFICATIONS !== 'false',
         cronSchedule: process.env.NOTIFICATION_CRON || '0 9 * * *' // 9 AM daily
+    },
+
+    // WhatsApp configuration
+    whatsapp: {
+        verifyToken: process.env.WHATSAPP_VERIFY_TOKEN,
+        accessToken: process.env.WHATSAPP_ACCESS_TOKEN,
+        phoneNumberId: process.env.WHATSAPP_PHONE_NUMBER_ID,
+        apiVersion: process.env.WHATSAPP_API_VERSION || 'v20.0'
     }
 };
