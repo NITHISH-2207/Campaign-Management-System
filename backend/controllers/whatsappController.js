@@ -41,6 +41,9 @@ const handleWebhook = async (req, res) => {
     try {
         const body = req.body;
 
+        console.log('📥 WhatsApp webhook POST received');
+        console.log('📦 Full WhatsApp webhook payload:', JSON.stringify(body, null, 2));
+
         // Verify object type is whatsapp_business_account
         if (body.object === 'whatsapp_business_account') {
             // Acknowledge receipt to Meta immediately (must return 200 within 3 seconds)
@@ -50,6 +53,8 @@ const handleWebhook = async (req, res) => {
             const entry = body.entry?.[0];
             const change = entry?.changes?.[0];
             const value = change?.value;
+
+            console.log('🔎 WhatsApp webhook value:', JSON.stringify(value, null, 2));
 
             // Check if payload contains messages
             if (value && value.messages && value.messages.length > 0) {
@@ -71,6 +76,8 @@ const handleWebhook = async (req, res) => {
                         console.error(`❌ Failed to send WhatsApp reply to ${fromNumber}:`, sendErr.message);
                     }
                 }
+            } else {
+                console.log('ℹ️ WhatsApp webhook received, but no messages array was found.');
             }
             return;
         } else {
