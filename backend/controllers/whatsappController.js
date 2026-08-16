@@ -139,66 +139,6 @@ const handleWebhook = async (req, res) => {
 
 /**
  * POST /api/whatsapp/send
- * Sends a WhatsApp text message using Meta Cloud API
- */
-const sendMessage = async (req, res) => {
-    try {
-        const { to, message } = req.body;
-
-        // Validate input
-        if (!to || !message) {
-            return res.status(400).json({
-                success: false,
-                error: 'Recipient phone number and message are required'
-            });
-        }
-
-        // Convert phone number to international format
-        // Example:
-        // +91 90921 32572
-        // becomes:
-        // 919092132572
-        const recipientNumber = String(to).replace(
-            /[+\s\-()]/g,
-            ''
-        );
-
-        console.log(
-            `📤 Sending WhatsApp message to ${recipientNumber}`
-        );
-
-        // Send through WhatsApp Cloud API
-        const result =
-            await whatsappService.sendTextMessage(
-                recipientNumber,
-                message
-            );
-
-        console.log(
-            `✅ WhatsApp message sent successfully to ${recipientNumber}`
-        );
-
-        return res.status(200).json({
-            success: true,
-            message: 'WhatsApp message sent successfully',
-            data: result
-        });
-
-    } catch (error) {
-        console.error(
-            '❌ WhatsApp send error:',
-            error.message
-        );
-
-        return res.status(500).json({
-            success: false,
-            error: error.message
-        });
-    }
-};
-
-/**
- * POST /api/whatsapp/send
  * Send a WhatsApp message using Meta Cloud API
  */
 const sendMessage = async (req, res) => {
