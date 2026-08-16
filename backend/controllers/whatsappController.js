@@ -1,4 +1,5 @@
 // backend/controllers/whatsappController.js
+
 const config = require('../config/config');
 const whatsappService = require('../services/whatsappService');
 
@@ -14,22 +15,31 @@ const verifyWebhook = (req, res) => {
         const token = req.query['hub.verify_token'];
         const challenge = req.query['hub.challenge'];
 
-        const verifyToken = config.whatsapp?.verifyToken || process.env.WHATSAPP_VERIFY_TOKEN;
+        const verifyToken =
+            config.whatsapp?.verifyToken ||
+            process.env.WHATSAPP_VERIFY_TOKEN;
 
         if (mode && token) {
             if (mode === 'subscribe' && token === verifyToken) {
                 console.log('✅ WhatsApp Webhook verified successfully');
                 return res.status(200).send(challenge);
             } else {
-                console.warn('⚠️ WhatsApp Webhook verification failed. Token mismatch.');
+                console.warn(
+                    '⚠️ WhatsApp Webhook verification failed. Token mismatch.'
+                );
                 return res.sendStatus(403);
             }
         }
 
-        return res.status(400).json({ error: 'Invalid verification request' });
+        return res.status(400).json({
+            error: 'Invalid verification request'
+        });
     } catch (error) {
         console.error('🔥 Error in verifyWebhook:', error);
-        return res.status(500).json({ error: 'Internal server error' });
+
+        return res.status(500).json({
+            error: 'Internal server error'
+        });
     }
 };
 
@@ -42,58 +52,153 @@ const handleWebhook = async (req, res) => {
         const body = req.body;
 
         console.log('📥 WhatsApp webhook POST received');
-        console.log('📦 Full WhatsApp webhook payload:', JSON.stringify(body, null, 2));
+        console.log(
+            '📦 Full WhatsApp webhook payload:',
+            JSON.stringify(body, null, 2)
+        );
 
-        // Verify object type is whatsapp_business_account
+        // Verify object type
         if (body.object === 'whatsapp_business_account') {
-            // Acknowledge receipt to Meta immediately (must return 200 within 3 seconds)
+
+            // Acknowledge Meta immediately
             res.status(200).send('EVENT_RECEIVED');
 
-            // Iterate over entries and changes
             const entry = body.entry?.[0];
             const change = entry?.changes?.[0];
             const value = change?.value;
 
-            console.log('🔎 WhatsApp webhook value:', JSON.stringify(value, null, 2));
+            console.log(
+                '🔎 WhatsApp webhook value:',
+                JSON.stringify(value, null, 2)
+            );
 
-            // Check if payload contains messages
-            if (value && value.messages && value.messages.length > 0) {
+            // Check for incoming messages
+            if (
+                value &&
+                value.messages &&
+                value.messages.length > 0
+            ) {
                 const message = value.messages[0];
-                const fromNumber = message.from; // Sender's phone number
+
+                const fromNumber = message.from;
                 const messageType = message.type;
 
-                console.log(`📩 Incoming WhatsApp message from ${fromNumber} (Type: ${messageType})`);
+                console.log(
+                    `📩 Incoming WhatsApp message from ${fromNumber} (Type: ${messageType})`
+                );
 
                 if (messageType === 'text') {
-                    const textBody = (message.text?.body || '').trim();
-                    console.log(`💬 Text content: "${textBody}"`);
+                    const textBody =
+                        (message.text?.body || '').trim();
 
-                    // Send welcome reply
+                    console.log(
+                        `💬 Text content: "${textBody}"`
+                    );
+
+                    // Send automatic welcome reply
                     try {
-                        await whatsappService.sendTextMessage(fromNumber, WELCOME_MESSAGE);
-                        console.log(`📤 Sent welcome response to ${fromNumber}`);
+                        await whatsappService.sendTextMessage(
+                            fromNumber,
+                            WELCOME_MESSAGE
+                        );
+
+                        console.log(
+                            `📤 Sent welcome response to ${fromNumber}`
+                        );
                     } catch (sendErr) {
-                        console.error(`❌ Failed to send WhatsApp reply to ${fromNumber}:`, sendErr.message);
+                        console.error(
+                            `❌ Failed to send WhatsApp reply to ${fromNumber}:`,
+                            sendErr.message
+                        );
                     }
                 }
             } else {
-                console.log('ℹ️ WhatsApp webhook received, but no messages array was found.');
+                console.log(
+                    'ℹ️ WhatsApp webhook received, but no messages array was found.'
+                );
             }
+
             return;
-        } else {
-            // Not a whatsapp business account event
-            return res.sendStatus(404);
         }
+
+        // Not a WhatsApp Business Account event
+        return res.sendStatus(404);
+
     } catch (error) {
-        console.error('🔥 Error in handleWebhook:', error);
-        // Always attempt to return 200 to prevent Meta retry loop if response hasn't been sent
+        console.error(
+            '🔥 Error in handleWebhook:',
+            error
+        );
+
+        // Prevent Meta retry loop
         if (!res.headersSent) {
             return res.status(200).send('EVENT_RECEIVED');
         }
     }
 };
 
+/**
+ * POST /api/whatsapp/send
+ * Sends a WhatsApp text message using Meta Cloud API
+ */
+const sendMessage = async (req, res) => {
+    try {
+        const { to, message } = req.body;
+
+        // Validate input
+        if (!to || !message) {
+            return res.status(400).json({
+                success: false,
+                error: 'Recipient phone number and message are required'
+            });
+        }
+
+        // Convert phone number to international format
+        // Example:
+        // +91 90921 32572
+        // becomes:
+        // 919092132572
+        const recipientNumber = String(to).replace(
+            /[+\s\-()]/g,
+            ''
+        );
+
+        console.log(
+            `📤 Sending WhatsApp message to ${recipientNumber}`
+        );
+
+        // Send through WhatsApp Cloud API
+        const result =
+            await whatsappService.sendTextMessage(
+                recipientNumber,
+                message
+            );
+
+        console.log(
+            `✅ WhatsApp message sent successfully to ${recipientNumber}`
+        );
+
+        return res.status(200).json({
+            success: true,
+            message: 'WhatsApp message sent successfully',
+            data: result
+        });
+
+    } catch (error) {
+        console.error(
+            '❌ WhatsApp send error:',
+            error.message
+        );
+
+        return res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+};
+
 module.exports = {
     verifyWebhook,
-    handleWebhook
+    handleWebhook,
+    sendMessage
 };
