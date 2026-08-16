@@ -197,6 +197,44 @@ const sendMessage = async (req, res) => {
     }
 };
 
+/**
+ * POST /api/whatsapp/send
+ * Send a WhatsApp message using Meta Cloud API
+ */
+const sendMessage = async (req, res) => {
+    try {
+        const { to, message } = req.body;
+
+        if (!to || !message) {
+            return res.status(400).json({
+                success: false,
+                error: 'to and message are required'
+            });
+        }
+
+        console.log(`📤 Sending WhatsApp message to ${to}`);
+
+        const result = await whatsappService.sendTextMessage(
+            to,
+            message
+        );
+
+        return res.status(200).json({
+            success: true,
+            message: 'WhatsApp message sent successfully',
+            data: result
+        });
+
+    } catch (error) {
+        console.error('❌ Failed to send WhatsApp message:', error);
+
+        return res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+};
+
 module.exports = {
     verifyWebhook,
     handleWebhook,
