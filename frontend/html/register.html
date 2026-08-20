@@ -44,12 +44,12 @@
 
         /* Override common.css button styles */
         button[type="submit"] {
-            background: var(--brown);
-            color: white;
+            background: var(--brown) !important;
+            color: white !important;
         }
 
         button[type="submit"]:hover {
-            background: var(--light-brown);
+            background: var(--light-brown) !important;
         }
 
         /* Left Registration Form Section */
@@ -84,6 +84,7 @@
             background: radial-gradient(circle, rgba(139, 107, 74, 0.1) 0%, transparent 70%);
             border-radius: 50%;
             transform: translate(50%, -50%);
+            pointer-events: none;
         }
 
         /* Progress Bar */
@@ -231,6 +232,7 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            user-select: none;
         }
 
         .account-type-card::before {
@@ -243,6 +245,7 @@
             background: radial-gradient(circle at top right, rgba(139, 107, 74, 0.1) 0%, transparent 50%);
             opacity: 0;
             transition: opacity 0.3s ease;
+            pointer-events: none;
         }
 
         .account-type-card:hover::before {
@@ -266,21 +269,25 @@
             font-size: 3rem;
             margin-bottom: 20px;
             display: block;
+            pointer-events: none;
         }
 
         .account-type-card h5 {
             color: var(--white);
             font-weight: 600;
             margin-bottom: 15px;
+            pointer-events: none;
         }
 
         .account-type-card p {
             color: var(--light-grey);
             margin-bottom: 20px;
+            pointer-events: none;
         }
 
         .account-type-card .features {
             text-align: left;
+            pointer-events: none;
         }
 
         .account-type-card .features i {
@@ -309,11 +316,11 @@
             margin-left: 5px;
         }
 
-        /* Buttons */
+        /* ChangeWave Gold/Brown Buttons Styling Override */
         .btn-primary {
-            background: var(--brown);
-            border: none;
-            color: var(--white);
+            background: var(--brown) !important;
+            border: none !important;
+            color: var(--white) !important;
             padding: 15px 30px;
             font-size: 1.1rem;
             font-weight: 600;
@@ -322,10 +329,24 @@
             box-shadow: 0 4px 15px rgba(139, 107, 74, 0.3);
         }
 
-        .btn-primary:hover {
-            background: var(--light-brown);
+        .btn-primary:hover,
+        .btn-primary:focus,
+        .btn-primary:active {
+            background: var(--light-brown) !important;
+            border: none !important;
+            color: var(--white) !important;
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(139, 107, 74, 0.4);
+        }
+
+        .btn-primary:disabled {
+            background: var(--brown) !important;
+            border: none !important;
+            color: var(--white) !important;
+            opacity: 0.85 !important;
+            cursor: wait !important;
+            box-shadow: none !important;
+            transform: none !important;
         }
 
         .btn-outline-secondary {
@@ -341,9 +362,9 @@
         }
 
         .btn-success {
-            background: var(--light-brown);
-            border: none;
-            color: var(--white);
+            background: var(--light-brown) !important;
+            border: none !important;
+            color: var(--white) !important;
             padding: 15px 30px;
             font-size: 1.1rem;
             font-weight: 600;
@@ -352,10 +373,24 @@
             box-shadow: 0 4px 15px rgba(166, 124, 82, 0.3);
         }
 
-        .btn-success:hover {
-            background: var(--brown);
+        .btn-success:hover,
+        .btn-success:focus,
+        .btn-success:active {
+            background: var(--brown) !important;
+            border: none !important;
+            color: var(--white) !important;
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(139, 107, 74, 0.4);
+        }
+
+        .btn-success:disabled {
+            background: var(--light-brown) !important;
+            border: none !important;
+            color: var(--white) !important;
+            opacity: 0.85 !important;
+            cursor: wait !important;
+            box-shadow: none !important;
+            transform: none !important;
         }
 
         /* Right Side - Features */
@@ -384,12 +419,9 @@
         }
 
         @keyframes float-bg {
-
-            0%,
-            100% {
+            0%, 100% {
                 transform: translate(0, 0);
             }
-
             50% {
                 transform: translate(-20px, 20px);
             }
@@ -553,7 +585,6 @@
                 opacity: 0;
                 transform: translateY(20px);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -565,7 +596,6 @@
             .features-section {
                 display: none;
             }
-
             .register-container {
                 max-width: 600px;
                 padding: 40px;
@@ -602,7 +632,6 @@
             from {
                 transform: rotate(0deg);
             }
-
             to {
                 transform: rotate(360deg);
             }
@@ -628,7 +657,7 @@
 
                     <!-- Registration Progress -->
                     <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width: 33%" id="progressBar"></div>
+                        <div class="progress-bar" role="progressbar" style="width: 25%" id="progressBar"></div>
                     </div>
 
                     <!-- Error/Success Messages -->
@@ -659,8 +688,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="account-type-card"
-                                        onclick="selectAccountType('campaign_manager', event)">
+                                    <div class="account-type-card" onclick="selectAccountType('campaign_manager', event)">
                                         <i class="fas fa-megaphone text-info"></i>
                                         <h5>Campaign Manager</h5>
                                         <p>Create and manage campaigns to drive social change</p>
@@ -689,8 +717,7 @@
                         <div class="registration-step" id="step2" style="display: none;">
                             <div class="selected-role-indicator" id="roleIndicator" style="display: none;">
                                 <div class="alert">
-                                    <i class="fas fa-info-circle"></i> Registering as: <strong
-                                        id="selectedRoleText"></strong>
+                                    <i class="fas fa-info-circle"></i> Registering as: <strong id="selectedRoleText"></strong>
                                 </div>
                             </div>
 
@@ -720,7 +747,6 @@
                                     <input type="email" class="form-control" id="email" name="email"
                                         placeholder="Enter your email" required>
                                 </div>
-
                             </div>
 
                             <div class="row mb-4">
@@ -759,9 +785,80 @@
                                 <button type="button" class="btn btn-outline-secondary btn-lg" onclick="prevStep(1)">
                                     <i class="fas fa-arrow-left"></i> Back
                                 </button>
-                                <button type="button" class="btn btn-primary btn-lg flex-fill" onclick="nextStep(3)">
+                                <button type="button" class="btn btn-primary btn-lg flex-fill" onclick="proceedToVerificationStep()">
                                     Continue <i class="fas fa-arrow-right"></i>
                                 </button>
+                            </div>
+                        </div>
+
+                        <!-- Step 2.5: Email Verification -->
+                        <div class="registration-step" id="step2_5" style="display: none;">
+                            <div class="selected-role-indicator" id="roleIndicatorOtp" style="display: none;">
+                                <div class="alert">
+                                    <i class="fas fa-info-circle"></i> Registering as: <strong id="selectedRoleTextOtp"></strong>
+                                </div>
+                            </div>
+
+                            <div class="step-header text-center mb-4">
+                                <h4><i class="fas fa-envelope-open-text text-warning me-2"></i> Verify Your Email</h4>
+                                <p class="text-muted mt-2 mb-0" style="font-size: 0.95rem;">
+                                    We've sent a 6-digit verification code to your email.
+                                </p>
+                            </div>
+
+                            <!-- Email Display Row (Email appears ONLY inside this box) -->
+                            <div class="mb-4">
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                    <input type="email" id="targetEmailDisplayInput" class="form-control text-light" style="background: var(--medium-grey); border-left: none; cursor: default; font-weight: 500;" readonly disabled>
+                                </div>
+                            </div>
+
+                            <!-- Alert Messages -->
+                            <div id="otpAlertError" class="alert alert-danger d-none"></div>
+                            <div id="otpAlertSuccess" class="alert alert-success d-none"></div>
+
+                            <!-- STATE 1: Initial State before sending code -->
+                            <div id="sendCodeSection" class="mb-3">
+                                <div class="d-grid mb-3">
+                                    <button type="button" id="btnSendOtp" class="btn btn-primary btn-lg" onclick="sendFirstRegistrationOtp()">
+                                        <i class="fas fa-paper-plane me-2"></i> Send Verification Code
+                                    </button>
+                                </div>
+                                <div class="text-center pt-2">
+                                    <button type="button" class="btn btn-link text-light p-0 text-decoration-none" onclick="changeRegistrationEmail()">
+                                        <i class="fas fa-edit me-1"></i> Change Email
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- STATE 2: Revealed after clicking "Send Verification Code" -->
+                            <div id="otpSection" style="display: none;">
+                                <!-- OTP Input Row -->
+                                <div class="mb-4">
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-key"></i></span>
+                                        <input type="text" class="form-control text-center fs-3 fw-bold text-white" id="otpInput" name="otpInput" placeholder="• • • • • •" maxlength="6" pattern="\d{6}" autocomplete="one-time-code" style="letter-spacing: 10px; background: var(--medium-grey);" required>
+                                    </div>
+                                    <div class="form-text text-center mt-2" style="color: var(--light-grey);">The code is valid for 10 minutes.</div>
+                                </div>
+
+                                <!-- Verify Email Button -->
+                                <div class="d-grid mb-4">
+                                    <button type="button" id="btnVerifyOtp" class="btn btn-primary btn-lg" onclick="verifyRegistrationOtp()">
+                                        <i class="fas fa-check-circle me-1"></i> Verify Email
+                                    </button>
+                                </div>
+
+                                <!-- Actions Row: Resend OTP (Left) & Change Email (Right) -->
+                                <div class="d-flex justify-content-between align-items-center pt-2">
+                                    <button type="button" id="btnResendOtp" class="btn btn-link text-warning p-0 text-decoration-none d-inline-flex align-items-center gap-1" onclick="resendRegistrationOtp()">
+                                        <i class="fas fa-redo me-1"></i> Resend OTP
+                                    </button>
+                                    <button type="button" class="btn btn-link text-light p-0 text-decoration-none d-inline-flex align-items-center gap-1" onclick="changeRegistrationEmail()">
+                                        <i class="fas fa-edit me-1"></i> Change Email
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
@@ -769,8 +866,7 @@
                         <div class="registration-step" id="step3" style="display: none;">
                             <div class="selected-role-indicator" id="roleIndicator2" style="display: none;">
                                 <div class="alert">
-                                    <i class="fas fa-info-circle"></i> Registering as: <strong
-                                        id="selectedRoleText2"></strong>
+                                    <i class="fas fa-info-circle"></i> Registering as: <strong id="selectedRoleText2"></strong>
                                 </div>
                             </div>
 
@@ -786,8 +882,7 @@
                                         <input type="tel" class="form-control" id="phone" name="phone"
                                             placeholder="9876543210" maxlength="10" pattern="[6-9][0-9]{9}" required>
                                     </div>
-                                    <div class="form-text text-secondary">Must be a valid 10-digit Indian mobile number
-                                    </div>
+                                    <div class="form-text text-secondary">Must be a valid 10-digit Indian mobile number</div>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="dob" class="form-label">Date of Birth *</label>
@@ -815,11 +910,9 @@
                                         <option value="">Select Occupation Category</option>
                                         <option value="School Student">School Student</option>
                                         <option value="College Student">College Student</option>
-                                        <option value="Working Professional / Employee">Working Professional / Employee
-                                        </option>
+                                        <option value="Working Professional / Employee">Working Professional / Employee</option>
                                         <option value="Self-Employed">Self-Employed</option>
-                                        <option value="Entrepreneur / Business Owner">Entrepreneur / Business Owner
-                                        </option>
+                                        <option value="Entrepreneur / Business Owner">Entrepreneur / Business Owner</option>
                                         <option value="Government Employee">Government Employee</option>
                                         <option value="Teacher / Faculty">Teacher / Faculty</option>
                                         <option value="Researcher">Researcher</option>
@@ -869,48 +962,39 @@
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input" type="checkbox" value="climate"
-                                                id="interest1">
+                                            <input class="form-check-input" type="checkbox" value="climate" id="interest1">
                                             <label class="form-check-label" for="interest1">Climate Action</label>
                                         </div>
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input" type="checkbox" value="health"
-                                                id="interest2">
+                                            <input class="form-check-input" type="checkbox" value="health" id="interest2">
                                             <label class="form-check-label" for="interest2">Health Awareness</label>
                                         </div>
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input" type="checkbox" value="education"
-                                                id="interest3">
+                                            <input class="form-check-input" type="checkbox" value="education" id="interest3">
                                             <label class="form-check-label" for="interest3">Education</label>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input" type="checkbox" value="social"
-                                                id="interest4">
+                                            <input class="form-check-input" type="checkbox" value="social" id="interest4">
                                             <label class="form-check-label" for="interest4">Social Justice</label>
                                         </div>
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input" type="checkbox" value="poverty"
-                                                id="interest5">
+                                            <input class="form-check-input" type="checkbox" value="poverty" id="interest5">
                                             <label class="form-check-label" for="interest5">Poverty Alleviation</label>
                                         </div>
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input" type="checkbox" value="animal"
-                                                id="interest6">
+                                            <input class="form-check-input" type="checkbox" value="animal" id="interest6">
                                             <label class="form-check-label" for="interest6">Animal Welfare</label>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input" type="checkbox" value="community"
-                                                id="interest7">
-                                            <label class="form-check-label" for="interest7">Community
-                                                Development</label>
+                                            <input class="form-check-input" type="checkbox" value="community" id="interest7">
+                                            <label class="form-check-label" for="interest7">Community Development</label>
                                         </div>
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input" type="checkbox" value="technology"
-                                                id="interest8">
+                                            <input class="form-check-input" type="checkbox" value="technology" id="interest8">
                                             <label class="form-check-label" for="interest8">Technology for Good</label>
                                         </div>
                                         <div class="form-check mb-2">
@@ -950,8 +1034,7 @@
 
                             <div class="mb-4">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="emailUpdates"
-                                        name="emailUpdates">
+                                    <input class="form-check-input" type="checkbox" id="emailUpdates" name="emailUpdates">
                                     <label class="form-check-label" for="emailUpdates">
                                         I want to receive email updates about campaigns and platform news
                                     </label>
@@ -981,8 +1064,7 @@
             <div class="col-lg-5 features-section d-none d-lg-block">
                 <div class="features-content">
                     <h1 class="mb-4">Start Your Impact Journey</h1>
-                    <p class="lead mb-5 text-light">Join thousands of changemakers creating viral campaigns for social
-                        good</p>
+                    <p class="lead mb-5 text-light">Join thousands of changemakers creating viral campaigns for social good</p>
 
                     <!-- Feature Cards -->
                     <div class="row g-4">
@@ -990,24 +1072,21 @@
                             <div class="feature-highlight">
                                 <i class="fas fa-rocket text-warning"></i>
                                 <h5>Launch Campaigns</h5>
-                                <p class="mb-0 small text-light">Create impactful campaigns with our easy-to-use tools
-                                </p>
+                                <p class="mb-0 small text-light">Create impactful campaigns with our easy-to-use tools</p>
                             </div>
                         </div>
                         <div class="col-12">
                             <div class="feature-highlight">
                                 <i class="fas fa-chart-bar text-info"></i>
                                 <h5>Track Impact</h5>
-                                <p class="mb-0 small text-light">Measure your real-world impact with advanced analytics
-                                </p>
+                                <p class="mb-0 small text-light">Measure your real-world impact with advanced analytics</p>
                             </div>
                         </div>
                         <div class="col-12">
                             <div class="feature-highlight">
                                 <i class="fas fa-users text-success"></i>
                                 <h5>Build Community</h5>
-                                <p class="mb-0 small text-light">Connect with like-minded people who share your passion
-                                </p>
+                                <p class="mb-0 small text-light">Connect with like-minded people who share your passion</p>
                             </div>
                         </div>
                     </div>
@@ -1037,6 +1116,8 @@
     <script src="js/common/location.js"></script>
     <script>
         let currentStep = 1;
+        let registrationVerificationToken = null;
+        let resendTimerInterval = null;
 
         // Toggle password visibility
         function togglePassword(inputId) {
@@ -1058,8 +1139,11 @@
         // Navigate to next step
         function nextStep(step) {
             if (validateCurrentStep()) {
-                document.getElementById(`step${currentStep}`).style.display = 'none';
-                document.getElementById(`step${step}`).style.display = 'block';
+                const currentElId = currentStep === 2.5 ? 'step2_5' : `step${currentStep}`;
+                const nextElId = step === 2.5 ? 'step2_5' : `step${step}`;
+
+                document.getElementById(currentElId).style.display = 'none';
+                document.getElementById(nextElId).style.display = 'block';
                 currentStep = step;
                 updateProgressBar();
 
@@ -1078,15 +1162,21 @@
 
         // Navigate to previous step
         function prevStep(step) {
-            document.getElementById(`step${currentStep}`).style.display = 'none';
-            document.getElementById(`step${step}`).style.display = 'block';
+            const currentElId = currentStep === 2.5 ? 'step2_5' : `step${currentStep}`;
+            const prevElId = step === 2.5 ? 'step2_5' : `step${step}`;
+
+            document.getElementById(currentElId).style.display = 'none';
+            document.getElementById(prevElId).style.display = 'block';
             currentStep = step;
             updateProgressBar();
         }
 
         // Update progress bar
         function updateProgressBar() {
-            const progress = (currentStep / 3) * 100;
+            let progress = 25;
+            if (currentStep === 2) progress = 50;
+            else if (currentStep === 2.5) progress = 75;
+            else if (currentStep === 3) progress = 100;
             document.getElementById('progressBar').style.width = progress + '%';
         }
 
@@ -1097,6 +1187,8 @@
                     return validateStep1();
                 case 2:
                     return validateStep2();
+                case 2.5:
+                    return registrationVerificationToken !== null;
                 case 3:
                     return validateStep3();
                 default:
@@ -1200,25 +1292,33 @@
             return true;
         }
 
-        // Select account type with event parameter fix
+        // Robust selectAccountType function
         function selectAccountType(type, event) {
-            // Remove active class from all cards
+            // Remove selected class from all account type cards
             document.querySelectorAll('.account-type-card').forEach(card => {
                 card.classList.remove('selected');
             });
 
-            // Add active class to clicked card
-            if (event && event.currentTarget) {
-                event.currentTarget.classList.add('selected');
+            // Find closest account-type-card container regardless of inner element clicked
+            let cardElement = null;
+            if (event && event.target) {
+                cardElement = event.target.closest('.account-type-card');
+            }
+            if (!cardElement && event && event.currentTarget) {
+                cardElement = event.currentTarget;
+            }
+            if (cardElement) {
+                cardElement.classList.add('selected');
             }
 
-            // Set the account type value
+            // Set the accountType hidden input value
             document.getElementById('accountType').value = type;
 
-            // Update role indicator for next steps
+            // Update role indicator across all steps
             const roleText = type === 'campaign_manager' ? 'Campaign Manager' : 'Participant';
-            document.getElementById('selectedRoleText').textContent = roleText;
-            document.getElementById('selectedRoleText2').textContent = roleText;
+            if (document.getElementById('selectedRoleText')) document.getElementById('selectedRoleText').textContent = roleText;
+            if (document.getElementById('selectedRoleText2')) document.getElementById('selectedRoleText2').textContent = roleText;
+            if (document.getElementById('selectedRoleTextOtp')) document.getElementById('selectedRoleTextOtp').textContent = roleText;
         }
 
         // Show alert messages
@@ -1226,26 +1326,258 @@
             const alertDiv = type === 'danger' ? document.getElementById('registerError') : document.getElementById('registerSuccess');
             const otherDiv = type === 'danger' ? document.getElementById('registerSuccess') : document.getElementById('registerError');
 
-            alertDiv.textContent = message;
-            alertDiv.classList.remove('d-none');
-            otherDiv.classList.add('d-none');
+            if (alertDiv && otherDiv) {
+                alertDiv.textContent = message;
+                alertDiv.classList.remove('d-none');
+                otherDiv.classList.add('d-none');
 
-            // Scroll to top to show message
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+                // Scroll to top to show message
+                window.scrollTo({ top: 0, behavior: 'smooth' });
 
-            setTimeout(() => {
-                alertDiv.classList.add('d-none');
-            }, 5000);
+                setTimeout(() => {
+                    alertDiv.classList.add('d-none');
+                }, 6000);
+            }
         }
 
-        // Helper function to resolve API URL
+        // Helper function to resolve API URL cleanly (Check local hostname first)
         function getApiUrl() {
-            if (typeof API_URL !== 'undefined' && API_URL) return API_URL;
             const hostname = window.location.hostname;
-            if (hostname === 'localhost' || hostname === '127.0.0.1') {
+            if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '' || hostname.startsWith('192.168.') || hostname.startsWith('10.')) {
                 return 'http://localhost:3000/api';
             }
+            if (typeof API_URL !== 'undefined' && API_URL) return API_URL;
             return 'https://campaign-management-system-zquy.onrender.com/api';
+        }
+
+        // Called on Page 2 "Continue" click: Validates & opens Page 3 (Does NOT send OTP yet)
+        function proceedToVerificationStep() {
+            if (!validateStep2()) {
+                return;
+            }
+
+            const email = document.getElementById('email').value.trim().toLowerCase();
+            const role = document.getElementById('accountType').value || 'participant';
+
+            if (document.getElementById('targetEmailDisplayInput')) {
+                document.getElementById('targetEmailDisplayInput').value = email;
+            }
+
+            // Ensure Step 2.5 is in State 1 (Initial state before sending code)
+            if (document.getElementById('sendCodeSection')) {
+                document.getElementById('sendCodeSection').style.display = 'block';
+            }
+            if (document.getElementById('otpSection')) {
+                document.getElementById('otpSection').style.display = 'none';
+            }
+            if (document.getElementById('otpAlertError')) {
+                document.getElementById('otpAlertError').classList.add('d-none');
+            }
+            if (document.getElementById('otpAlertSuccess')) {
+                document.getElementById('otpAlertSuccess').classList.add('d-none');
+            }
+
+            document.getElementById('step2').style.display = 'none';
+            document.getElementById('step2_5').style.display = 'block';
+            currentStep = 2.5;
+            updateProgressBar();
+
+            const roleText = role === 'campaign_manager' ? 'Campaign Manager' : 'Participant';
+            if (document.getElementById('selectedRoleTextOtp')) {
+                document.getElementById('selectedRoleTextOtp').textContent = roleText;
+            }
+            if (document.getElementById('roleIndicatorOtp')) {
+                document.getElementById('roleIndicatorOtp').style.display = 'block';
+            }
+        }
+
+        // Triggered when user clicks "Send Verification Code" on Page 3
+        async function sendFirstRegistrationOtp() {
+            if (!validateStep2()) {
+                changeRegistrationEmail();
+                return;
+            }
+
+            const sendBtn = document.getElementById('btnSendOtp');
+            const originalBtnText = sendBtn ? sendBtn.innerHTML : '<i class="fas fa-paper-plane me-2"></i> Send Verification Code';
+            if (sendBtn) {
+                sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Sending Code...';
+                sendBtn.disabled = true;
+            }
+
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const email = document.getElementById('email').value.trim().toLowerCase();
+            const password = document.getElementById('password').value;
+            const role = document.getElementById('accountType').value || 'participant';
+
+            try {
+                const response = await fetch(`${getApiUrl()}/auth/send-registration-otp`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ firstName, lastName, email, password, role })
+                });
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    showOtpAlert('Verification code sent successfully to your email.', 'success');
+
+                    // Transition to State 2 (Reveal OTP Section)
+                    document.getElementById('sendCodeSection').style.display = 'none';
+                    document.getElementById('otpSection').style.display = 'block';
+                    document.getElementById('otpInput').value = '';
+
+                    setTimeout(() => document.getElementById('otpInput').focus(), 300);
+                } else {
+                    showOtpAlert(data.message || 'Failed to send verification code.', 'danger');
+                }
+            } catch (error) {
+                console.error('Error requesting OTP:', error);
+                showOtpAlert('Network error while sending verification code. Please try again.', 'danger');
+            } finally {
+                if (sendBtn) {
+                    sendBtn.innerHTML = originalBtnText;
+                    sendBtn.disabled = false;
+                }
+            }
+        }
+
+        // OTP Verification handler
+        async function verifyRegistrationOtp() {
+            const email = document.getElementById('email').value.trim().toLowerCase();
+            const otp = document.getElementById('otpInput').value.trim();
+
+            if (!otp || otp.length !== 6 || !/^\d{6}$/.test(otp)) {
+                showOtpAlert('Please enter a valid 6-digit verification code.', 'danger');
+                return;
+            }
+
+            const verifyBtn = document.getElementById('btnVerifyOtp');
+            const originalText = verifyBtn ? verifyBtn.innerHTML : '<i class="fas fa-check-circle me-1"></i> Verify Email';
+            if (verifyBtn) {
+                verifyBtn.innerHTML = 'Verifying... <i class="fas fa-spinner fa-spin ms-1"></i>';
+                verifyBtn.disabled = true;
+            }
+
+            try {
+                const response = await fetch(`${getApiUrl()}/auth/verify-registration-otp`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, otp })
+                });
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    registrationVerificationToken = data.verificationToken;
+                    showOtpAlert('Email verified successfully!', 'success');
+
+                    setTimeout(() => {
+                        document.getElementById('step2_5').style.display = 'none';
+                        document.getElementById('step3').style.display = 'block';
+                        currentStep = 3;
+                        updateProgressBar();
+
+                        const roleText = (document.getElementById('accountType').value === 'campaign_manager') ? 'Campaign Manager' : 'Participant';
+                        document.getElementById('selectedRoleText2').textContent = roleText;
+                        document.getElementById('roleIndicator2').style.display = 'block';
+
+                        if (document.getElementById('accountType').value === 'campaign_manager') {
+                            document.getElementById('campaignManagerFields').style.display = 'block';
+                        }
+                    }, 600);
+                } else {
+                    showOtpAlert(data.message || 'Invalid verification code.', 'danger');
+                }
+            } catch (error) {
+                console.error('Error verifying OTP:', error);
+                showOtpAlert('Network error during verification. Please try again.', 'danger');
+            } finally {
+                if (verifyBtn) {
+                    verifyBtn.innerHTML = originalText;
+                    verifyBtn.disabled = false;
+                }
+            }
+        }
+
+        // Resend OTP handler
+        async function resendRegistrationOtp() {
+            const email = document.getElementById('email').value.trim().toLowerCase();
+            const resendBtn = document.getElementById('btnResendOtp');
+
+            if (resendBtn.disabled) return;
+
+            resendBtn.disabled = true;
+            let secondsLeft = 30;
+            resendBtn.innerHTML = `<i class="fas fa-spinner fa-spin me-1"></i> Resending (${secondsLeft}s)...`;
+
+            try {
+                const response = await fetch(`${getApiUrl()}/auth/resend-registration-otp`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    showOtpAlert('New verification code sent successfully to your email.', 'success');
+                } else {
+                    showOtpAlert(data.message || 'Failed to resend code.', 'danger');
+                }
+            } catch (error) {
+                console.error('Error resending OTP:', error);
+                showOtpAlert('Network error while resending code. Please try again.', 'danger');
+            }
+
+            if (resendTimerInterval) clearInterval(resendTimerInterval);
+            resendTimerInterval = setInterval(() => {
+                secondsLeft--;
+                if (secondsLeft <= 0) {
+                    clearInterval(resendTimerInterval);
+                    resendBtn.disabled = false;
+                    resendBtn.innerHTML = '<i class="fas fa-redo me-1"></i> Resend OTP';
+                } else {
+                    resendBtn.innerHTML = `<i class="fas fa-clock me-1"></i> Wait ${secondsLeft}s`;
+                }
+            }, 1000);
+        }
+
+        // Change Email handler
+        function changeRegistrationEmail() {
+            document.getElementById('step2_5').style.display = 'none';
+            document.getElementById('step2').style.display = 'block';
+            currentStep = 2;
+            updateProgressBar();
+            registrationVerificationToken = null;
+
+            // Reset Step 2.5 back to State 1
+            if (document.getElementById('sendCodeSection')) {
+                document.getElementById('sendCodeSection').style.display = 'block';
+            }
+            if (document.getElementById('otpSection')) {
+                document.getElementById('otpSection').style.display = 'none';
+            }
+
+            const emailInput = document.getElementById('email');
+            if (emailInput) {
+                emailInput.focus();
+                emailInput.select();
+            }
+        }
+
+        // Show OTP specific alerts
+        function showOtpAlert(message, type) {
+            const alertDiv = type === 'danger' ? document.getElementById('otpAlertError') : document.getElementById('otpAlertSuccess');
+            const otherDiv = type === 'danger' ? document.getElementById('otpAlertSuccess') : document.getElementById('otpAlertError');
+
+            if (alertDiv && otherDiv) {
+                alertDiv.textContent = message;
+                alertDiv.classList.remove('d-none');
+                otherDiv.classList.add('d-none');
+
+                setTimeout(() => {
+                    alertDiv.classList.add('d-none');
+                }, 6000);
+            }
         }
 
         // Form submission
@@ -1256,11 +1588,18 @@
                 return;
             }
 
+            if (!registrationVerificationToken) {
+                showAlert('Please verify your email address before completing registration.', 'danger');
+                return;
+            }
+
             // Show loading state
             const submitBtn = e.target.querySelector('button[type="submit"]');
-            const originalText = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
-            submitBtn.disabled = true;
+            const originalText = submitBtn ? submitBtn.innerHTML : '<i class="fas fa-user-plus"></i> Create Account';
+            if (submitBtn) {
+                submitBtn.innerHTML = 'Creating Account... <i class="fas fa-spinner fa-spin ms-1"></i>';
+                submitBtn.disabled = true;
+            }
 
             // Collect form data
             const formData = new FormData(this);
@@ -1273,12 +1612,10 @@
                 }
             });
 
-            // Build user data object with normalized fields
+            // Build user data object
             const userData = {
-                name: `${formData.get('firstName').trim()} ${formData.get('lastName').trim()}`,
                 email: formData.get('email').trim().toLowerCase(),
-                password: formData.get('password'),
-                role: formData.get('role'),
+                verificationToken: registrationVerificationToken,
                 phone: `+91${formData.get('phone').trim()}`,
                 dob: formData.get('dob'),
                 gender: formData.get('gender'),
@@ -1308,6 +1645,7 @@
 
                     // Clear form
                     this.reset();
+                    registrationVerificationToken = null;
 
                     // Redirect to login after 2 seconds
                     setTimeout(() => {
@@ -1320,9 +1658,10 @@
                 console.error('Registration error:', error);
                 showAlert('An error occurred during registration. Please try again.', 'danger');
             } finally {
-                // Reset button state
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
+                if (submitBtn) {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
             }
         });
 
@@ -1385,7 +1724,6 @@
         // Add keyboard navigation
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Tab') {
-                // Allow normal tab behavior
                 return;
             }
 

@@ -1,10 +1,14 @@
 const User = require('../models/User');
+const PendingRegistration = require('../models/PendingRegistration');
 const Campaign = require('../models/Campaign');
 const Post = require('../models/Post');
 const SurveyResponse = require('../models/SurveyResponse');
 const UserProgress = require('../models/UserProgress');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 const config = require('../config/config');
+const otpEmailService = require('../services/otpEmailService');
 
 const generateToken = (user) => {
     return jwt.sign(
@@ -53,13 +57,221 @@ function sanitizeUserResponse(user) {
     return u;
 }
 
+// Send Registration OTP
+exports.sendRegistrationOtp = async (req, res) => {
+    try {
+        const { firstName, lastName, email, password, role } = req.body;
+
+        if (!firstName || !lastName || !email || !password) {
+            return res.status(400).json({
+                success: false,
+                message: 'First name, last name, email, and password are required.'
+            });
+        }
+
+        const normalizedEmail = email.trim().toLowerCase();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(normalizedEmail)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Please enter a valid email address.'
+            });
+        }
+
+        if (password.length < 8) {
+            return res.status(400).json({
+                success: false,
+                message: 'Password must be at least 8 characters long.'
+            });
+        }
+        const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*])/;
+        if (!passwordRegex.test(password)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Password must contain at least one number and one special character.'
+            });
+        }
+
+        // Email Uniqueness Check across User collection
+        const existingUser = await User.findOne({ email: normalizedEmail });
+        if (existingUser) {
+            return res.status(400).json({
+                success: false,
+                message: 'This email is already registered. Please use another email or sign in.'
+            });
+        }
+
+        // Generate 6-digit OTP
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        const salt = await bcrypt.genSalt(10);
+        const otpHash = await bcrypt.hash(otp, salt);
+        const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+        const encryptedPassword = encryptText(password);
+        const selectedRole = ['campaign_manager', 'participant'].includes(role) ? role : 'participant';
+
+        await PendingRegistration.findOneAndUpdate(
+            { email: normalizedEmail },
+            {
+                email: normalizedEmail,
+                firstName: firstName.trim(),
+                lastName: lastName.trim(),
+                encryptedPassword,
+                role: selectedRole,
+                otpHash,
+                otpExpiresAt,
+                isVerified: false,
+                verificationToken: null,
+                resendAttempts: 0,
+                lastResendAt: new Date(),
+                createdAt: new Date()
+            },
+            { upsert: true, new: true }
+        );
+
+        // Send OTP Email via dedicated service
+        await otpEmailService.sendOTPEmail(normalizedEmail, otp);
+
+        res.status(200).json({
+            success: true,
+            message: 'Verification code sent successfully.',
+            email: normalizedEmail
+        });
+    } catch (error) {
+        console.error('Error sending registration OTP:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message || 'Failed to send verification email. Please try again.'
+        });
+    }
+};
+
+// Verify Registration OTP
+exports.verifyRegistrationOtp = async (req, res) => {
+    try {
+        const { email, otp } = req.body;
+
+        if (!email || !otp) {
+            return res.status(400).json({
+                success: false,
+                message: 'Email and verification code are required.'
+            });
+        }
+
+        const normalizedEmail = email.trim().toLowerCase();
+        const pending = await PendingRegistration.findOne({ email: normalizedEmail });
+
+        if (!pending) {
+            return res.status(400).json({
+                success: false,
+                message: 'No pending verification found. Please request a new verification code.'
+            });
+        }
+
+        if (pending.otpExpiresAt < new Date()) {
+            return res.status(400).json({
+                success: false,
+                message: 'Verification code has expired. Please click Resend OTP to get a new code.'
+            });
+        }
+
+        const isMatch = await bcrypt.compare(otp.trim(), pending.otpHash);
+        if (!isMatch) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid verification code.'
+            });
+        }
+
+        const verificationToken = crypto.randomBytes(32).toString('hex');
+        pending.isVerified = true;
+        pending.verificationToken = verificationToken;
+        await pending.save();
+
+        res.status(200).json({
+            success: true,
+            message: 'Email verified successfully.',
+            verificationToken
+        });
+    } catch (error) {
+        console.error('Error verifying OTP:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to verify code. Please try again.'
+        });
+    }
+};
+
+// Resend Registration OTP
+exports.resendRegistrationOtp = async (req, res) => {
+    try {
+        const { email } = req.body;
+        if (!email) {
+            return res.status(400).json({
+                success: false,
+                message: 'Email address is required.'
+            });
+        }
+
+        const normalizedEmail = email.trim().toLowerCase();
+        const pending = await PendingRegistration.findOne({ email: normalizedEmail });
+
+        if (!pending) {
+            return res.status(400).json({
+                success: false,
+                message: 'No registration session found. Please start registration again.'
+            });
+        }
+
+        const now = new Date();
+        const timeSinceLastResend = (now - new Date(pending.lastResendAt)) / 1000;
+        if (timeSinceLastResend < 30) {
+            const waitTime = Math.ceil(30 - timeSinceLastResend);
+            return res.status(429).json({
+                success: false,
+                message: `Please wait ${waitTime} seconds before requesting a new verification code.`
+            });
+        }
+
+        if (pending.resendAttempts >= 5) {
+            return res.status(429).json({
+                success: false,
+                message: 'Too many verification attempts. Please try again later.'
+            });
+        }
+
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        const salt = await bcrypt.genSalt(10);
+        const otpHash = await bcrypt.hash(otp, salt);
+
+        pending.otpHash = otpHash;
+        pending.otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
+        pending.resendAttempts += 1;
+        pending.lastResendAt = now;
+        pending.isVerified = false;
+        pending.verificationToken = null;
+        await pending.save();
+
+        await otpEmailService.sendOTPEmail(normalizedEmail, otp);
+
+        res.status(200).json({
+            success: true,
+            message: 'New verification code sent.'
+        });
+    } catch (error) {
+        console.error('Error resending OTP:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to resend verification code. Please try again.'
+        });
+    }
+};
+
 exports.register = async (req, res) => {
     try {
         let {
-            name,
             email,
-            password,
-            role,
+            verificationToken,
             phone,
             dob,
             gender,
@@ -73,15 +285,6 @@ exports.register = async (req, res) => {
             emailUpdates
         } = req.body;
 
-        // Prevent public creation of Admin accounts
-        if (role === 'admin') {
-            return res.status(403).json({
-                success: false,
-                message: 'Admin accounts cannot be created publicly.'
-            });
-        }
-
-        // 1. Email Normalization & Validation
         if (!email || typeof email !== 'string') {
             return res.status(400).json({
                 success: false,
@@ -89,11 +292,37 @@ exports.register = async (req, res) => {
             });
         }
         const normalizedEmail = email.trim().toLowerCase();
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(normalizedEmail)) {
+
+        if (!verificationToken) {
             return res.status(400).json({
                 success: false,
-                message: 'Invalid email address format.'
+                message: 'Email verification is required before completing registration.'
+            });
+        }
+
+        // Server-side verification check
+        const pending = await PendingRegistration.findOne({
+            email: normalizedEmail,
+            verificationToken: verificationToken,
+            isVerified: true
+        });
+
+        if (!pending) {
+            return res.status(400).json({
+                success: false,
+                message: 'Email verification required. Please verify your email before continuing.'
+            });
+        }
+
+        const name = `${pending.firstName} ${pending.lastName}`.trim();
+        const plainPassword = decryptText(pending.encryptedPassword);
+        const role = pending.role;
+
+        // Prevent public creation of Admin accounts
+        if (role === 'admin') {
+            return res.status(403).json({
+                success: false,
+                message: 'Admin accounts cannot be created publicly.'
             });
         }
 
@@ -135,7 +364,6 @@ exports.register = async (req, res) => {
                     message: 'Date of Birth cannot be in the future.'
                 });
             }
-            // Age check (at least 13 years old)
             let age = today.getFullYear() - dobDate.getFullYear();
             const monthDiff = today.getMonth() - dobDate.getMonth();
             if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dobDate.getDate())) {
@@ -167,18 +395,18 @@ exports.register = async (req, res) => {
         if (existingUser) {
             return res.status(400).json({
                 success: false,
-                message: 'An account with this email already exists.'
+                message: 'This email is already registered. Please use another email or sign in.'
             });
         }
 
         const now = new Date();
 
-        // Create new user with plaintext fields (encryption occurs in pre-save hook)
+        // Create new user (password is hashed in User pre-save hook)
         const user = new User({
-            name: name ? name.trim() : '',
+            name,
             email: normalizedEmail,
-            password,
-            role: role || 'participant',
+            password: plainPassword,
+            role,
             phone: normalizedPhone,
             dob: validDob,
             gender: selectedGender,
@@ -195,6 +423,9 @@ exports.register = async (req, res) => {
         });
 
         await user.save();
+
+        // Clean up pending registration record
+        await PendingRegistration.deleteOne({ email: normalizedEmail });
 
         const token = generateToken(user);
 
@@ -219,6 +450,7 @@ exports.register = async (req, res) => {
             }
         });
     } catch (error) {
+
         console.error('Registration error:', error);
 
         if (error.name === 'ValidationError') {

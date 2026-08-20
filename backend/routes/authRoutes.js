@@ -39,6 +39,9 @@ const upload = multer({
 });
 
 // Public routes
+router.post('/send-registration-otp', authController.sendRegistrationOtp);
+router.post('/verify-registration-otp', authController.verifyRegistrationOtp);
+router.post('/resend-registration-otp', authController.resendRegistrationOtp);
 router.post('/register', validateRegistration, authController.register);
 router.post('/login', validateLogin, authController.login);
 

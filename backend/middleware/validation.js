@@ -1,11 +1,6 @@
 const validateRegistration = (req, res, next) => {
-    const { name, email, password, role } = req.body;
+    const { name, email, password, role, verificationToken } = req.body;
     const errors = [];
-    
-    // Name validation
-    if (!name || name.trim().length < 2) {
-        errors.push('Name must be at least 2 characters long');
-    }
     
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -13,15 +8,23 @@ const validateRegistration = (req, res, next) => {
         errors.push('Please provide a valid email address');
     }
     
-    // Password validation
-    if (!password || password.length < 8) {
-        errors.push('Password must be at least 8 characters long');
-    }
-    
-    // Password strength validation
-    const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*])/;
-    if (password && !passwordRegex.test(password)) {
-        errors.push('Password must contain at least one number and one special character');
+    // If verificationToken is NOT provided, validate basic credentials
+    if (!verificationToken) {
+        // Name validation
+        if (!name || name.trim().length < 2) {
+            errors.push('Name must be at least 2 characters long');
+        }
+        
+        // Password validation
+        if (!password || password.length < 8) {
+            errors.push('Password must be at least 8 characters long');
+        }
+        
+        // Password strength validation
+        const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*])/;
+        if (password && !passwordRegex.test(password)) {
+            errors.push('Password must contain at least one number and one special character');
+        }
     }
     
     // Role validation
@@ -39,6 +42,7 @@ const validateRegistration = (req, res, next) => {
     
     next();
 };
+
 
 const validateLogin = (req, res, next) => {
     const { email, password } = req.body;
