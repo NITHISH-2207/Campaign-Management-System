@@ -114,6 +114,9 @@ const setupRoutes = () => {
         app.use('/api/whatsapp', require('./routes/whatsappRoutes'));
         console.log('✅ WhatsApp routes loaded');
         
+        app.use('/api/location', require('./routes/locationRoutes'));
+        console.log('✅ Location routes loaded');
+        
     } catch (error) {
         console.error('❌ Error loading routes:', error);
     }

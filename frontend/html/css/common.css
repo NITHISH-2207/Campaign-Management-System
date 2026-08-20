@@ -364,3 +364,45 @@ option {
     color: #ffffff !important;
     padding: 12px;
 }
+
+/* Location Feature Button & Status Styling */
+.use-location-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #e5e5e5;
+    padding: 5px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 6px;
+}
+
+.use-location-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.35);
+    color: #ffffff;
+}
+
+.location-status {
+    font-size: 12px;
+    margin-left: 8px;
+    font-weight: 400;
+}
+
+.location-status.text-info {
+    color: #64b5f6 !important;
+}
+
+.location-status.text-success {
+    color: #81c784 !important;
+}
+
+.location-status.text-warning {
+    color: #ffb74d !important;
+}
+

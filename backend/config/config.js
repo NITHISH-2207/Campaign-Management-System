@@ -51,5 +51,9 @@ module.exports = {
         accessToken: process.env.WHATSAPP_ACCESS_TOKEN,
         phoneNumberId: process.env.WHATSAPP_PHONE_NUMBER_ID,
         apiVersion: process.env.WHATSAPP_API_VERSION || 'v20.0'
-    }
+    },
+
+    // Google Geocoding API key
+    googleGeocodingApiKey: process.env.GOOGLE_GEOCODING_API_KEY
 };
+

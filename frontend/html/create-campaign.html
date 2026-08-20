@@ -599,6 +599,12 @@
                         <label for="location">Location *</label>
                         <input type="text" id="location" name="location" required
                             placeholder="e.g., Mumbai, India or Global">
+                        <div>
+                            <button type="button" class="use-location-btn" onclick="useMyLocation('location', 'create-campaign-location-status', this)">
+                                📍 Use My Location
+                            </button>
+                            <span id="create-campaign-location-status" class="location-status"></span>
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -697,6 +703,7 @@
 
     <script src="js/common/auth.js"></script>
     <script src="js/common/navigation.js"></script>
+    <script src="js/common/location.js"></script>
     <script src="js/campaign/create-campaign.js"></script>
     <script>
         // Character count functionality
