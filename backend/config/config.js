@@ -8,22 +8,47 @@ module.exports = {
 
     corsOptions: {
         origin: function (origin, callback) {
-            // Allow requests with no origin (file://, mobile apps, curl, etc.)
-            // and common local dev origins
+            // Allow requests with no origin (mobile apps, Postman, server-to-server, etc.)
+            if (!origin) {
+                return callback(null, true);
+            }
+
             const allowedOrigins = [
-                'http://localhost:5500',
-                'http://127.0.0.1:5500',
+                'https://changewave.vercel.app',
                 'https://campaign-management-system-zquy.onrender.com',
+                'http://localhost:3000',
                 'http://localhost:3001',
-                'http://127.0.0.1:3000'
+                'http://localhost:5173',
+                'http://localhost:5500',
+                'http://127.0.0.1:3000',
+                'http://127.0.0.1:3001',
+                'http://127.0.0.1:5173',
+                'http://127.0.0.1:5500'
             ];
-            if (!origin || allowedOrigins.includes(origin)) {
+
+            // Allow custom allowed origins via environment variable
+            if (process.env.ALLOWED_ORIGINS) {
+                const envOrigins = process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim());
+                allowedOrigins.push(...envOrigins);
+            }
+            if (process.env.FRONTEND_URL) {
+                allowedOrigins.push(process.env.FRONTEND_URL.trim());
+            }
+
+            // Match exact domain or any Vercel deployment preview domain
+            const isAllowed = allowedOrigins.includes(origin) ||
+                              origin.endsWith('.vercel.app');
+
+            if (isAllowed) {
                 callback(null, true);
             } else {
-                callback(null, true); // Allow all origins in development
+                console.warn(`[CORS Blocked] Origin not allowed: ${origin}`);
+                callback(new Error(`CORS Error: Origin ${origin} not allowed by CORS policy.`));
             }
         },
-        credentials: true
+        credentials: true,
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
     },
 
     uploadLimits: {
@@ -56,4 +81,3 @@ module.exports = {
     // Google Geocoding API key
     googleGeocodingApiKey: process.env.GOOGLE_GEOCODING_API_KEY
 };
-

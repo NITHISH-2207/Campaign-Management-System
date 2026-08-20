@@ -79,6 +79,7 @@ class OTPEmailService {
 
         // Preferred: Use Resend API (HTTPS port 443 - works everywhere including Render)
         if (resendApiKey) {
+            console.log(`[OTP Email Service] 🚀 Sending OTP via Resend API to recipient: ${to}`);
             const resend = new Resend(resendApiKey);
             const fromEmail = process.env.RESEND_FROM_EMAIL || process.env.OTP_EMAIL_FROM || 'ChangeWave Verification <onboarding@resend.dev>';
 
@@ -91,10 +92,11 @@ class OTPEmailService {
             });
 
             if (response.error) {
-                console.error('Resend API error detail:', response.error);
+                console.error('[OTP Email Service] ❌ Resend API Error:', response.error.message || response.error);
                 throw new Error(`Resend Email Error: ${response.error.message || JSON.stringify(response.error)}`);
             }
 
+            console.log(`[OTP Email Service] ✅ Resend Email sent successfully. Message ID: ${response.data ? response.data.id : 'N/A'}`);
             return {
                 success: true,
                 messageId: response.data ? response.data.id : null,
@@ -103,6 +105,7 @@ class OTPEmailService {
         }
 
         // Fallback: Local Nodemailer SMTP
+        console.log(`[OTP Email Service] ℹ️ RESEND_API_KEY not set. Using local Nodemailer SMTP fallback for: ${to}`);
         const transporter = this.getTransporter();
         const fromEmail = process.env.OTP_EMAIL_FROM || process.env.OTP_EMAIL_USER || process.env.EMAIL_USER || 'changewave15@gmail.com';
 
@@ -115,6 +118,7 @@ class OTPEmailService {
         };
 
         const info = await transporter.sendMail(mailOptions);
+        console.log(`[OTP Email Service] ✅ SMTP Email sent successfully. Message ID: ${info.messageId}`);
         return {
             success: true,
             messageId: info.messageId,
